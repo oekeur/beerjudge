@@ -7,7 +7,6 @@ use App\Models\Entry;
 use App\Models\Member;
 use App\Models\Style;
 use App\Services\BottleNumberAssignmentService;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Tests\TestCase;
 
@@ -21,9 +20,9 @@ class CompetitionLifecycleTest extends TestCase
         $comp = Competition::create(['name' => 'Test', 'year' => 2025, 'status' => 'open']);
         $member = Member::factory()->create(['name' => 'M', 'email' => 'm@t.com']);
 
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'name' => 'Beer A']);
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'name' => 'Beer B']);
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'name' => 'Beer C']);
+        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
+        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
+        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
 
         app(BottleNumberAssignmentService::class)->assign($comp);
 
@@ -31,15 +30,19 @@ class CompetitionLifecycleTest extends TestCase
         $this->assertEquals([1, 2, 3], $numbers);
     }
 
-    public function test_bottle_numbers_unique_within_competition(): void
+    public function test_bottle_number_assignment_produces_unique_numbers(): void
     {
         $style = Style::create(['code' => '1B', 'category_name' => 'SA', 'name' => 'American Lager']);
         $comp = Competition::create(['name' => 'Test2', 'year' => 2025, 'status' => 'judging']);
         $member = Member::factory()->create(['name' => 'M2', 'email' => 'm2@t.com']);
 
-        $e1 = Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'name' => 'A', 'bottle_number' => 1]);
+        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
+        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
+        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
 
-        $this->expectException(QueryException::class);
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'name' => 'B', 'bottle_number' => 1]);
+        app(BottleNumberAssignmentService::class)->assign($comp);
+
+        $numbers = Entry::where('competition_id', $comp->id)->pluck('bottle_number')->toArray();
+        $this->assertCount(count($numbers), array_unique($numbers));
     }
 }

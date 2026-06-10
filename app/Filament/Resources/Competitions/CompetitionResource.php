@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Competitions;
 use App\Filament\Resources\Competitions\Pages\CreateCompetition;
 use App\Filament\Resources\Competitions\Pages\EditCompetition;
 use App\Filament\Resources\Competitions\Pages\ListCompetitions;
-use App\Filament\Resources\Competitions\RelationManagers\EntriesRelationManager;
 use App\Filament\Resources\Competitions\Schemas\CompetitionForm;
 use App\Filament\Resources\Competitions\Tables\CompetitionsTable;
 use App\Models\Competition;
@@ -33,9 +32,7 @@ class CompetitionResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            EntriesRelationManager::class,
-        ];
+        return [];
     }
 
     public static function getPages(): array

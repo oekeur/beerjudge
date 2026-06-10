@@ -2,6 +2,7 @@
 
 namespace App\Filament\Forms\Components;
 
+use App\Models\Style;
 use Filament\Forms\Components\CheckboxList;
 
 class StyleMultiSelect extends CheckboxList
@@ -15,5 +16,16 @@ class StyleMultiSelect extends CheckboxList
         $this->getOptionLabelFromRecordUsing(
             fn ($record): string => "{$record->code} {$record->name}"
         );
+    }
+
+    public function getCategorizedOptions(): array
+    {
+        return Style::orderBy('code')
+            ->get()
+            ->groupBy('category_name')
+            ->map(fn ($styles) => $styles->mapWithKeys(
+                fn ($style) => [$style->id => "{$style->code} {$style->name}"]
+            )->all())
+            ->all();
     }
 }

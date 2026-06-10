@@ -50,6 +50,8 @@ class EntriesRelationManager extends RelationManager
                 TextColumn::make('bottle_number')
                     ->label('#'),
             ])
+            ->reorderable('bottle_number')
+            ->defaultSort('bottle_number')
             ->filters([])
             ->headerActions([
                 CreateAction::make(),

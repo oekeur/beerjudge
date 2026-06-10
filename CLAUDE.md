@@ -10,6 +10,10 @@ A Laravel app for a ~10-person homebrew club to run four competitions per year. 
 
 The `laravel-best-practices` skill is authoritative for this project. Invoke it before making any non-trivial Laravel change.
 
+Use lean sub-agents where they add value:
+- `Explore` for codebase searches and multi-file reads — keep the main context clean.
+- Parallel worktree agents for independent edits across unrelated files — spawn them together, collect results.
+
 ## Tech stack
 
 - **Laravel** with **Filament** for the admin/management side
@@ -47,11 +51,11 @@ Two frontends, one app:
 ## Data model
 
 ```
-members             id, name, email, bjcp_rank, is_admin, is_active
+members             id, name, email, is_admin, is_active
 competitions        id, name, year, judging_date, status (draft/open/judging/closed), published_at
 styles              id, code (e.g. 23A), category_name, name, version (2021), OG/FG/ABV/IBU/SRM ranges
                     + description, commercial_examples (Enhancement 1)
-entries             id, competition_id, member_id, style_id, name, bottle_number, brewer_notes
+entries             id, competition_id, member_id, style_id, bottle_number, brewer_notes
 scoresheets         id, entry_id, judge_id, aroma (0-12), appearance (0-3), flavour (0-20),
                     mouthfeel (0-5), overall (0-10), total (computed), per-section notes,
                     client_uuid, status (draft/submitted), timestamps
