@@ -42,9 +42,9 @@ class ScoresheetUpsertTest extends TestCase
     {
         return Entry::create([
             'competition_id' => $comp->id,
-            'member_id'      => $brewer->id,
-            'style_id'       => $style->id,
-            'name'           => 'Test Beer',
+            'member_id' => $brewer->id,
+            'style_id' => $style->id,
+            'name' => 'Test Beer',
         ]);
     }
 
@@ -52,13 +52,13 @@ class ScoresheetUpsertTest extends TestCase
     {
         return array_merge([
             'client_uuid' => $uuid,
-            'entry_id'    => $entryId,
-            'aroma'       => 8,
-            'appearance'  => 2,
-            'flavour'     => 14,
-            'mouthfeel'   => 4,
-            'overall'     => 7,
-            'status'      => 'draft',
+            'entry_id' => $entryId,
+            'aroma' => 8,
+            'appearance' => 2,
+            'flavour' => 14,
+            'mouthfeel' => 4,
+            'overall' => 7,
+            'status' => 'draft',
         ], $overrides);
     }
 
@@ -154,5 +154,71 @@ class ScoresheetUpsertTest extends TestCase
     {
         $response = $this->postJson('/scoresheets', ['client_uuid' => fake()->uuid()]);
         $response->assertStatus(401);
+    }
+
+    public function test_descriptors_are_stored_and_persisted(): void
+    {
+        $comp = $this->makeJudgingCompetition();
+        $style = $this->makeStyle();
+        $brewer = $this->makeMember(['email' => 'b6@test.com']);
+        $judge = $this->makeMember(['email' => 'j6@test.com']);
+        $entry = $this->makeEntry($comp, $brewer, $style);
+        $uuid = fake()->uuid();
+
+        $response = $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, $uuid, [
+            'descriptors' => ['diacetyl', 'dms'],
+        ]));
+
+        $response->assertOk();
+        $sheet = Scoresheet::where('client_uuid', $uuid)->first();
+        $this->assertEquals(['diacetyl', 'dms'], $sheet->descriptors);
+    }
+
+    public function test_empty_descriptors_array_is_stored(): void
+    {
+        $comp = $this->makeJudgingCompetition();
+        $style = $this->makeStyle();
+        $brewer = $this->makeMember(['email' => 'b7@test.com']);
+        $judge = $this->makeMember(['email' => 'j7@test.com']);
+        $entry = $this->makeEntry($comp, $brewer, $style);
+        $uuid = fake()->uuid();
+
+        $response = $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, $uuid, [
+            'descriptors' => [],
+        ]));
+
+        $response->assertOk();
+        $sheet = Scoresheet::where('client_uuid', $uuid)->first();
+        $this->assertEquals([], $sheet->descriptors);
+    }
+
+    public function test_omitted_descriptors_defaults_to_empty_array(): void
+    {
+        $comp = $this->makeJudgingCompetition();
+        $style = $this->makeStyle();
+        $brewer = $this->makeMember(['email' => 'b8@test.com']);
+        $judge = $this->makeMember(['email' => 'j8@test.com']);
+        $entry = $this->makeEntry($comp, $brewer, $style);
+        $uuid = fake()->uuid();
+
+        $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, $uuid));
+
+        $sheet = Scoresheet::where('client_uuid', $uuid)->first();
+        $this->assertEquals([], $sheet->descriptors);
+    }
+
+    public function test_invalid_descriptor_slug_is_rejected(): void
+    {
+        $comp = $this->makeJudgingCompetition();
+        $style = $this->makeStyle();
+        $brewer = $this->makeMember(['email' => 'b9@test.com']);
+        $judge = $this->makeMember(['email' => 'j9@test.com']);
+        $entry = $this->makeEntry($comp, $brewer, $style);
+
+        $response = $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, fake()->uuid(), [
+            'descriptors' => ['notaslug'],
+        ]));
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['descriptors.0']);
     }
 }

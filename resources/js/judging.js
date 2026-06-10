@@ -29,6 +29,7 @@ function emptySheet(entryId) {
         flavour_notes: '',
         mouthfeel_notes: '',
         overall_notes: '',
+        descriptors: [],
         status: 'draft',
         syncStatus: 'idle',
         expanded: false,
@@ -129,6 +130,7 @@ window.judgingApp = function (serverData) {
                         flavour_notes: sheet.flavour_notes || null,
                         mouthfeel_notes: sheet.mouthfeel_notes || null,
                         overall_notes: sheet.overall_notes || null,
+                        descriptors: sheet.descriptors || [],
                         status: sheet.status,
                     }),
                 });
@@ -172,6 +174,17 @@ window.judgingApp = function (serverData) {
             if (this._retryTimer) clearTimeout(this._retryTimer);
             this._retryTimer = null;
             this.scheduleRetry();
+        },
+
+        async toggleDescriptor(entryId, slug) {
+            const sheet = this.sheets[entryId];
+            const idx = (sheet.descriptors || []).indexOf(slug);
+            if (idx === -1) {
+                sheet.descriptors = [...(sheet.descriptors || []), slug];
+            } else {
+                sheet.descriptors = sheet.descriptors.filter(s => s !== slug);
+            }
+            await this.saveSheet(entryId);
         },
     };
 };

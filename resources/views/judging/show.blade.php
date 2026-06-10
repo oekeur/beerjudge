@@ -177,6 +177,39 @@
                                 <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Overall impression notes…" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Overall impression notes'"></textarea>
                             </div>
 
+                            {{-- Off-Flavor Descriptors --}}
+                            <div x-data="{ descriptorsOpen: false }" class="mb-4">
+                                <button
+                                    type="button"
+                                    class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
+                                    @click="descriptorsOpen = !descriptorsOpen"
+                                >
+                                    <svg class="w-3.5 h-3.5 transition-transform" :class="{ 'rotate-90': descriptorsOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                    Off-Flavor Descriptors
+                                    <template x-if="(sheets[entry.id]?.descriptors || []).length > 0">
+                                        <span class="ml-1 bg-amber-100 text-amber-700 text-xs font-medium px-1.5 py-0.5 rounded-full" x-text="(sheets[entry.id]?.descriptors || []).length"></span>
+                                    </template>
+                                </button>
+                                <div x-show="descriptorsOpen" x-transition class="mt-3 grid grid-cols-1 gap-y-2">
+                                    @foreach($descriptors as $descriptor)
+                                    <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                                        <input
+                                            type="checkbox"
+                                            class="mt-0.5 w-4 h-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500 flex-shrink-0"
+                                            :checked="(sheets[entry.id]?.descriptors || []).includes('{{ $descriptor['slug'] }}')"
+                                            @change="toggleDescriptor(entry.id, '{{ $descriptor['slug'] }}')"
+                                        >
+                                        <span class="text-sm leading-snug">
+                                            <span class="font-medium text-gray-800">{{ $descriptor['name'] }}</span>
+                                            <span class="text-gray-500"> — {{ $descriptor['description'] }}</span>
+                                        </span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
                             {{-- Total + Submit --}}
                             <div class="border-t border-gray-100 pt-3 flex items-center justify-between gap-3">
                                 <div>
