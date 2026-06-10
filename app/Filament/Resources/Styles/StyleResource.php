@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Styles;
 
+use App\Filament\Resources\Styles\Pages\EditStyle;
 use App\Filament\Resources\Styles\Pages\ListStyles;
+use App\Filament\Resources\Styles\Schemas\StyleForm;
 use App\Filament\Resources\Styles\Tables\StylesTable;
 use App\Models\Style;
 use BackedEnum;
@@ -20,7 +22,7 @@ class StyleResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([]);
+        return StyleForm::configure($schema);
     }
 
     public static function table(Table $table): Table
@@ -35,7 +37,7 @@ class StyleResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return false;
+        return true;
     }
 
     public static function canDelete(Model $record): bool
@@ -52,6 +54,7 @@ class StyleResource extends Resource
     {
         return [
             'index' => ListStyles::route('/'),
+            'edit' => EditStyle::route('/{record}/edit'),
         ];
     }
 }
