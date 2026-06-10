@@ -20,13 +20,13 @@ class JudgeVarianceWidget extends BaseWidget
             ->query(
                 Entry::query()
                     ->where('competition_id', $this->competitionId)
-                    ->withCount(['scoresheets as sheet_count' => fn($q) => $q->where('status', 'submitted')])
-                    ->withAvg(['scoresheets as avg_total' => fn($q) => $q->where('status', 'submitted')], 'total')
+                    ->withCount(['scoresheets as sheet_count' => fn ($q) => $q->where('status', 'submitted')])
+                    ->withAvg(['scoresheets as avg_total' => fn ($q) => $q->where('status', 'submitted')], 'total')
                     ->addSelect([
                         'entries.*',
                         DB::raw('(SELECT MAX(s.total) - MIN(s.total) FROM scoresheets s WHERE s.entry_id = entries.id AND s.status = \'submitted\') as spread'),
                     ])
-                    ->having('sheet_count', '>=', 2)
+                    ->whereRaw('(select count(*) from scoresheets where entries.id = scoresheets.entry_id and status = ?) >= 2', ['submitted'])
             )
             ->columns([
                 Tables\Columns\TextColumn::make('bottle_number')->label('#')->sortable(),
@@ -34,12 +34,12 @@ class JudgeVarianceWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('sheet_count')->label('Sheets'),
                 Tables\Columns\TextColumn::make('avg_total')
                     ->label('Avg Score')
-                    ->formatStateUsing(fn($state) => round($state, 1)),
+                    ->formatStateUsing(fn ($state) => round($state, 1)),
                 Tables\Columns\TextColumn::make('spread')
                     ->label('Spread')
                     ->badge()
-                    ->color(fn($state) => $state > 7 ? 'danger' : 'success')
-                    ->formatStateUsing(fn($state) => $state > 7 ? "⚠ {$state} pts" : "{$state} pts"),
+                    ->color(fn ($state) => $state > 7 ? 'danger' : 'success')
+                    ->formatStateUsing(fn ($state) => $state > 7 ? "⚠ {$state} pts" : "{$state} pts"),
             ]);
     }
 }
