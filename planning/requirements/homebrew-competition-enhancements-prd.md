@@ -2,7 +2,7 @@
 
 Builds on the v1 PRD. Five enhancements, in the order to build them. Each ships independently, so none blocks the others; the order reflects value per unit of effort. Terminology (members, entries, scoresheets, styles, results sheet, judging screen) carries over from v1.
 
-## 1. Style guidelines next to judging
+## 1. Style guidelines next to judging - DONE
 
 Judges score better when the target is in front of them. Show the BJCP description and vital stats for the entry's style on the judging screen, so people score to style instead of from memory.
 
@@ -14,7 +14,7 @@ One thing to settle first: confirm the BJCP's redistribution terms for the guide
 
 Effort: low, mostly seed data and a panel.
 
-## 2. Off-flavor descriptor checkboxes
+## 2. Off-flavor descriptor checkboxes - DONE
 
 Free-text notes are slow to write on a phone and uneven to read back. Add structured descriptor tick boxes to the scoresheet, the way the paper BJCP sheet does, for faster judging and clearer feedback.
 
