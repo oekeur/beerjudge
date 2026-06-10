@@ -21,10 +21,8 @@ class MemberForm
                 TextInput::make('password')
                     ->password()
                     ->visibleOn('create')
-                    ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
-                    ->dehydrated(fn($state) => filled($state)),
-                TextInput::make('bjcp_rank')
-                    ->nullable(),
+                    ->dehydrateStateUsing(fn ($state) => filled($state) ? bcrypt($state) : null)
+                    ->dehydrated(fn ($state) => filled($state)),
                 Toggle::make('is_admin'),
                 Toggle::make('is_active')
                     ->default(true),

@@ -17,8 +17,6 @@ class MembersTable
                     ->searchable(),
                 TextColumn::make('email')
                     ->searchable(),
-                TextColumn::make('bjcp_rank')
-                    ->searchable(),
                 IconColumn::make('is_admin')
                     ->boolean(),
                 IconColumn::make('is_active')
