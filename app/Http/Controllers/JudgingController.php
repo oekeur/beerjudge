@@ -15,7 +15,7 @@ class JudgingController extends Controller
         $judge = $request->user();
 
         $entries = $competition->entries()
-            ->with('style')
+            ->with(['style', 'member'])
             ->where('member_id', '!=', $judge->id)
             ->orderBy('bottle_number')
             ->get();
@@ -32,6 +32,7 @@ class JudgingController extends Controller
                 'name' => $e->name,
                 'style_code' => $e->style->code,
                 'style_name' => $e->style->name,
+                'brewer_name' => $e->member->name,
                 'style_guide' => [
                     'aroma' => $e->style->aroma,
                     'appearance' => $e->style->appearance,

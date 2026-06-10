@@ -39,38 +39,38 @@
                 {{-- Entry row header --}}
                 <button
                     type="button"
-                    class="w-full text-left px-4 py-3 flex justify-between items-center gap-3"
+                    class="w-full text-left px-4 py-4 flex items-center gap-3"
                     @click="toggleExpanded(entry.id)"
                 >
                     <div class="flex-1 min-w-0">
-                        <div class="font-semibold text-gray-900 truncate">
-                            #<span x-text="entry.bottle_number"></span>
-                            · <span x-text="entry.style_code"></span>
-                            · "<span x-text="entry.name"></span>"
+                        <div class="font-semibold text-gray-900 truncate text-sm" x-text="entry.name"></div>
+                        <div class="text-xs text-gray-400 truncate mt-0.5">
+                            <span x-text="entry.style_name"></span>
+                            <span class="mx-1">·</span>
+                            <span x-text="entry.brewer_name"></span>
                         </div>
-                        <div class="text-xs text-gray-500 truncate" x-text="entry.style_name"></div>
                     </div>
 
                     <div class="flex items-center gap-2 flex-shrink-0">
                         {{-- Score preview --}}
-                        <span class="text-sm font-medium text-gray-700"
-                            x-show="sheets[entry.id] && sheets[entry.id].status === 'submitted'"
+                        <span class="text-sm font-semibold tabular-nums text-green-700"
+                            x-show="sheets[entry.id]?.status === 'submitted'"
                             x-text="sheetTotal(entry.id) + ' / 50'">
                         </span>
-                        <span class="text-sm text-gray-400"
-                            x-show="sheets[entry.id] && sheets[entry.id].status === 'draft' && sheetTotal(entry.id) > 0"
+                        <span class="text-sm tabular-nums text-gray-400"
+                            x-show="sheets[entry.id]?.status === 'draft' && sheetTotal(entry.id) > 0"
                             x-text="sheetTotal(entry.id) + ' / 50'">
                         </span>
 
                         {{-- Sync badge --}}
-                        <span x-show="!sheets[entry.id] || sheets[entry.id].syncStatus === 'idle'" class="text-xs text-gray-400">—</span>
+                        <span x-show="!sheets[entry.id] || sheets[entry.id].syncStatus === 'idle'" class="text-xs text-gray-300">—</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'syncing' || sheets[entry.id]?.syncStatus === 'pending'" class="text-xs text-blue-500 animate-pulse">Saving…</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'submitted'" class="text-xs text-green-600 font-medium">Submitted ✓</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'draft'" class="text-xs text-gray-400">Saved ✓</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'error'" class="text-xs text-red-500 cursor-pointer" @click.stop="retryNow(entry.id)">⚠ Retry</span>
 
                         {{-- Expand chevron --}}
-                        <svg class="w-4 h-4 text-gray-400 transition-transform" :class="{ 'rotate-180': sheets[entry.id]?.expanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0" :class="{ 'rotate-180': sheets[entry.id]?.expanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
