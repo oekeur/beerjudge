@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Competitions\Schemas;
 
-use Filament\Forms\Components\CheckboxList;
+use App\Filament\Forms\Components\StyleMultiSelect;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -32,10 +32,9 @@ class CompetitionForm
                     ->default('draft'),
                 DateTimePicker::make('published_at')
                     ->nullable(),
-                CheckboxList::make('styles')
+                StyleMultiSelect::make('styles')
                     ->relationship('styles', 'name')
-                    ->searchable()
-                    ->columns(3),
+                    ->columnSpanFull(),
             ]);
     }
 }
