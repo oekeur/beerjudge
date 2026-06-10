@@ -1,5 +1,10 @@
 *.log
 .DS_Store
+/.agents
+/.ai
+/.claire
+/.claude
+/.junie
 .env
 .env.backup
 .env.production
