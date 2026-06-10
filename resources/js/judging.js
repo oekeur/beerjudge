@@ -41,6 +41,7 @@ window.judgingApp = function (serverData) {
         sheets: {},
         syncQueue: [],
         _retryTimer: null,
+        styleGuide: { open: false, section: '', text: '' },
 
         async init() {
             // Seed from server data
@@ -172,6 +173,23 @@ window.judgingApp = function (serverData) {
             if (this._retryTimer) clearTimeout(this._retryTimer);
             this._retryTimer = null;
             this.scheduleRetry();
+        },
+
+        openGuide(entryId, sectionKey) {
+            const entry = this.entries.find(e => e.id === entryId);
+            const titles = {
+                aroma: 'Aroma', appearance: 'Appearance', flavor: 'Flavour',
+                mouthfeel: 'Mouthfeel', overall_impression: 'Overall Impression',
+            };
+            this.styleGuide = {
+                open: true,
+                section: titles[sectionKey] ?? sectionKey,
+                text: entry?.style_guide?.[sectionKey] ?? 'No descriptor available.',
+            };
+        },
+
+        closeGuide() {
+            this.styleGuide.open = false;
         },
     };
 };

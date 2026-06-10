@@ -110,7 +110,10 @@
                             {{-- Aroma --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <label :for="'aroma-' + entry.id" class="font-medium text-gray-800 text-sm">Aroma</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <label :for="'aroma-' + entry.id" class="font-medium text-gray-800 text-sm">Aroma</label>
+                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'aroma')" :aria-label="'View BJCP aroma guideline for ' + entry.style_name">i</button>
+                                    </div>
                                     <div class="flex items-center gap-1" role="group" :aria-label="'Aroma score, 0 to 12'">
                                         <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].aroma = Math.max(0, sheets[entry.id].aroma - 1); onInput(entry.id)">−</button>
                                         <input :id="'aroma-' + entry.id" type="number" min="0" max="12" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].aroma" @change="onInput(entry.id)" :aria-label="'Aroma score, 0 to 12'">
@@ -124,7 +127,10 @@
                             {{-- Appearance --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <label :for="'appearance-' + entry.id" class="font-medium text-gray-800 text-sm">Appearance</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <label :for="'appearance-' + entry.id" class="font-medium text-gray-800 text-sm">Appearance</label>
+                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'appearance')" :aria-label="'View BJCP appearance guideline for ' + entry.style_name">i</button>
+                                    </div>
                                     <div class="flex items-center gap-1" role="group" :aria-label="'Appearance score, 0 to 3'">
                                         <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].appearance = Math.max(0, sheets[entry.id].appearance - 1); onInput(entry.id)">−</button>
                                         <input :id="'appearance-' + entry.id" type="number" min="0" max="3" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].appearance" @change="onInput(entry.id)" :aria-label="'Appearance score, 0 to 3'">
@@ -138,7 +144,10 @@
                             {{-- Flavour --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <label :for="'flavour-' + entry.id" class="font-medium text-gray-800 text-sm">Flavour</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <label :for="'flavour-' + entry.id" class="font-medium text-gray-800 text-sm">Flavour</label>
+                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'flavor')" :aria-label="'View BJCP flavour guideline for ' + entry.style_name">i</button>
+                                    </div>
                                     <div class="flex items-center gap-1" role="group" :aria-label="'Flavour score, 0 to 20'">
                                         <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].flavour = Math.max(0, sheets[entry.id].flavour - 1); onInput(entry.id)">−</button>
                                         <input :id="'flavour-' + entry.id" type="number" min="0" max="20" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].flavour" @change="onInput(entry.id)" :aria-label="'Flavour score, 0 to 20'">
@@ -152,7 +161,10 @@
                             {{-- Mouthfeel --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <label :for="'mouthfeel-' + entry.id" class="font-medium text-gray-800 text-sm">Mouthfeel</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <label :for="'mouthfeel-' + entry.id" class="font-medium text-gray-800 text-sm">Mouthfeel</label>
+                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'mouthfeel')" :aria-label="'View BJCP mouthfeel guideline for ' + entry.style_name">i</button>
+                                    </div>
                                     <div class="flex items-center gap-1" role="group" :aria-label="'Mouthfeel score, 0 to 5'">
                                         <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].mouthfeel = Math.max(0, sheets[entry.id].mouthfeel - 1); onInput(entry.id)">−</button>
                                         <input :id="'mouthfeel-' + entry.id" type="number" min="0" max="5" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].mouthfeel" @change="onInput(entry.id)" :aria-label="'Mouthfeel score, 0 to 5'">
@@ -166,7 +178,10 @@
                             {{-- Overall --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <label :for="'overall-' + entry.id" class="font-medium text-gray-800 text-sm">Overall Impression</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <label :for="'overall-' + entry.id" class="font-medium text-gray-800 text-sm">Overall Impression</label>
+                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'overall_impression')" :aria-label="'View BJCP overall impression guideline for ' + entry.style_name">i</button>
+                                    </div>
                                     <div class="flex items-center gap-1" role="group" :aria-label="'Overall impression score, 0 to 10'">
                                         <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].overall = Math.max(0, sheets[entry.id].overall - 1); onInput(entry.id)">−</button>
                                         <input :id="'overall-' + entry.id" type="number" min="0" max="10" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].overall" @change="onInput(entry.id)" :aria-label="'Overall impression score, 0 to 10'">
@@ -211,6 +226,25 @@
             </div>
         </template>
     </main>
+
+    {{-- Style guide bottom sheet --}}
+    <div x-show="styleGuide.open" class="fixed inset-0 z-50 flex items-end" @keydown.escape.window="closeGuide()" style="display: none;">
+        <div class="absolute inset-0 bg-black/40" @click="closeGuide()"></div>
+        <div class="relative w-full max-w-lg mx-auto bg-white rounded-t-2xl shadow-xl px-5 pt-4 pb-8"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="translate-y-full opacity-0"
+            x-transition:enter-end="translate-y-0 opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="translate-y-0 opacity-100"
+            x-transition:leave-end="translate-y-full opacity-0"
+        >
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-amber-600" x-text="styleGuide.section"></span>
+                <button type="button" class="text-gray-400 hover:text-gray-600 text-xl leading-none" @click="closeGuide()">×</button>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed" x-text="styleGuide.text"></p>
+        </div>
+    </div>
 
 </body>
 </html>
