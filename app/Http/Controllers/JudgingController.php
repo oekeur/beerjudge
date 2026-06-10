@@ -53,10 +53,13 @@ class JudgingController extends Controller
                 'flavour_notes' => $s->flavour_notes ?? '',
                 'mouthfeel_notes' => $s->mouthfeel_notes ?? '',
                 'overall_notes' => $s->overall_notes ?? '',
+                'descriptors' => $s->descriptors ?? [],
                 'status' => $s->status,
             ])->values(),
         ]);
 
-        return view('judging.show', compact('competition', 'entries', 'existingSheets', 'judge', 'serverDataJson'));
+        $descriptors = ScoresheetController::DESCRIPTORS;
+
+        return view('judging.show', compact('competition', 'entries', 'existingSheets', 'judge', 'serverDataJson', 'descriptors'));
     }
 }
