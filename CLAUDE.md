@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Laravel app for a ~10-person homebrew club to run four competitions per year. Members register beers, judges score them on the BJCP 50-point scale, and each competition produces a ranked result list. Deliberately narrow in scope: no payments, no shipping, no BJCP report generation, no multi-club support.
 
+## Skills
+
+The `laravel-best-practices` skill is authoritative for this project. Invoke it before making any non-trivial Laravel change.
+
 ## Tech stack
 
 - **Laravel** with **Filament** for the admin/management side
@@ -13,6 +17,12 @@ A Laravel app for a ~10-person homebrew club to run four competitions per year. 
 - **IndexedDB** (Dexie optional) for offline-first scoresheet backup on the judging screen
 - **Postgres or MySQL**
 - Session-based auth; sessions last ~1 week
+
+## Git
+
+- Commit automatically after completing each task — do not wait to be asked.
+- Use the format: `[type](scope): description` (e.g. `feat(judging): add offline sync retry`)
+- Stage only files relevant to the task; do not use `git add -A` blindly.
 
 ## Commands
 
