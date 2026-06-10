@@ -29,7 +29,6 @@ class JudgingController extends Controller
             'entries' => $entries->map(fn ($e) => [
                 'id' => $e->id,
                 'bottle_number' => $e->bottle_number,
-                'name' => $e->name,
                 'style_code' => $e->style->code,
                 'style_name' => $e->style->name,
                 'brewer_name' => $e->member->name,

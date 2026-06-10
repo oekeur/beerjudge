@@ -57,10 +57,10 @@ class DemoSeeder extends Seeder
         ]);
 
         $entries = [
-            Entry::create(['competition_id' => $comp->id, 'member_id' => $judge1->id, 'style_id' => $ipa->id, 'name' => 'Hop Cannon IPA', 'bottle_number' => 1]),
-            Entry::create(['competition_id' => $comp->id, 'member_id' => $judge2->id, 'style_id' => $helles->id, 'name' => 'Munich Gold', 'bottle_number' => 2]),
-            Entry::create(['competition_id' => $comp->id, 'member_id' => $admin->id, 'style_id' => $porter->id, 'name' => 'Dark Matter Porter', 'bottle_number' => 3]),
-            Entry::create(['competition_id' => $comp->id, 'member_id' => $judge1->id, 'style_id' => $stout->id, 'name' => 'Midnight Stout', 'bottle_number' => 4]),
+            Entry::create(['competition_id' => $comp->id, 'member_id' => $judge1->id, 'style_id' => $ipa->id, 'bottle_number' => 1]),
+            Entry::create(['competition_id' => $comp->id, 'member_id' => $judge2->id, 'style_id' => $helles->id, 'bottle_number' => 2]),
+            Entry::create(['competition_id' => $comp->id, 'member_id' => $admin->id, 'style_id' => $porter->id, 'bottle_number' => 3]),
+            Entry::create(['competition_id' => $comp->id, 'member_id' => $judge1->id, 'style_id' => $stout->id, 'bottle_number' => 4]),
         ];
 
         Scoresheet::create([

@@ -19,8 +19,8 @@ class JudgingScreenTest extends TestCase
         $style = Style::create(['code' => '1A', 'category_name' => 'Standard American', 'name' => 'Light Lager']);
         $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@test.com']);
         $judge = Member::factory()->create(['name' => 'Judge', 'email' => 'judge@test.com']);
-        $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'name' => 'Pale Ale', 'bottle_number' => 1]);
-        $ownEntry = Entry::create(['competition_id' => $comp->id, 'member_id' => $judge->id, 'style_id' => $style->id, 'name' => 'Judge Beer', 'bottle_number' => 2]);
+        $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
+        $ownEntry = Entry::create(['competition_id' => $comp->id, 'member_id' => $judge->id, 'style_id' => $style->id, 'bottle_number' => 2]);
 
         return [$comp, $brewer, $judge, $entry, $ownEntry];
     }
@@ -37,9 +37,9 @@ class JudgingScreenTest extends TestCase
         [$comp, $brewer, $judge, $entry, $ownEntry] = $this->makeFixtures();
         $response = $this->actingAs($judge)->get("/judging/{$comp->id}");
         $response->assertOk();
-        // The own entry's name should not appear in the server-rendered JSON blob
-        $response->assertDontSee('Judge Beer');
-        $response->assertSee('Pale Ale');
+        // Brewer's entry appears in the JSON; judge's own entry does not
+        $response->assertSee('"brewer_name":"Brewer"', false);
+        $response->assertDontSee('"brewer_name":"Judge"', false);
     }
 
     public function test_judging_screen_returns_403_when_not_judging(): void

@@ -40,7 +40,7 @@
         <div class="mb-8">
             <div class="flex justify-between items-baseline mb-2">
                 <h3 class="text-base font-semibold">
-                    {{ $row['entry']->style->code }} · {{ $row['entry']->name }}
+                    {{ $row['entry']->style->code }} · {{ $row['entry']->style->name }}
                 </h3>
                 <span class="text-sm text-gray-500">#{{ $row['entry']->bottle_number }}</span>
             </div>
@@ -111,7 +111,6 @@
             <thead>
                 <tr class="bg-gray-100 text-gray-700">
                     <th class="text-left py-1 px-2 font-medium">#</th>
-                    <th class="text-left py-1 px-2 font-medium">Beer</th>
                     <th class="text-left py-1 px-2 font-medium">Brewer</th>
                     <th class="text-left py-1 px-2 font-medium">Style</th>
                     <th class="text-center py-1 px-2 font-medium">Score</th>
@@ -123,7 +122,6 @@
                 @foreach($rankedEntries as $row)
                 <tr class="border-t border-gray-200 {{ $row['entry']->member_id === $member->id ? 'bg-amber-50' : '' }}">
                     <td class="py-1 px-2 font-bold text-gray-900">{{ $row['placement'] }}</td>
-                    <td class="py-1 px-2">{{ $row['entry']->name }}</td>
                     <td class="py-1 px-2 text-gray-700">{{ $row['entry']->member->name }}</td>
                     <td class="py-1 px-2 text-gray-600">{{ $row['entry']->style->code }}</td>
                     <td class="text-center py-1 px-2 font-semibold">{{ number_format($row['avg_total'], 1) }}</td>

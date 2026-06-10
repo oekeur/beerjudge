@@ -29,9 +29,7 @@ class EntriesRelationManager extends RelationManager
                     ->relationship('style', 'name')
                     ->searchable()
                     ->required()
-                    ->getOptionLabelFromRecordUsing(fn($record) => "{$record->code} — {$record->name}"),
-                TextInput::make('name')
-                    ->required(),
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->code} — {$record->name}"),
                 TextInput::make('bottle_number')
                     ->numeric()
                     ->nullable(),
@@ -43,14 +41,12 @@ class EntriesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name')
+            ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('member.name')
                     ->label('Member'),
                 TextColumn::make('style.code')
                     ->label('Style'),
-                TextColumn::make('name')
-                    ->label('Beer Name'),
                 TextColumn::make('bottle_number')
                     ->label('#'),
             ])

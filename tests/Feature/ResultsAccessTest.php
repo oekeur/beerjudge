@@ -78,17 +78,17 @@ class ResultsAccessTest extends TestCase
         $b1 = Member::factory()->create(['name' => 'High', 'email' => 'high@t.com']);
         $b2 = Member::factory()->create(['name' => 'Low', 'email' => 'low@t.com']);
         $comp = Competition::create(['name' => 'Rank Cup', 'year' => 2025, 'status' => 'closed']);
-        $e1 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b1->id, 'style_id' => $style->id, 'name' => 'High Beer', 'bottle_number' => 1]);
-        $e2 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b2->id, 'style_id' => $style->id, 'name' => 'Low Beer', 'bottle_number' => 2]);
+        $e1 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b1->id, 'style_id' => $style->id, 'bottle_number' => 1]);
+        $e2 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b2->id, 'style_id' => $style->id, 'bottle_number' => 2]);
         Scoresheet::create(['entry_id' => $e1->id, 'judge_id' => $admin->id, 'aroma' => 12, 'appearance' => 3, 'flavour' => 20, 'mouthfeel' => 5, 'overall' => 10, 'client_uuid' => fake()->uuid(), 'status' => 'submitted']);
         Scoresheet::create(['entry_id' => $e2->id, 'judge_id' => $admin->id, 'aroma' => 5, 'appearance' => 2, 'flavour' => 10, 'mouthfeel' => 3, 'overall' => 5, 'client_uuid' => fake()->uuid(), 'status' => 'submitted']);
 
         $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results/{$b1->id}");
         $response->assertOk();
-        // High Beer (50 pts) should appear before Low Beer (25 pts)
+        // High (50 pts) should appear before Low (25 pts) in the standings
         $this->assertLessThan(
-            strpos($response->getContent(), 'Low Beer'),
-            strpos($response->getContent(), 'High Beer')
+            strpos($response->getContent(), 'Low'),
+            strpos($response->getContent(), 'High')
         );
     }
 }
