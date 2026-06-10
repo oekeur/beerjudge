@@ -92,9 +92,12 @@
                                 <div>Mouthfeel <strong x-text="sheets[entry.id].mouthfeel"></strong>/5
                                     · Overall <strong x-text="sheets[entry.id].overall"></strong>/10</div>
                             </div>
-                            <div class="text-base font-bold mb-4">
-                                Total: <span x-text="sheetTotal(entry.id)"></span> / 50
-                                · <span x-text="bandLabel(sheetTotal(entry.id))"></span>
+                            <div class="mb-4">
+                                <div class="text-base font-bold">Total: <span x-text="sheetTotal(entry.id)"></span> / 50</div>
+                                <div class="mt-0.5">
+                                    <span class="text-sm font-semibold" x-text="bandInfo(sheetTotal(entry.id)).name"></span><span class="text-sm text-gray-500 ml-1.5" x-text="'(' + bandInfo(sheetTotal(entry.id)).range + ')'"></span>
+                                    <div class="text-sm text-gray-700 italic" x-text="bandInfo(sheetTotal(entry.id)).description"></div>
+                                </div>
                             </div>
                             <button
                                 type="button"
@@ -198,14 +201,16 @@
                                     <div class="text-lg font-bold text-gray-900">
                                         <span x-text="sheetTotal(entry.id)"></span> / 50
                                     </div>
-                                    <div class="text-xs font-medium"
-                                        :class="{
-                                            'text-green-600': sheetTotal(entry.id) >= 38,
-                                            'text-teal-600': sheetTotal(entry.id) >= 30 && sheetTotal(entry.id) < 38,
-                                            'text-yellow-600': sheetTotal(entry.id) >= 21 && sheetTotal(entry.id) < 30,
-                                            'text-red-600': sheetTotal(entry.id) < 21
-                                        }"
-                                        x-text="bandLabel(sheetTotal(entry.id))">
+                                    <div>
+                                        <span class="text-xs font-semibold"
+                                            :class="{
+                                                'text-green-600': sheetTotal(entry.id) >= 38,
+                                                'text-teal-600': sheetTotal(entry.id) >= 30 && sheetTotal(entry.id) < 38,
+                                                'text-yellow-600': sheetTotal(entry.id) >= 21 && sheetTotal(entry.id) < 30,
+                                                'text-red-600': sheetTotal(entry.id) < 21
+                                            }"
+                                            x-text="bandInfo(sheetTotal(entry.id)).name"></span><span class="text-xs text-gray-500 ml-1.5" x-text="'(' + bandInfo(sheetTotal(entry.id)).range + ')'"></span>
+                                        <div class="text-xs text-gray-600 italic" x-text="bandInfo(sheetTotal(entry.id)).description"></div>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3" aria-live="polite">
