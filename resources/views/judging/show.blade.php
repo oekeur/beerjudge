@@ -43,12 +43,8 @@
                     @click="toggleExpanded(entry.id)"
                 >
                     <div class="flex-1 min-w-0">
-                        <div class="font-semibold text-gray-900 truncate text-sm" x-text="entry.name"></div>
-                        <div class="text-xs text-gray-400 truncate mt-0.5">
-                            <span x-text="entry.style_name"></span>
-                            <span class="mx-1">·</span>
-                            <span x-text="entry.brewer_name"></span>
-                        </div>
+                        <div class="font-semibold text-gray-900 truncate text-sm" x-text="entry.brewer_name"></div>
+                        <div class="text-xs text-gray-400 truncate mt-0.5" x-text="entry.style_name"></div>
                     </div>
 
                     <div class="flex items-center gap-2 flex-shrink-0">
