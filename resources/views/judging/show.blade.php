@@ -124,7 +124,7 @@
                                         <span class="text-xs text-gray-400 ml-1">/12</span>
                                     </div>
                                 </div>
-                                <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Aroma notes…" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Aroma notes'"></textarea>
+                                <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on malt, hops, esters, and other aromatics" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Aroma notes'"></textarea>
                             </div>
 
                             {{-- Appearance --}}
@@ -141,7 +141,7 @@
                                         <span class="text-xs text-gray-400 ml-1">/3</span>
                                     </div>
                                 </div>
-                                <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Appearance notes…" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Appearance notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on color, clarity, and head (retention, color, and texture)" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Appearance notes'"></textarea>
                             </div>
 
                             {{-- Flavour --}}
@@ -158,7 +158,7 @@
                                         <span class="text-xs text-gray-400 ml-1">/20</span>
                                     </div>
                                 </div>
-                                <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Flavour notes…" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Flavour notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on malt, hops, fermentation characteristics, balance, finish/aftertaste, and other flavor characteristics" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Flavour notes'"></textarea>
                             </div>
 
                             {{-- Mouthfeel --}}
@@ -175,7 +175,7 @@
                                         <span class="text-xs text-gray-400 ml-1">/5</span>
                                     </div>
                                 </div>
-                                <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Mouthfeel notes…" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Mouthfeel notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on body, carbonation, warmth, creaminess, astringency, and other palate sensations" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Mouthfeel notes'"></textarea>
                             </div>
 
                             {{-- Overall --}}
@@ -192,7 +192,7 @@
                                         <span class="text-xs text-gray-400 ml-1">/10</span>
                                     </div>
                                 </div>
-                                <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Overall impression notes…" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Overall impression notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on overall drinking pleasure associated with entry, give suggestions for improvement" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Overall impression notes'"></textarea>
                             </div>
 
                             {{-- Total + Submit --}}
