@@ -25,7 +25,7 @@ class JudgingController extends Controller
             ->get()
             ->keyBy('entry_id');
 
-        $serverDataJson = json_encode([
+        $serverData = [
             'entries' => $entries->map(fn ($e) => [
                 'id' => $e->id,
                 'bottle_number' => $e->bottle_number,
@@ -57,10 +57,10 @@ class JudgingController extends Controller
                 'descriptors' => $s->descriptors ?? [],
                 'status' => $s->status,
             ])->values(),
-        ]);
+        ];
 
         $descriptors = ScoresheetController::DESCRIPTORS;
 
-        return view('judging.show', compact('competition', 'entries', 'existingSheets', 'judge', 'serverDataJson', 'descriptors'));
+        return view('judging.show', compact('competition', 'judge', 'serverData', 'descriptors'));
     }
 }

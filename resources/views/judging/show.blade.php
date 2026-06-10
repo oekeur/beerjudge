@@ -7,7 +7,7 @@
     <title>Judging · {{ $competition->name }}</title>
     @vite(['resources/css/app.css', 'resources/js/judging.js'])
 </head>
-<body class="bg-gray-50 min-h-screen" x-data="judgingApp(serverData)" x-init="init()">
+<body class="bg-gray-50 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server))" x-init="init()" data-server='@json($serverData)'>
 
     {{-- Header --}}
     <header class="bg-amber-700 text-white px-4 py-3 flex justify-between items-center sticky top-0 z-10 shadow">
@@ -20,11 +20,6 @@
             <button type="submit" class="text-amber-200 text-sm underline">Log out</button>
         </form>
     </header>
-
-    {{-- Server data --}}
-    <script>
-        const serverData = {!! $serverDataJson !!};
-    </script>
 
     {{-- Entry list --}}
     <main class="max-w-lg mx-auto px-4 py-4 space-y-3">

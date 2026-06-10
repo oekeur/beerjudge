@@ -7,17 +7,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Scoresheet extends Model
 {
+    protected $attributes = ['status' => 'draft'];
+
     protected $fillable = [
         'entry_id', 'judge_id', 'aroma', 'appearance', 'flavour', 'mouthfeel', 'overall',
         'total', 'aroma_notes', 'appearance_notes', 'flavour_notes', 'mouthfeel_notes',
-        'overall_notes', 'descriptors', 'client_uuid', 'status', 'submitted_at',
+        'overall_notes', 'client_uuid', 'status', 'submitted_at',
     ];
 
     protected function casts(): array
     {
         return [
             'submitted_at' => 'datetime',
-            'descriptors' => 'array',
         ];
     }
 

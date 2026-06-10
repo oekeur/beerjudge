@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreScoresheetRequest;
 use App\Models\Entry;
 use App\Models\Scoresheet;
-use Illuminate\Http\Request;
 
 class ScoresheetController extends Controller
 {
@@ -33,25 +33,9 @@ class ScoresheetController extends Controller
         return array_column(self::DESCRIPTORS, 'slug');
     }
 
-    public function upsert(Request $request)
+    public function upsert(StoreScoresheetRequest $request)
     {
-        $data = $request->validate([
-            'client_uuid' => ['required', 'uuid'],
-            'entry_id' => ['required', 'integer', 'exists:entries,id'],
-            'aroma' => ['required', 'integer', 'min:0', 'max:12'],
-            'appearance' => ['required', 'integer', 'min:0', 'max:3'],
-            'flavour' => ['required', 'integer', 'min:0', 'max:20'],
-            'mouthfeel' => ['required', 'integer', 'min:0', 'max:5'],
-            'overall' => ['required', 'integer', 'min:0', 'max:10'],
-            'aroma_notes' => ['nullable', 'string', 'max:2000'],
-            'appearance_notes' => ['nullable', 'string', 'max:2000'],
-            'flavour_notes' => ['nullable', 'string', 'max:2000'],
-            'mouthfeel_notes' => ['nullable', 'string', 'max:2000'],
-            'overall_notes' => ['nullable', 'string', 'max:2000'],
-            'descriptors' => ['nullable', 'array'],
-            'descriptors.*' => ['string', 'in:'.implode(',', self::descriptorSlugs())],
-            'status' => ['required', 'in:draft,submitted'],
-        ]);
+        $data = $request->validated();
 
         $judge = $request->user();
         $entry = Entry::with('competition')->findOrFail($data['entry_id']);

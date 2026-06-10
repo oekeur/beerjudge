@@ -7,19 +7,19 @@ use App\Models\Entry;
 use App\Models\Member;
 use App\Models\Scoresheet;
 use App\Models\Style;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Tests\TestCase;
 
 class ResultsAccessTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
 
     private function seedData(): array
     {
         $style = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
-        $admin = Member::create(['name' => 'Admin', 'email' => 'admin@t.com', 'password' => bcrypt('pw'), 'is_admin' => true, 'is_active' => true]);
-        $brewer = Member::create(['name' => 'Brewer', 'email' => 'brewer@t.com', 'password' => bcrypt('pw'), 'is_active' => true]);
-        $other = Member::create(['name' => 'Other', 'email' => 'other@t.com', 'password' => bcrypt('pw'), 'is_active' => true]);
+        $admin = Member::factory()->create(['name' => 'Admin', 'email' => 'admin@t.com', 'is_admin' => true]);
+        $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@t.com']);
+        $other = Member::factory()->create(['name' => 'Other', 'email' => 'other@t.com']);
         $comp = Competition::create(['name' => 'Spring Cup', 'year' => 2025, 'status' => 'closed']);
         $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'name' => 'Pale Ale', 'bottle_number' => 1]);
         Scoresheet::create([
@@ -27,6 +27,7 @@ class ResultsAccessTest extends TestCase
             'aroma' => 10, 'appearance' => 3, 'flavour' => 18, 'mouthfeel' => 4, 'overall' => 9,
             'client_uuid' => fake()->uuid(), 'status' => 'submitted',
         ]);
+
         return [$comp, $brewer, $admin, $other, $entry];
     }
 
@@ -63,9 +64,9 @@ class ResultsAccessTest extends TestCase
     public function test_results_blocked_if_competition_not_closed(): void
     {
         $style = Style::create(['code' => '2A', 'category_name' => 'SA', 'name' => 'Intl Lager']);
-        $admin = Member::create(['name' => 'Admin2', 'email' => 'a2@t.com', 'password' => bcrypt('pw'), 'is_admin' => true, 'is_active' => true]);
+        $admin = Member::factory()->create(['name' => 'Admin2', 'email' => 'a2@t.com', 'is_admin' => true]);
         $comp = Competition::create(['name' => 'Open Cup', 'year' => 2025, 'status' => 'judging']);
-        $brewer = Member::create(['name' => 'B2', 'email' => 'b2@t.com', 'password' => bcrypt('pw'), 'is_active' => true]);
+        $brewer = Member::factory()->create(['name' => 'B2', 'email' => 'b2@t.com']);
         $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results/{$brewer->id}");
         $response->assertForbidden();
     }
@@ -73,9 +74,9 @@ class ResultsAccessTest extends TestCase
     public function test_ranking_orders_by_average_total_descending(): void
     {
         $style = Style::create(['code' => '3A', 'category_name' => 'CZ', 'name' => 'Czech Pale Lager']);
-        $admin = Member::create(['name' => 'Admin3', 'email' => 'a3@t.com', 'password' => bcrypt('pw'), 'is_admin' => true, 'is_active' => true]);
-        $b1 = Member::create(['name' => 'High', 'email' => 'high@t.com', 'password' => bcrypt('pw'), 'is_active' => true]);
-        $b2 = Member::create(['name' => 'Low', 'email' => 'low@t.com', 'password' => bcrypt('pw'), 'is_active' => true]);
+        $admin = Member::factory()->create(['name' => 'Admin3', 'email' => 'a3@t.com', 'is_admin' => true]);
+        $b1 = Member::factory()->create(['name' => 'High', 'email' => 'high@t.com']);
+        $b2 = Member::factory()->create(['name' => 'Low', 'email' => 'low@t.com']);
         $comp = Competition::create(['name' => 'Rank Cup', 'year' => 2025, 'status' => 'closed']);
         $e1 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b1->id, 'style_id' => $style->id, 'name' => 'High Beer', 'bottle_number' => 1]);
         $e2 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b2->id, 'style_id' => $style->id, 'name' => 'Low Beer', 'bottle_number' => 2]);
