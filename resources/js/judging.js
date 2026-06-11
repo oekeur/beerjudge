@@ -6,14 +6,6 @@ db.version(1).stores({
     scoresheets: 'client_uuid, entry_id, syncStatus',
 });
 
-function bandInfo(total) {
-    if (total >= 45) return { name: 'Outstanding', range: '45–50', description: 'World-class example of style.' };
-    if (total >= 38) return { name: 'Excellent', range: '38–44', description: 'Exemplifies style well, requires minor fine-tuning.' };
-    if (total >= 30) return { name: 'Very Good', range: '30–37', description: 'Generally within style parameters, some minor flaws.' };
-    if (total >= 21) return { name: 'Good', range: '21–29', description: 'Misses the mark on style and/or minor flaws.' };
-    if (total >= 14) return { name: 'Fair', range: '14–20', description: 'Off flavors/aromas or major style deficiencies. Unpleasant.' };
-    return { name: 'Problematic', range: '0–13', description: 'Major off flavors and aromas dominate. Hard to drink.' };
-}
 
 function emptySheet(entryId) {
     return {
@@ -39,6 +31,7 @@ function emptySheet(entryId) {
 window.judgingApp = function (serverData) {
     return {
         entries: serverData.entries,
+        bands: serverData.bands,
         sheets: {},
         syncQueue: [],
         _retryTimer: null,
@@ -88,7 +81,7 @@ window.judgingApp = function (serverData) {
         },
 
         bandInfo(total) {
-            return bandInfo(total);
+            return this.bands.find(b => total >= b.min) ?? this.bands[this.bands.length - 1];
         },
 
         toggleExpanded(entryId) {

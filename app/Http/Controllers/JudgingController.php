@@ -40,6 +40,14 @@ class JudgingController extends Controller
                     'overall_impression' => $e->style->overall_impression,
                 ],
             ])->values(),
+            'bands' => [
+                ['min' => 45, 'name' => __('judging.band.outstanding.name'),  'range' => '45–50', 'description' => __('judging.band.outstanding.description')],
+                ['min' => 38, 'name' => __('judging.band.excellent.name'),    'range' => '38–44', 'description' => __('judging.band.excellent.description')],
+                ['min' => 30, 'name' => __('judging.band.very_good.name'),    'range' => '30–37', 'description' => __('judging.band.very_good.description')],
+                ['min' => 21, 'name' => __('judging.band.good.name'),         'range' => '21–29', 'description' => __('judging.band.good.description')],
+                ['min' => 14, 'name' => __('judging.band.fair.name'),         'range' => '14–20', 'description' => __('judging.band.fair.description')],
+                ['min' => 0,  'name' => __('judging.band.problematic.name'),  'range' => '0–13',  'description' => __('judging.band.problematic.description')],
+            ],
             'existingSheets' => $existingSheets->map(fn ($s) => [
                 'entry_id' => $s->entry_id,
                 'client_uuid' => $s->client_uuid,
