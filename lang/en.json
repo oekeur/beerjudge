@@ -5,6 +5,7 @@
     "competition.tab.styles": "Styles",
     "competition.tab.entries": "Entries",
     "competition.tab.results": "Results & Variance",
+    "competition.tab.dashboard": "Dashboard",
     "competition.tab.judging": "Judging",
     "competition.save_first": "Save the competition first to view results.",
     "competition.judging_progress.heading": "Scoresheet Progress",
