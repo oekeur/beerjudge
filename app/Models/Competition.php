@@ -34,16 +34,25 @@ class Competition extends Model
         return $this->status === self::STATUS_CLOSED;
     }
 
+    /**
+     * @return BelongsToMany<Style, $this>
+     */
     public function styles(): BelongsToMany
     {
         return $this->belongsToMany(Style::class, 'competition_style');
     }
 
+    /**
+     * @return BelongsToMany<Member, $this>
+     */
     public function judges(): BelongsToMany
     {
         return $this->belongsToMany(Member::class, 'competition_judge');
     }
 
+    /**
+     * @return HasMany<Entry, $this>
+     */
     public function entries(): HasMany
     {
         return $this->hasMany(Entry::class);

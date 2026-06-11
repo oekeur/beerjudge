@@ -74,7 +74,7 @@ class CompetitionForm
                                     ])
                                     ->columns(2)
                                     ->defaultItems(0)
-                                    ->reorderable('sort_order')
+                                    ->orderColumn('sort_order')
                                     ->columnSpanFull(),
                             ]),
 

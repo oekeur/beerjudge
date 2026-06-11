@@ -3,18 +3,22 @@
 namespace App\Filament\Resources\Competitions\Pages;
 
 use App\Filament\Resources\Competitions\CompetitionResource;
+use App\Models\Competition;
 use App\Services\BottleNumberAssignmentService;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
+/**
+ * @property-read Competition $record
+ */
 class EditCompetition extends EditRecord
 {
     protected static string $resource = CompetitionResource::class;
 
     protected function getHeaderActions(): array
     {
-        $record = $this->getRecord();
+        $record = $this->record;
 
         $lifecycle = array_values(array_filter([
             $record->status === 'draft' ? Action::make('moveToOpen')
