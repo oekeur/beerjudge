@@ -98,11 +98,11 @@
                                 <span class="text-green-600 font-semibold text-sm">{{ __('judging.submitted') }}</span>
                             </div>
                             <div class="text-sm text-gray-600 mb-3 grid gap-x-3" style="grid-template-columns: max-content max-content" aria-live="polite">
-                                <span>{{ __('judging.section.aroma') }}</span><span><strong x-text="sheets[entry.id].aroma"></strong>/12</span>
-                                <span>{{ __('judging.section.appearance') }}</span><span><strong x-text="sheets[entry.id].appearance"></strong>/3</span>
-                                <span>{{ __('judging.section.flavour') }}</span><span><strong x-text="sheets[entry.id].flavour"></strong>/20</span>
-                                <span>{{ __('judging.section.mouthfeel') }}</span><span><strong x-text="sheets[entry.id].mouthfeel"></strong>/5</span>
-                                <span>{{ __('judging.section.overall') }}</span><span><strong x-text="sheets[entry.id].overall"></strong>/10</span>
+                                <span>{{ __('judging.section.aroma') }}</span><span class="text-center"><strong x-text="sheets[entry.id].aroma"></strong>/12</span>
+                                <span>{{ __('judging.section.appearance') }}</span><span class="text-center"><strong x-text="sheets[entry.id].appearance"></strong>/3</span>
+                                <span>{{ __('judging.section.flavour') }}</span><span class="text-center"><strong x-text="sheets[entry.id].flavour"></strong>/20</span>
+                                <span>{{ __('judging.section.mouthfeel') }}</span><span class="text-center"><strong x-text="sheets[entry.id].mouthfeel"></strong>/5</span>
+                                <span>{{ __('judging.section.overall') }}</span><span class="text-center"><strong x-text="sheets[entry.id].overall"></strong>/10</span>
                             </div>
                             <div class="mb-4">
                                 <div class="text-base font-bold">{{ __('judging.total') }} <span x-text="sheetTotal(entry.id)"></span> / 50</div>
