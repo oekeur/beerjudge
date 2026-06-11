@@ -115,7 +115,7 @@
                     x-show="totalSelected() > 0"
                     x-cloak
                     class="px-3 py-2"
-                    style="display:flex;flex-wrap:wrap;gap:6px;max-height:5rem;overflow-y:auto"
+                    style="display:flex;flex-wrap:wrap;gap:6px;max-height:5rem;overflow-y:auto;border-bottom:1px solid #f3f4f6"
                 >
                     <template x-for="item in selectedItems()" :key="item.value">
                         <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:9999px;font-size:0.75rem;font-weight:500;background:var(--color-primary-100,#fef3c7);color:var(--color-primary-700,#b45309)">
@@ -133,11 +133,11 @@
             @endunless
 
             {{-- Search row --}}
-            <div class="flex items-center px-3 py-2" style="gap:0.5rem">
+            <div class="px-3 pt-2 pb-1">
                 <x-filament::input.wrapper
                     inline-prefix
                     :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-                    style="flex:1;min-width:10rem"
+                    style="width:100%"
                 >
                     <input
                         type="search"
@@ -147,24 +147,21 @@
                         class="fi-input fi-input-has-inline-prefix"
                     />
                 </x-filament::input.wrapper>
+            </div>
 
+            {{-- Controls row --}}
+            <div class="flex items-center px-3 py-2" style="gap:0.5rem">
                 @unless ($isDisabled)
-                    <div style="display:flex;align-items:center;gap:0.5rem;padding-left:0.75rem;border-left:1px solid #e5e7eb;flex-shrink:0">
-                        <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
-                            Select all
-                        </x-filament::button>
-                        <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="deselectAll()">
-                            Deselect all
-                        </x-filament::button>
-                        <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300">
-                            <span x-text="totalSelected()"></span> / {{ $totalCount }}
-                        </span>
-                    </div>
-                @else
-                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300" style="flex-shrink:0">
-                        <span x-text="totalSelected()"></span> / {{ $totalCount }}
-                    </span>
+                    <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
+                        Select all
+                    </x-filament::button>
+                    <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="deselectAll()">
+                        Deselect all
+                    </x-filament::button>
                 @endunless
+                <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300" style="margin-left:auto">
+                    <span x-text="totalSelected()"></span> / {{ $totalCount }}
+                </span>
             </div>
         </div>
 
