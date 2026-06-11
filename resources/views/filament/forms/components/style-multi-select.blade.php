@@ -1,173 +1,268 @@
 @php
-    use Illuminate\Support\Str;
-
     $fieldWrapperView = $getFieldWrapperView();
     $isDisabled = $isDisabled();
     $statePath = $getStatePath();
 
     $categorized = $field->getCategorizedOptions();
     $totalCount = collect($categorized)->sum(fn ($opts) => count($opts));
+
+    $categories = collect($categorized)
+        ->map(fn ($opts, $name) => [
+            'name'   => $name,
+            'values' => array_keys($opts),
+            'labels' => $opts,
+        ])
+        ->values()
+        ->all();
+
+    $allValues = collect($categorized)
+        ->flatMap(fn ($opts) => array_keys($opts))
+        ->map(fn ($v) => (string) $v)
+        ->values()
+        ->all();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         x-data="{
             search: '',
-            openGroups: {},
+            activeIdx: 0,
             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
-            toggleGroup(cat) {
-                this.openGroups[cat] = !this.openGroups[cat];
+            categories: @js($categories),
+            allValues: @js($allValues),
+
+            visibleCategories() {
+                const q = this.search.trim().toLowerCase();
+                if (!q) return this.categories;
+                return this.categories.filter(cat =>
+                    cat.name.toLowerCase().includes(q) ||
+                    Object.values(cat.labels).some(l => l.toLowerCase().includes(q))
+                );
             },
-            isOpen(cat) {
-                if (this.search.trim()) return true;
-                return !!this.openGroups[cat];
+            activeCategory() {
+                const vis = this.visibleCategories();
+                return vis[this.activeIdx] ?? null;
             },
-            allValues: @js(collect($categorized)->flatMap(fn ($opts) => array_keys($opts))->map(fn ($v) => (string) $v)->values()->all()),
+            searchResults() {
+                const q = this.search.trim().toLowerCase();
+                if (!q) return [];
+                return this.categories.flatMap(cat =>
+                    Object.entries(cat.labels)
+                        .filter(([, l]) => l.toLowerCase().includes(q))
+                        .map(([value, label]) => ({ value, label, catName: cat.name }))
+                );
+            },
+            onSearchChange() {
+                this.activeIdx = 0;
+            },
+            countCat(cat) {
+                const cur = new Set((this.state ?? []).map(String));
+                return cat.values.filter(v => cur.has(String(v))).length;
+            },
+            isFull(cat)    { return this.countCat(cat) === cat.values.length; },
+            isEmpty(cat)   { return this.countCat(cat) === 0; },
+            isPartial(cat) { return !this.isEmpty(cat) && !this.isFull(cat); },
             selectAll() {
-                const cur = Array.isArray(this.state) ? this.state.map(String) : [];
-                this.allValues.forEach(v => { if (!cur.includes(v)) cur.push(v); });
-                this.state = cur;
+                this.state = [...new Set([...(this.state ?? []).map(String), ...this.allValues.map(String)])];
             },
             deselectAll() {
-                const all = new Set(this.allValues);
-                this.state = (Array.isArray(this.state) ? this.state.map(String) : []).filter(v => !all.has(v));
+                const s = new Set(this.allValues.map(String));
+                this.state = (this.state ?? []).map(String).filter(v => !s.has(v));
             },
-            selectCat(values) {
-                const cur = Array.isArray(this.state) ? [...this.state.map(String)] : [];
-                values.map(String).forEach(v => { if (!cur.includes(v)) cur.push(v); });
-                this.state = cur;
+            selectCat(cat) {
+                this.state = [...new Set([...(this.state ?? []).map(String), ...cat.values.map(String)])];
             },
-            deselectCat(values) {
-                const rem = new Set(values.map(String));
-                this.state = (Array.isArray(this.state) ? this.state.map(String) : []).filter(v => !rem.has(v));
+            deselectCat(cat) {
+                const s = new Set(cat.values.map(String));
+                this.state = (this.state ?? []).map(String).filter(v => !s.has(v));
             },
-            countCat(values) {
-                const cur = Array.isArray(this.state) ? this.state.map(String) : [];
-                return values.map(String).filter(v => cur.includes(v)).length;
+            toggleCat(cat) {
+                this.isFull(cat) ? this.deselectCat(cat) : this.selectCat(cat);
             },
             toggle(val) {
                 val = String(val);
-                const cur = Array.isArray(this.state) ? this.state.map(String) : [];
+                const cur = (this.state ?? []).map(String);
                 this.state = cur.includes(val) ? cur.filter(v => v !== val) : [...cur, val];
             },
             isChecked(val) {
-                return Array.isArray(this.state) && this.state.map(String).includes(String(val));
+                return (this.state ?? []).map(String).includes(String(val));
+            },
+            totalSelected() {
+                return (this.state ?? []).length;
             },
         }"
-        class="fi-fo-checkbox-list space-y-3"
+        class="fi-fo-checkbox-list"
     >
-        @unless ($isDisabled)
-            <div class="flex gap-2 items-center">
-                <x-filament::input.wrapper
-                    inline-prefix
-                    :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-                    class="flex-1"
-                >
-                    <input
-                        type="search"
-                        placeholder="Search styles…"
-                        x-model.debounce.300ms="search"
-                        class="fi-input fi-input-has-inline-prefix"
-                    />
-                </x-filament::input.wrapper>
+        {{-- Toolbar --}}
+        <div class="sticky top-0 z-10 flex flex-wrap items-center gap-2 rounded-t-lg border border-gray-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-gray-900">
+            <x-filament::input.wrapper
+                inline-prefix
+                :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
+                class="flex-1 min-w-40"
+            >
+                <input
+                    type="search"
+                    placeholder="Search styles…"
+                    x-model.debounce.200ms="search"
+                    x-on:input="onSearchChange()"
+                    class="fi-input fi-input-has-inline-prefix"
+                />
+            </x-filament::input.wrapper>
 
+            @unless ($isDisabled)
                 <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
                     Select all
                 </x-filament::button>
-
                 <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="deselectAll()">
                     Deselect all
                 </x-filament::button>
-            </div>
-        @endunless
+            @endunless
 
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-            <span x-text="Array.isArray(state) ? state.length : 0"></span> of {{ $totalCount }} selected
-        </p>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400 tabular-nums whitespace-nowrap">
+                <span x-text="totalSelected()"></span> / {{ $totalCount }}
+            </span>
+        </div>
 
-        <div class="rounded-lg border border-gray-200 dark:border-white/10 divide-y divide-gray-100 dark:divide-white/5 overflow-hidden">
-            @forelse ($categorized as $categoryName => $categoryOptions)
-                @php
-                    $catValues = array_keys($categoryOptions);
-                    $catLabels = collect($categoryOptions)->map(fn ($l) => Str::lower($l))->values()->all();
-                @endphp
+        {{-- Master-detail panels --}}
+        <div class="flex h-[32rem] overflow-hidden rounded-b-lg border border-t-0 border-gray-200 dark:border-white/10">
 
-                <div x-show="!search.trim() || @js($catLabels).some(l => l.includes(search.toLowerCase().trim()))">
-
-                    {{-- Category header --}}
-                    <div class="flex items-center bg-gray-50 dark:bg-white/5">
-                        <button
-                            type="button"
-                            x-on:click="toggleGroup(@js($categoryName))"
-                            class="flex flex-1 items-center justify-between px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-white/10 transition-colors min-w-0"
-                        >
-                            <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide truncate">{{ $categoryName }}</span>
-                            <span class="flex items-center gap-2 ml-2 shrink-0">
-                                <span
-                                    class="text-xs text-gray-400 dark:text-gray-500 tabular-nums"
-                                    x-text="countCat(@js($catValues)) + '/{{ count($categoryOptions) }}'"
-                                ></span>
-                                <svg
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    style="width:14px;height:14px;transition:transform 0.15s;flex-shrink:0"
-                                    x-bind:style="'width:14px;height:14px;flex-shrink:0;transition:transform 0.15s;transform:rotate(' + (isOpen(@js($categoryName)) ? '180' : '0') + 'deg)'"
-                                >
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </span>
-                        </button>
+            {{-- Left: category list --}}
+            <div class="w-60 shrink-0 overflow-y-auto border-r border-gray-200 dark:border-white/10">
+                <template x-for="(cat, idx) in visibleCategories()" :key="cat.name">
+                    <div
+                        x-on:click="activeIdx = idx"
+                        :title="cat.name"
+                        class="flex w-full cursor-pointer items-center justify-between border-l-2 px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                        x-bind:class="activeIdx === idx
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300'
+                            : 'border-transparent text-gray-700 dark:text-gray-200'"
+                    >
+                        <span class="truncate text-sm font-medium" x-text="cat.name"></span>
 
                         @unless ($isDisabled)
-                            <div class="flex gap-1 px-2 shrink-0">
-                                <button
-                                    type="button"
-                                    x-on:click.stop="selectCat(@js($catValues))"
-                                    class="text-xs text-primary-600 dark:text-primary-400 hover:underline px-1"
-                                >all</button>
-                                <span class="text-gray-300 dark:text-gray-600">·</span>
-                                <button
-                                    type="button"
-                                    x-on:click.stop="deselectCat(@js($catValues))"
-                                    class="text-xs text-gray-400 dark:text-gray-500 hover:underline px-1"
-                                >none</button>
-                            </div>
+                            <button
+                                type="button"
+                                x-on:click.stop="toggleCat(cat)"
+                                :title="isFull(cat) ? 'Deselect all' : 'Select all'"
+                                class="ml-2 shrink-0 rounded-full px-1.5 py-0.5 text-xs tabular-nums font-medium transition-opacity hover:opacity-70"
+                                x-bind:class="{
+                                    'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300': isFull(cat),
+                                    'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300': isPartial(cat),
+                                    'bg-gray-100 text-gray-500 dark:bg-white/10 dark:text-gray-400': isEmpty(cat),
+                                }"
+                                x-text="countCat(cat) + '/' + cat.values.length"
+                            ></button>
+                        @else
+                            <span
+                                class="ml-2 shrink-0 rounded-full px-1.5 py-0.5 text-xs tabular-nums font-medium"
+                                x-bind:class="{
+                                    'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300': isFull(cat),
+                                    'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300': isPartial(cat),
+                                    'bg-gray-100 text-gray-500 dark:bg-white/10 dark:text-gray-400': isEmpty(cat),
+                                }"
+                                x-text="countCat(cat) + '/' + cat.values.length"
+                            ></span>
                         @endunless
                     </div>
+                </template>
 
-                    {{-- Category options --}}
-                    <div
-                        x-show="isOpen(@js($categoryName))"
-                        class="divide-y divide-gray-50 dark:divide-white/5"
-                    >
-                        @foreach ($categoryOptions as $value => $label)
-                            <div
-                                x-show="!search.trim() || @js(Str::lower($label)).includes(search.toLowerCase().trim())"
-                                class="fi-fo-checkbox-list-option-ctn px-3 py-2"
-                            >
-                                <label class="fi-fo-checkbox-list-option flex items-center gap-2.5 cursor-pointer select-none">
+                <div
+                    x-show="visibleCategories().length === 0"
+                    class="px-3 py-4 text-center text-sm text-gray-400 dark:text-gray-500"
+                >
+                    No categories match.
+                </div>
+            </div>
+
+            {{-- Right: content panel --}}
+            <div class="flex flex-1 flex-col overflow-hidden">
+
+                {{-- Search results: flat cross-category list --}}
+                <template x-if="search.trim() !== ''">
+                    <div class="flex-1 overflow-y-auto divide-y divide-gray-50 dark:divide-white/5">
+                        <template x-for="item in searchResults()" :key="item.value">
+                            <label class="flex cursor-pointer select-none items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-white/5">
+                                <input
+                                    type="checkbox"
+                                    x-bind:value="item.value"
+                                    x-bind:checked="isChecked(item.value)"
+                                    x-on:change="toggle(item.value)"
+                                    {{ $isDisabled ? 'disabled' : '' }}
+                                    class="fi-checkbox-input"
+                                />
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-sm text-gray-700 dark:text-gray-200" x-text="item.label"></span>
+                                    <span class="block text-xs text-gray-400 dark:text-gray-500" x-text="item.catName"></span>
+                                </span>
+                            </label>
+                        </template>
+
+                        <div
+                            x-show="searchResults().length === 0"
+                            class="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-500"
+                        >
+                            No styles match your search.
+                        </div>
+                    </div>
+                </template>
+
+                {{-- Normal view: category header + substyle checkboxes --}}
+                <template x-if="search.trim() === ''">
+                    <div class="flex flex-1 flex-col overflow-hidden">
+
+                        <div
+                            x-show="activeCategory() !== null"
+                            class="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-2 dark:border-white/10 dark:bg-white/5"
+                        >
+                            <span
+                                class="truncate text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300"
+                                x-text="activeCategory()?.name"
+                            ></span>
+
+                            @unless ($isDisabled)
+                                <div class="ml-2 flex shrink-0 items-center gap-2">
+                                    <button
+                                        type="button"
+                                        x-on:click="selectCat(activeCategory())"
+                                        class="text-xs text-primary-600 hover:underline dark:text-primary-400"
+                                    >Select all</button>
+                                    <span class="text-gray-300 dark:text-gray-600">·</span>
+                                    <button
+                                        type="button"
+                                        x-on:click="deselectCat(activeCategory())"
+                                        class="text-xs text-gray-400 hover:underline dark:text-gray-500"
+                                    >Clear</button>
+                                </div>
+                            @endunless
+                        </div>
+
+                        <div class="flex-1 overflow-y-auto divide-y divide-gray-50 dark:divide-white/5">
+                            <template x-for="[value, label] in Object.entries(activeCategory()?.labels ?? {})" :key="value">
+                                <label class="flex cursor-pointer select-none items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-white/5">
                                     <input
                                         type="checkbox"
-                                        value="{{ $value }}"
-                                        x-bind:checked="isChecked('{{ $value }}')"
-                                        x-on:change="toggle('{{ $value }}')"
+                                        x-bind:value="value"
+                                        x-bind:checked="isChecked(value)"
+                                        x-on:change="toggle(value)"
                                         {{ $isDisabled ? 'disabled' : '' }}
                                         class="fi-checkbox-input"
                                     />
-                                    <span class="fi-fo-checkbox-list-option-label text-sm text-gray-700 dark:text-gray-200">
-                                        {{ $label }}
-                                    </span>
+                                    <span class="text-sm text-gray-700 dark:text-gray-200" x-text="label"></span>
                                 </label>
+                            </template>
+
+                            <div
+                                x-show="activeCategory() === null"
+                                class="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-500"
+                            >
+                                No styles available.
                             </div>
-                        @endforeach
+                        </div>
+
                     </div>
+                </template>
 
-                </div>
-            @empty
-                <div class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-                    No styles available.
-                </div>
-            @endforelse
-
+            </div>
         </div>
 
     </div>
