@@ -180,8 +180,8 @@
                         }"
                         x-bind:style="{
                             'border-left': activeIdx === idx ? '2px solid var(--color-primary-500)' : '2px solid transparent',
-                            'padding-top': '0.625rem',
-                            'padding-bottom': '0.625rem',
+                            'padding-top': '0.375rem',
+                            'padding-bottom': '0.375rem',
                         }"
                     >
                         <span class="fi-sms-cat-name truncate text-sm font-medium" x-text="cat.name"></span>
