@@ -36,6 +36,15 @@ Every session works in its own git worktree by default unless the user explicitl
 - **Postgres or MySQL**
 - Session-based auth; sessions last ~1 week
 
+## Styling in Filament
+
+A custom Filament theme is configured at `resources/css/filament/admin/theme.css` and registered via `->viteTheme()` in `AdminPanelProvider`. It is compiled by the same Vite/Tailwind build as `app.css`, so all Tailwind utilities are available on every admin panel page.
+
+**Rules:**
+- Use Tailwind utility classes directly in Filament Blade views — no scoped `<style>` blocks, no inline styles.
+- The theme's `@source` directives scan `app/Filament/**/*` and `resources/views/filament/**/*`. Any new custom Blade view must live under one of those paths, or add an `@source` entry to `theme.css`.
+- After editing `theme.css` (e.g. adding a new `@source` or a custom CSS rule), run `npm run build`.
+
 ## Git
 
 - Commit automatically after completing each task — do not wait to be asked.
