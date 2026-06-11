@@ -14,6 +14,20 @@ Use lean sub-agents where they add value:
 - `Explore` for codebase searches and multi-file reads — keep the main context clean.
 - Parallel worktree agents for independent edits across unrelated files — spawn them together, collect results.
 
+## Worktrees
+
+Every session works in its own git worktree by default unless the user explicitly says not to. This enables parallel agents without conflicts.
+
+**On session start (unless told otherwise):**
+1. Create a worktree: `git worktree add ../beerjudge-<branch-slug> -b <branch-name>`
+2. Do all work there.
+
+**On session end:**
+1. Commit all changes in the worktree.
+2. Switch back to the main worktree: `cd /home/oscar/projects/beerjudge`
+3. Merge with `git merge --no-ff <branch-name>` — resolve conflicts carefully; never discard the other branch's changes.
+4. Remove the worktree: `git worktree remove ../beerjudge-<branch-slug>` and delete the branch: `git branch -d <branch-name>`
+
 ## Tech stack
 
 - **Laravel** with **Filament** for the admin/management side
