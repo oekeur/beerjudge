@@ -33,7 +33,12 @@ try {
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
-    // 2. Judging entry list
+    // 2. Home page — competition list
+    await page.goto(`${BASE_URL}/`);
+    await page.waitForLoadState('networkidle');
+    await page.screenshot({ path: `${OUT}/home.png` });
+
+    // 4. Judging entry list
     await page.goto(`${BASE_URL}/judging/1`);
     await page.waitForLoadState('networkidle');
     // Wait for Alpine.js to render entry names into the buttons
@@ -43,7 +48,7 @@ try {
     }, { timeout: 10000 });
     await page.screenshot({ path: `${OUT}/judging-list.png` });
 
-    // 3. Judging scoresheet — open Dmitri's American Stout (3rd entry, draft with scores filled)
+    // 5. Judging scoresheet — open Dmitri's American Stout (3rd entry, draft with scores filled)
     // Entry header buttons have class "w-full text-left" (score buttons do not)
     await page.locator('main button.w-full').nth(2).click();
     await page.waitForTimeout(600);
@@ -56,7 +61,7 @@ try {
         });
     }
 
-    // 4. Admin — competition edit page, Entries tab
+    // 6. Admin — competition edit page, Entries tab
     await page.goto(`${BASE_URL}/admin/competitions/1/edit`);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1500);
@@ -65,7 +70,7 @@ try {
     await page.waitForTimeout(800);
     await page.screenshot({ path: `${OUT}/admin-competition.png` });
 
-    // 5. Results — temporarily close the competition
+    // 7. Results — temporarily close the competition
     artisan('App\\Models\\Competition::find(1)->update(["status" => "closed"]);');
     await page.goto(`${BASE_URL}/competitions/1/results/2`);
     await page.waitForLoadState('networkidle');

@@ -6,9 +6,9 @@ Deliberately narrow in scope: no payments, no shipping, no BJCP report generatio
 
 ## Screenshots
 
-| Judging screen | Scoresheet |
-|---|---|
-| ![Entry list](docs/screenshots/judging-list.png) | ![Scoring interface](docs/screenshots/judging-scoresheet.png) |
+| Home | Judging screen | Scoresheet |
+|---|---|---|
+| ![Home](docs/screenshots/home.png) | ![Entry list](docs/screenshots/judging-list.png) | ![Scoring interface](docs/screenshots/judging-scoresheet.png) |
 
 | Admin — competition entries | Results |
 |---|---|
