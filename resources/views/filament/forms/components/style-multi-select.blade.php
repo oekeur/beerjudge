@@ -124,18 +124,19 @@
         </div>
 
         {{-- Master-detail panels --}}
-        <div class="flex h-[32rem] overflow-hidden rounded-b-lg border border-t-0 border-gray-200 dark:border-white/10">
+        <div class="rounded-b-lg border border-t-0 border-gray-200 dark:border-white/10" style="display:flex;height:32rem;overflow:hidden">
 
             {{-- Left: category list --}}
-            <div class="w-60 shrink-0 overflow-y-auto border-r border-gray-200 dark:border-white/10">
+            <div class="overflow-y-auto border-r border-gray-200 dark:border-white/10" style="width:15rem;flex-shrink:0">
                 <template x-for="(cat, idx) in visibleCategories()" :key="cat.name">
                     <div
                         x-on:click="activeIdx = idx"
                         :title="cat.name"
-                        class="flex w-full cursor-pointer items-center justify-between border-l-2 px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                        class="flex w-full cursor-pointer items-center justify-between px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                         x-bind:class="activeIdx === idx
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300'
-                            : 'border-transparent text-gray-700 dark:text-gray-200'"
+                            ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300'
+                            : 'text-gray-700 dark:text-gray-200'"
+                        x-bind:style="activeIdx === idx ? 'border-left:2px solid var(--color-primary-500)' : 'border-left:2px solid transparent'"
                     >
                         <span class="truncate text-sm font-medium" x-text="cat.name"></span>
 
@@ -175,7 +176,7 @@
             </div>
 
             {{-- Right: content panel --}}
-            <div class="flex flex-1 flex-col overflow-hidden">
+            <div class="flex flex-col overflow-hidden" style="flex:1">
 
                 {{-- Search results: flat cross-category list --}}
                 <template x-if="search.trim() !== ''">
@@ -208,7 +209,7 @@
 
                 {{-- Normal view: category header + substyle checkboxes --}}
                 <template x-if="search.trim() === ''">
-                    <div class="flex flex-1 flex-col overflow-hidden">
+                    <div class="flex flex-col overflow-hidden" style="flex:1">
 
                         <div
                             x-show="activeCategory() !== null"
