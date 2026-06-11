@@ -24,11 +24,14 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $clubName = config('app.club_name');
+        $brandName = is_string($clubName) && $clubName !== '' ? $clubName.' BeerJudge' : 'BeerJudge';
+
         return $panel
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName(config('app.club_name') ? config('app.club_name').' BeerJudge' : 'BeerJudge')
+            ->brandName($brandName)
             ->login()
             ->authGuard('web')
             ->colors([
