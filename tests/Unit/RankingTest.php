@@ -8,13 +8,13 @@ class RankingTest extends TestCase
 {
     private function rank(array $rows): array
     {
-        $sorted = collect($rows)->sort(fn($a, $b) =>
-            $b['avg_total'] <=> $a['avg_total'] ?: $b['avg_overall'] <=> $a['avg_overall']
+        $sorted = collect($rows)->sort(fn ($a, $b) => $b['avg_total'] <=> $a['avg_total'] ?: $b['avg_overall'] <=> $a['avg_overall']
         )->values()->toArray();
 
         foreach ($sorted as $i => &$row) {
             $row['placement'] = $i + 1;
         }
+
         return $sorted;
     }
 

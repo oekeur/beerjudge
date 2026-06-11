@@ -1,0 +1,12 @@
+#!/bin/sh
+staged=$(git diff --cached --name-only --diff-filter=ACM -- '*.php')
+[ -z "$staged" ] && exit 0
+
+echo "$staged" | xargs vendor/bin/pint
+
+if ! git diff --quiet -- $staged; then
+    echo ""
+    echo "Pint reformatted staged PHP files. Re-stage them and commit again:"
+    echo "  git add -p"
+    exit 1
+fi

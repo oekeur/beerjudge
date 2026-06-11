@@ -39,6 +39,11 @@ class Competition extends Model
         return $this->belongsToMany(Style::class, 'competition_style');
     }
 
+    public function judges(): BelongsToMany
+    {
+        return $this->belongsToMany(Member::class, 'competition_judge');
+    }
+
     public function entries(): HasMany
     {
         return $this->hasMany(Entry::class);
