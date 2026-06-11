@@ -79,35 +79,6 @@ class CompetitionForm
                                     ->columnSpanFull(),
                             ]),
 
-                        Tab::make(__('competition.tab.results'))
-                            ->schema([
-                                Placeholder::make('variance_table')
-                                    ->label('')
-                                    ->content(fn (?Competition $record) => $record
-                                        ? new HtmlString(view('filament.forms.components.variance-tab', [
-                                            'record' => $record,
-                                        ])->render())
-                                        : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
-                                    )
-                                    ->columnSpanFull(),
-                            ]),
-
-                        Tab::make(__('competition.tab.dashboard'))
-                            ->schema([
-                                Placeholder::make('results_summary')
-                                    ->hiddenLabel()
-                                    ->content(function (?Competition $record): HtmlString {
-                                        if (! $record?->exists) {
-                                            return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
-                                        }
-
-                                        return new HtmlString(view('filament.competition.results-summary', [
-                                            'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
-                                        ])->render());
-                                    })
-                                    ->columnSpanFull(),
-                            ]),
-
                         Tab::make(__('competition.tab.judging'))
                             ->schema([
                                 Select::make('judges')
@@ -129,6 +100,35 @@ class CompetitionForm
                                             'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
                                         ])->render());
                                     })
+                                    ->columnSpanFull(),
+                            ]),
+
+                        Tab::make(__('competition.tab.dashboard'))
+                            ->schema([
+                                Placeholder::make('results_summary')
+                                    ->hiddenLabel()
+                                    ->content(function (?Competition $record): HtmlString {
+                                        if (! $record?->exists) {
+                                            return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
+                                        }
+
+                                        return new HtmlString(view('filament.competition.results-summary', [
+                                            'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
+                                        ])->render());
+                                    })
+                                    ->columnSpanFull(),
+                            ]),
+
+                        Tab::make(__('competition.tab.results'))
+                            ->schema([
+                                Placeholder::make('variance_table')
+                                    ->label('')
+                                    ->content(fn (?Competition $record) => $record
+                                        ? new HtmlString(view('filament.forms.components.variance-tab', [
+                                            'record' => $record,
+                                        ])->render())
+                                        : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
+                                    )
                                     ->columnSpanFull(),
                             ]),
                     ]),
