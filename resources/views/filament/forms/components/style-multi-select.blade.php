@@ -114,7 +114,7 @@
                 <div
                     x-show="totalSelected() > 0"
                     x-cloak
-                    class="px-3 pt-2"
+                    class="px-3 py-2"
                     style="display:flex;flex-wrap:wrap;gap:6px;max-height:5rem;overflow-y:auto"
                 >
                     <template x-for="item in selectedItems()" :key="item.value">
@@ -133,7 +133,7 @@
             @endunless
 
             {{-- Search row --}}
-            <div class="flex items-center gap-2 px-3 py-2">
+            <div class="flex items-center px-3 py-2" style="gap:0.5rem">
                 <x-filament::input.wrapper
                     inline-prefix
                     :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
@@ -149,17 +149,22 @@
                 </x-filament::input.wrapper>
 
                 @unless ($isDisabled)
-                    <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
-                        Select all
-                    </x-filament::button>
-                    <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="deselectAll()">
-                        Deselect all
-                    </x-filament::button>
+                    <div style="display:flex;align-items:center;gap:0.5rem;padding-left:0.75rem;border-left:1px solid #e5e7eb;flex-shrink:0">
+                        <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
+                            Select all
+                        </x-filament::button>
+                        <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="deselectAll()">
+                            Deselect all
+                        </x-filament::button>
+                        <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300">
+                            <span x-text="totalSelected()"></span> / {{ $totalCount }}
+                        </span>
+                    </div>
+                @else
+                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300" style="flex-shrink:0">
+                        <span x-text="totalSelected()"></span> / {{ $totalCount }}
+                    </span>
                 @endunless
-
-                <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300">
-                    <span x-text="totalSelected()"></span> / {{ $totalCount }}
-                </span>
             </div>
         </div>
 
@@ -173,7 +178,7 @@
                         x-on:click="activeIdx = idx"
                         :title="cat.name"
                         class="fi-sms-cat-row flex w-full cursor-pointer items-center justify-between px-3 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
-                        style="padding-top:0.625rem;padding-bottom:0.625rem"
+                        style="padding-top:0.875rem;padding-bottom:0.875rem"
                         x-bind:class="{
                             'fi-sms-active bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300': activeIdx === idx,
                             'text-gray-700 dark:text-gray-200': activeIdx !== idx,
@@ -228,7 +233,7 @@
                         <template x-for="item in searchResults()" :key="item.value">
                             <label
                                 class="flex cursor-pointer select-none items-center gap-3 px-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                                style="padding-top:0.625rem;padding-bottom:0.625rem;border-bottom:1px solid rgba(255,255,255,0.04)"
+                                style="padding-top:0.875rem;padding-bottom:0.875rem;border-bottom:1px solid rgba(255,255,255,0.04)"
                                 x-bind:class="isChecked(item.value) ? 'dark:bg-primary-500/5' : ''"
                             >
                                 <input
@@ -263,7 +268,7 @@
                         <div
                             x-show="activeCategory() !== null"
                             class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 px-4"
-                            style="padding-top:0.625rem;padding-bottom:0.625rem;flex-shrink:0;background:rgba(255,255,255,0.03)"
+                            style="padding-top:0.875rem;padding-bottom:0.875rem;flex-shrink:0;background:rgba(255,255,255,0.03)"
                         >
                             <span
                                 class="truncate text-sm font-semibold text-gray-800 dark:text-gray-100"
@@ -275,12 +280,16 @@
                                     <button
                                         type="button"
                                         x-on:click="selectCat(activeCategory())"
-                                        class="rounded border border-primary-300 px-2 py-0.5 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors dark:border-primary-600 dark:text-primary-400 dark:hover:bg-primary-500/10"
+                                        style="border-radius:4px;border:1px solid var(--color-primary-300,#fcd34d);padding:2px 8px;font-size:0.75rem;font-weight:500;color:var(--color-primary-600,#d97706);cursor:pointer;transition:background 0.1s;background:transparent"
+                                        onmouseover="this.style.background='var(--color-primary-50,#fffbeb)'"
+                                        onmouseout="this.style.background='transparent'"
                                     >Select all</button>
                                     <button
                                         type="button"
                                         x-on:click="deselectCat(activeCategory())"
-                                        class="rounded border border-gray-200 px-2 py-0.5 text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors dark:border-white/10 dark:text-gray-400 dark:hover:bg-white/5"
+                                        style="border-radius:4px;border:1px solid #e5e7eb;padding:2px 8px;font-size:0.75rem;font-weight:500;color:#6b7280;cursor:pointer;transition:background 0.1s;background:transparent"
+                                        onmouseover="this.style.background='#f9fafb'"
+                                        onmouseout="this.style.background='transparent'"
                                     >Clear</button>
                                 </div>
                             @endunless
@@ -291,7 +300,7 @@
                             <template x-for="[value, label] in Object.entries(activeCategory()?.labels ?? {})" :key="value">
                                 <label
                                     class="flex cursor-pointer select-none items-center gap-3 px-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                                    style="padding-top:0.625rem;padding-bottom:0.625rem;border-bottom:1px solid rgba(255,255,255,0.04)"
+                                    style="padding-top:0.875rem;padding-bottom:0.875rem;border-bottom:1px solid rgba(255,255,255,0.04)"
                                     x-bind:class="isChecked(value) ? 'dark:bg-primary-500/5' : ''"
                                 >
                                     <input
