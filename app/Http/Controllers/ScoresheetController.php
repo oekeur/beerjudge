@@ -39,21 +39,22 @@ class ScoresheetController extends Controller
     public function upsert(StoreScoresheetRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $entryId = $request->integer('entry_id');
 
         $judge = $this->member($request);
-        $entry = Entry::with('competition')->findOrFail((int) $data['entry_id']);
+        $entry = Entry::with('competition')->findOrFail($entryId);
 
         abort_if($entry->competition?->status !== 'judging', 422, 'Competition is not in judging phase.');
         abort_if($entry->member_id === $judge->id, 422, 'You cannot score your own entry.');
 
         // Look up existing sheet: by client_uuid first, then by (entry_id, judge_id)
         $sheet = Scoresheet::where('client_uuid', $data['client_uuid'])->first()
-            ?? Scoresheet::where('entry_id', $data['entry_id'])
+            ?? Scoresheet::where('entry_id', $entryId)
                 ->where('judge_id', $judge->id)
                 ->first();
 
         $attributes = [
-            'entry_id' => $data['entry_id'],
+            'entry_id' => $entryId,
             'judge_id' => $judge->id,
             'aroma' => $data['aroma'],
             'appearance' => $data['appearance'],
