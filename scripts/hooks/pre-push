@@ -1,2 +1,2 @@
 #!/bin/sh
-php artisan test --compact
+vendor/bin/phpstan analyse --no-progress && php artisan test --compact
