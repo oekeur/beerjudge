@@ -22,6 +22,11 @@
         ->all();
 @endphp
 
+<style>
+    .fi-sms-cat-row:hover .fi-sms-cat-name { text-decoration: underline; }
+    .fi-sms-cat-row.fi-sms-active .fi-sms-cat-name { font-weight: 600; }
+</style>
+
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         x-data="{
@@ -102,74 +107,80 @@
         class="fi-fo-checkbox-list"
     >
         {{-- Toolbar --}}
-        <div class="sticky top-0 z-10 flex items-center gap-2 rounded-t-lg border border-gray-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-gray-900">
-            <x-filament::input.wrapper
-                inline-prefix
-                :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-                style="flex:1;min-width:10rem"
-            >
-                <input
-                    type="search"
-                    placeholder="Search styles…"
-                    x-model.debounce.200ms="search"
-                    x-on:input="onSearchChange()"
-                    class="fi-input fi-input-has-inline-prefix"
-                />
-            </x-filament::input.wrapper>
+        <div class="sticky top-0 z-10 rounded-t-lg border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900" style="z-index:10">
 
+            {{-- Pills row --}}
             @unless ($isDisabled)
-                <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
-                    Select all
-                </x-filament::button>
-                <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="deselectAll()">
-                    Deselect all
-                </x-filament::button>
+                <div
+                    x-show="totalSelected() > 0"
+                    x-cloak
+                    class="px-3 pt-2"
+                    style="display:flex;flex-wrap:wrap;gap:6px;max-height:5rem;overflow-y:auto"
+                >
+                    <template x-for="item in selectedItems()" :key="item.value">
+                        <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:9999px;font-size:0.75rem;font-weight:500;background:var(--color-primary-100,#fef3c7);color:var(--color-primary-700,#b45309)">
+                            <span x-text="item.label"></span>
+                            <button
+                                type="button"
+                                x-on:click="toggle(item.value)"
+                                style="line-height:1;padding:0 3px;font-size:1rem;opacity:0.6"
+                                onmouseover="this.style.opacity='1'"
+                                onmouseout="this.style.opacity='0.6'"
+                            >&times;</button>
+                        </span>
+                    </template>
+                </div>
             @endunless
 
-            <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300">
-                <span x-text="totalSelected()"></span> / {{ $totalCount }}
-            </span>
-        </div>
+            {{-- Search row --}}
+            <div class="flex items-center gap-2 px-3 py-2">
+                <x-filament::input.wrapper
+                    inline-prefix
+                    :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
+                    style="flex:1;min-width:10rem"
+                >
+                    <input
+                        type="search"
+                        placeholder="Search styles…"
+                        x-model.debounce.200ms="search"
+                        x-on:input="onSearchChange()"
+                        class="fi-input fi-input-has-inline-prefix"
+                    />
+                </x-filament::input.wrapper>
 
-        {{-- Selected pills --}}
-        @unless ($isDisabled)
-            <div
-                x-show="totalSelected() > 0"
-                x-cloak
-                class="flex flex-wrap gap-1.5 border-l border-r border-b border-gray-200 bg-gray-50 px-3 py-2 dark:border-white/10 dark:bg-white/5"
-                style="max-height:5rem;overflow-y:auto"
-            >
-                <template x-for="item in selectedItems()" :key="item.value">
-                    <span class="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-500/20 dark:text-primary-300">
-                        <span x-text="item.label"></span>
-                        <button
-                            type="button"
-                            x-on:click="toggle(item.value)"
-                            class="rounded-full hover:bg-primary-200 dark:hover:bg-primary-500/30 transition-colors"
-                            style="line-height:1;padding:1px 3px;font-size:0.875rem"
-                        >&times;</button>
-                    </span>
-                </template>
+                @unless ($isDisabled)
+                    <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
+                        Select all
+                    </x-filament::button>
+                    <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="deselectAll()">
+                        Deselect all
+                    </x-filament::button>
+                @endunless
+
+                <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300">
+                    <span x-text="totalSelected()"></span> / {{ $totalCount }}
+                </span>
             </div>
-        @endunless
+        </div>
 
         {{-- Master-detail panels --}}
         <div class="rounded-b-lg border border-t-0 border-gray-200 dark:border-white/10" style="display:flex;height:32rem;overflow:hidden">
 
             {{-- Left: category list --}}
-            <div class="border-r border-gray-200 dark:border-white/10" style="width:40%;flex-shrink:0;overflow-y:auto">
+            <div class="border-r border-gray-200 dark:border-white/10" style="width:25%;flex-shrink:0;overflow-y:auto">
                 <template x-for="(cat, idx) in visibleCategories()" :key="cat.name">
                     <div
                         x-on:click="activeIdx = idx"
                         :title="cat.name"
-                        class="flex w-full cursor-pointer items-center justify-between px-3 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                        class="fi-sms-cat-row flex w-full cursor-pointer items-center justify-between px-3 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                         style="padding-top:0.625rem;padding-bottom:0.625rem"
-                        x-bind:class="activeIdx === idx
-                            ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300'
-                            : 'text-gray-700 dark:text-gray-200'"
+                        x-bind:class="{
+                            'fi-sms-active bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300': activeIdx === idx,
+                            'text-gray-700 dark:text-gray-200': activeIdx !== idx,
+                        }"
                         x-bind:style="activeIdx === idx ? 'border-left:2px solid var(--color-primary-500)' : 'border-left:2px solid transparent'"
                     >
-                        <span class="truncate text-sm font-medium" x-text="cat.name"></span>
+                        <span class="fi-sms-cat-name truncate text-sm font-medium" x-text="cat.name"></span>
 
                         @unless ($isDisabled)
                             <button
@@ -197,15 +208,6 @@
                                 x-text="countCat(cat) + '/' + cat.values.length"
                             ></span>
                         @endunless
-
-                        <svg
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            class="text-gray-400 dark:text-gray-500"
-                            style="width:12px;height:12px;margin-left:4px;flex-shrink:0;transition:opacity 0.15s"
-                            x-bind:style="activeIdx === idx ? 'width:12px;height:12px;margin-left:4px;flex-shrink:0;opacity:0.8' : 'width:12px;height:12px;margin-left:4px;flex-shrink:0;opacity:0.3'"
-                        >
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
-                        </svg>
                     </div>
                 </template>
 
