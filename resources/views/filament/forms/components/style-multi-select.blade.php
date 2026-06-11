@@ -114,8 +114,7 @@
                 <div
                     x-show="totalSelected() > 0"
                     x-cloak
-                    class="px-3 py-2"
-                    style="display:flex;flex-wrap:wrap;gap:6px;max-height:5rem;overflow-y:auto;border-bottom:1px solid #f3f4f6"
+                    style="display:flex;flex-wrap:wrap;gap:6px;max-height:5rem;overflow-y:auto;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f4f6"
                 >
                     <template x-for="item in selectedItems()" :key="item.value">
                         <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:9999px;font-size:0.75rem;font-weight:500;background:var(--color-primary-100,#fef3c7);color:var(--color-primary-700,#b45309)">
@@ -133,7 +132,7 @@
             @endunless
 
             {{-- Search row --}}
-            <div class="px-3 pt-2 pb-1">
+            <div style="padding:0.75rem 0.75rem 0.5rem">
                 <x-filament::input.wrapper
                     inline-prefix
                     :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
@@ -150,7 +149,7 @@
             </div>
 
             {{-- Controls row --}}
-            <div class="flex items-center px-3 py-2" style="gap:0.5rem">
+            <div style="display:flex;align-items:center;padding:0.5rem 0.75rem;gap:0.5rem">
                 @unless ($isDisabled)
                     <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
                         Select all
@@ -175,12 +174,15 @@
                         x-on:click="activeIdx = idx"
                         :title="cat.name"
                         class="fi-sms-cat-row flex w-full cursor-pointer items-center justify-between px-3 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
-                        style="padding-top:0.875rem;padding-bottom:0.875rem"
                         x-bind:class="{
                             'fi-sms-active bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300': activeIdx === idx,
                             'text-gray-700 dark:text-gray-200': activeIdx !== idx,
                         }"
-                        x-bind:style="activeIdx === idx ? 'border-left:2px solid var(--color-primary-500)' : 'border-left:2px solid transparent'"
+                        x-bind:style="{
+                            'border-left': activeIdx === idx ? '2px solid var(--color-primary-500)' : '2px solid transparent',
+                            'padding-top': '0.875rem',
+                            'padding-bottom': '0.875rem',
+                        }"
                     >
                         <span class="fi-sms-cat-name truncate text-sm font-medium" x-text="cat.name"></span>
 
@@ -230,7 +232,7 @@
                         <template x-for="item in searchResults()" :key="item.value">
                             <label
                                 class="flex cursor-pointer select-none items-center gap-3 px-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                                style="padding-top:0.875rem;padding-bottom:0.875rem;border-bottom:1px solid rgba(255,255,255,0.04)"
+                                style="padding-top:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.04)"
                                 x-bind:class="isChecked(item.value) ? 'dark:bg-primary-500/5' : ''"
                             >
                                 <input
@@ -265,7 +267,7 @@
                         <div
                             x-show="activeCategory() !== null"
                             class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 px-4"
-                            style="padding-top:0.875rem;padding-bottom:0.875rem;flex-shrink:0;background:rgba(255,255,255,0.03)"
+                            style="padding-top:1rem;padding-bottom:1rem;flex-shrink:0;background:rgba(255,255,255,0.03)"
                         >
                             <span
                                 class="truncate text-sm font-semibold text-gray-800 dark:text-gray-100"
@@ -297,7 +299,7 @@
                             <template x-for="[value, label] in Object.entries(activeCategory()?.labels ?? {})" :key="value">
                                 <label
                                     class="flex cursor-pointer select-none items-center gap-3 px-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                                    style="padding-top:0.875rem;padding-bottom:0.875rem;border-bottom:1px solid rgba(255,255,255,0.04)"
+                                    style="padding-top:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.04)"
                                     x-bind:class="isChecked(value) ? 'dark:bg-primary-500/5' : ''"
                                 >
                                     <input
