@@ -97,12 +97,12 @@
                             <div class="flex items-center gap-2 mb-3">
                                 <span class="text-green-600 font-semibold text-sm">{{ __('judging.submitted') }}</span>
                             </div>
-                            <table class="text-sm text-gray-600 mb-3" aria-live="polite">
-                                <tr><td class="pr-6">{{ __('judging.section.aroma') }}</td><td class="text-right tabular-nums pr-0"><strong x-text="sheets[entry.id].aroma"></strong></td><td class="pl-0">/12</td></tr>
-                                <tr><td class="pr-6">{{ __('judging.section.appearance') }}</td><td class="text-right tabular-nums pr-0"><strong x-text="sheets[entry.id].appearance"></strong></td><td class="pl-0">/3</td></tr>
-                                <tr><td class="pr-6">{{ __('judging.section.flavour') }}</td><td class="text-right tabular-nums pr-0"><strong x-text="sheets[entry.id].flavour"></strong></td><td class="pl-0">/20</td></tr>
-                                <tr><td class="pr-6">{{ __('judging.section.mouthfeel') }}</td><td class="text-right tabular-nums pr-0"><strong x-text="sheets[entry.id].mouthfeel"></strong></td><td class="pl-0">/5</td></tr>
-                                <tr><td class="pr-6">{{ __('judging.section.overall') }}</td><td class="text-right tabular-nums pr-0"><strong x-text="sheets[entry.id].overall"></strong></td><td class="pl-0">/10</td></tr>
+                            <table class="text-sm text-gray-600 mb-3" style="border-spacing: 0" aria-live="polite">
+                                <tr><td class="pr-6">{{ __('judging.section.aroma') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].aroma"></strong></span>/12</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.appearance') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].appearance"></strong></span>/3</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.flavour') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].flavour"></strong></span>/20</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.mouthfeel') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].mouthfeel"></strong></span>/5</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.overall') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].overall"></strong></span>/10</td></tr>
                             </table>
                             <div class="mb-4">
                                 <div class="text-base font-bold">{{ __('judging.total') }} <span x-text="sheetTotal(entry.id)"></span> / 50</div>
