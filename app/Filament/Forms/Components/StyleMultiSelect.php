@@ -14,7 +14,7 @@ class StyleMultiSelect extends CheckboxList
         parent::setUp();
 
         $this->getOptionLabelFromRecordUsing(
-            fn ($record): string => "{$record->code} {$record->name}"
+            fn (Style $record): string => "{$record->code} {$record->name}"
         );
     }
 
@@ -23,12 +23,12 @@ class StyleMultiSelect extends CheckboxList
      */
     public function getCategorizedOptions(): array
     {
-        return Style::orderBy('code')
-            ->get()
-            ->groupBy('category_name')
-            ->map(fn ($styles) => $styles->mapWithKeys(
-                fn ($style) => [$style->id => "{$style->code} {$style->name}"]
-            )->all())
-            ->all();
+        $categories = [];
+
+        foreach (Style::orderBy('code')->get() as $style) {
+            $categories[$style->category_name][$style->id] = "{$style->code} {$style->name}";
+        }
+
+        return $categories;
     }
 }

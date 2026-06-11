@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
+ * @property int $id
+ * @property bool $is_admin
+ * @property bool $is_active
  * @property string $locale
  */
 class Member extends Authenticatable implements FilamentUser

@@ -6,6 +6,7 @@ use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Member;
 use App\Models\Scoresheet;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -45,7 +46,7 @@ class ResultsController extends Controller
     private function buildRankedEntries(Competition $competition): Collection
     {
         $entries = Entry::where('competition_id', $competition->id)
-            ->with(['member', 'style', 'scoresheets' => fn ($query) => $query->where('status', 'submitted')->with('judge')])
+            ->with(['member', 'style', 'scoresheets' => fn (Relation $query) => $query->where('status', 'submitted')->with('judge')])
             ->orderBy('id')
             ->get();
 

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Competitions\Schemas;
 use App\Filament\Forms\Components\StyleMultiSelect;
 use App\Models\Competition;
 use App\Models\Member;
+use App\Models\Style;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -64,7 +65,7 @@ class CompetitionForm
                                             ->relationship('style', 'name')
                                             ->searchable()
                                             ->required()
-                                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->code} — {$record->name}"),
+                                            ->getOptionLabelFromRecordUsing(fn (Style $record): string => "{$record->code} — {$record->name}"),
                                         TextInput::make('bottle_number')
                                             ->numeric()
                                             ->nullable(),

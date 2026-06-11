@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Competitions\RelationManagers;
 
+use App\Models\Style;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -29,7 +30,7 @@ class EntriesRelationManager extends RelationManager
                     ->relationship('style', 'name')
                     ->searchable()
                     ->required()
-                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->code} — {$record->name}"),
+                    ->getOptionLabelFromRecordUsing(fn (Style $record): string => "{$record->code} — {$record->name}"),
                 TextInput::make('bottle_number')
                     ->numeric()
                     ->nullable(),

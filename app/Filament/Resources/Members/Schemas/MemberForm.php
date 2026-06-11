@@ -22,8 +22,8 @@ class MemberForm
                 TextInput::make('password')
                     ->password()
                     ->visibleOn('create')
-                    ->dehydrateStateUsing(fn ($state) => filled($state) ? bcrypt($state) : null)
-                    ->dehydrated(fn ($state) => filled($state)),
+                    ->dehydrateStateUsing(fn (?string $state): ?string => filled($state) ? bcrypt($state) : null)
+                    ->dehydrated(fn (?string $state): bool => filled($state)),
                 Select::make('locale')
                     ->options(['en' => 'English', 'nl' => 'Nederlands'])
                     ->default('en')
