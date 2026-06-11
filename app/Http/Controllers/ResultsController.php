@@ -16,7 +16,7 @@ class ResultsController extends Controller
     {
         abort_unless($competition->isClosed(), 403);
 
-        $viewer = $request->user();
+        $viewer = $this->member($request);
         abort_if(! $viewer->is_admin && $viewer->id !== $member->id, 403);
 
         $rankedEntries = $this->buildRankedEntries($competition);
@@ -29,7 +29,7 @@ class ResultsController extends Controller
 
     public function index(Competition $competition, Request $request): View
     {
-        abort_unless($request->user()->is_admin, 403);
+        abort_unless($this->member($request)->is_admin, 403);
         abort_unless($competition->isClosed(), 403);
 
         $members = Member::whereHas('entries', fn ($query) => $query->where('competition_id', $competition->id))

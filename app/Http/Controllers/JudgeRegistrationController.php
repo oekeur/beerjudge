@@ -15,14 +15,14 @@ class JudgeRegistrationController extends Controller
             403,
         );
 
-        $competition->judges()->syncWithoutDetaching([$request->user()->id]);
+        $competition->judges()->syncWithoutDetaching([$this->member($request)->id]);
 
         return back();
     }
 
     public function destroy(Competition $competition, Request $request): RedirectResponse
     {
-        $competition->judges()->detach($request->user()->id);
+        $competition->judges()->detach($this->member($request)->id);
 
         return back();
     }

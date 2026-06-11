@@ -40,10 +40,10 @@ class ScoresheetController extends Controller
     {
         $data = $request->validated();
 
-        $judge = $request->user();
+        $judge = $this->member($request);
         $entry = Entry::with('competition')->findOrFail((int) $data['entry_id']);
 
-        abort_if($entry->competition->status !== 'judging', 422, 'Competition is not in judging phase.');
+        abort_if($entry->competition?->status !== 'judging', 422, 'Competition is not in judging phase.');
         abort_if($entry->member_id === $judge->id, 422, 'You cannot score your own entry.');
 
         // Look up existing sheet: by client_uuid first, then by (entry_id, judge_id)
@@ -82,7 +82,7 @@ class ScoresheetController extends Controller
             'client_uuid' => $sheet->client_uuid,
             'total' => $sheet->total,
             'status' => $sheet->status,
-            'saved_at' => $sheet->updated_at->toISOString(),
+            'saved_at' => $sheet->updated_at?->toISOString(),
         ]);
     }
 }

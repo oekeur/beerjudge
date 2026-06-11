@@ -22,7 +22,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return Auth::user()->is_admin
+            return $this->member($request)->is_admin
                 ? redirect()->intended('/admin')
                 : redirect()->intended('/');
         }

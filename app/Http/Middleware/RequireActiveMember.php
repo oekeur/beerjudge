@@ -10,7 +10,9 @@ class RequireActiveMember
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->check() || ! auth()->user()->is_active) {
+        $user = $request->user();
+
+        if ($user === null || ! $user->is_active) {
             return redirect()->route('login');
         }
 

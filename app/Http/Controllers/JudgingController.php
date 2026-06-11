@@ -13,7 +13,7 @@ class JudgingController extends Controller
     {
         abort_if($competition->status !== 'judging', 403);
 
-        $judge = $request->user();
+        $judge = $this->member($request);
 
         $entries = $competition->entries()
             ->with(['style', 'member'])
@@ -30,15 +30,15 @@ class JudgingController extends Controller
             'entries' => $entries->map(fn ($e) => [
                 'id' => $e->id,
                 'bottle_number' => $e->bottle_number,
-                'style_code' => $e->style->code,
-                'style_name' => $e->style->name,
-                'brewer_name' => $e->member->name,
+                'style_code' => $e->style?->code,
+                'style_name' => $e->style?->name,
+                'brewer_name' => $e->member?->name,
                 'style_guide' => [
-                    'aroma' => $e->style->aroma,
-                    'appearance' => $e->style->appearance,
-                    'flavor' => $e->style->flavor,
-                    'mouthfeel' => $e->style->mouthfeel,
-                    'overall_impression' => $e->style->overall_impression,
+                    'aroma' => $e->style?->aroma,
+                    'appearance' => $e->style?->appearance,
+                    'flavor' => $e->style?->flavor,
+                    'mouthfeel' => $e->style?->mouthfeel,
+                    'overall_impression' => $e->style?->overall_impression,
                 ],
             ])->values(),
             'bands' => [
