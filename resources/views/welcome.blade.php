@@ -1,16 +1,19 @@
+@php
+    $appTitle = config('app.club_name') ? config('app.club_name').' BeerJudge' : 'BeerJudge';
+@endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeerJudge</title>
+    <title>{{ $appTitle }}</title>
     @vite(['resources/css/app.css'])
 </head>
 <body class="min-h-screen bg-amber-50 text-gray-900">
 
     <nav class="bg-white border-b border-amber-200 px-6 py-4">
         <div class="max-w-3xl mx-auto flex items-center justify-between">
-            <span class="text-lg font-semibold text-amber-900 tracking-tight">BeerJudge</span>
+            <span class="text-lg font-semibold text-amber-900 tracking-tight">{{ $appTitle }}</span>
             <div class="flex items-center gap-4">
                 @if(auth()->user()->is_admin)
                     <a href="/admin" class="text-sm text-amber-700 hover:text-amber-900 hover:underline">

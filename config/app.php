@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'club_name' => env('CLUB_NAME', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

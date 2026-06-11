@@ -1,14 +1,17 @@
+@php
+    $appTitle = config('app.club_name') ? config('app.club_name').' BeerJudge' : 'BeerJudge';
+@endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeerJudge — Log in</title>
+    <title>{{ $appTitle }} — Log in</title>
     @vite(['resources/css/app.css'])
 </head>
 <body class="min-h-screen bg-amber-50 flex items-center justify-center">
     <div class="w-full max-w-sm bg-white rounded-xl shadow p-8">
-        <h1 class="text-2xl font-bold text-amber-900 mb-6">BeerJudge</h1>
+        <h1 class="text-2xl font-bold text-amber-900 mb-6">{{ $appTitle }}</h1>
         <form method="POST" action="/login">
             @csrf
             @if ($errors->any())

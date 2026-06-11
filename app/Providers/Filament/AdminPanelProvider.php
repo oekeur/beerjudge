@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName(config('app.club_name') ? config('app.club_name').' BeerJudge' : 'BeerJudge')
             ->login()
             ->authGuard('web')
             ->colors([
