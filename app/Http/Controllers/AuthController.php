@@ -25,7 +25,7 @@ class AuthController extends Controller
                 : redirect()->intended('/');
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials.'])->onlyInput('email');
+        return back()->withErrors(['email' => __('Invalid credentials.')])->onlyInput('email');
     }
 
     public function logout(Request $request)

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Competitions\Tables;
 
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -23,7 +22,8 @@ class CompetitionsTable
                     ->sortable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn(string $state): string => match($state) {
+                    ->formatStateUsing(fn (string $state): string => __("competition.status.{$state}"))
+                    ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'open' => 'info',
                         'judging' => 'warning',

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Competitions\Schemas;
 
 use App\Filament\Forms\Components\StyleMultiSelect;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -24,7 +23,7 @@ class CompetitionForm
                 Tabs::make()
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make('Overview')
+                        Tab::make(__('competition.tab.overview'))
                             ->schema([
                                 TextInput::make('name')
                                     ->required(),
@@ -35,20 +34,22 @@ class CompetitionForm
                                     ->nullable(),
                                 Select::make('status')
                                     ->options([
-                                        'draft' => 'Draft',
-                                        'open' => 'Open',
-                                        'judging' => 'Judging',
-                                        'closed' => 'Closed',
+                                        'draft' => __('competition.status.draft'),
+                                        'open' => __('competition.status.open'),
+                                        'judging' => __('competition.status.judging'),
+                                        'closed' => __('competition.status.closed'),
                                     ])
                                     ->default('draft'),
-                                DateTimePicker::make('published_at')
-                                    ->nullable(),
+                            ]),
+
+                        Tab::make(__('competition.tab.styles'))
+                            ->schema([
                                 StyleMultiSelect::make('styles')
                                     ->relationship('styles', 'name')
                                     ->columnSpanFull(),
                             ]),
 
-                        Tab::make('Entries')
+                        Tab::make(__('competition.tab.entries'))
                             ->schema([
                                 Repeater::make('entries')
                                     ->relationship()
@@ -75,7 +76,7 @@ class CompetitionForm
                                     ->columnSpanFull(),
                             ]),
 
-                        Tab::make('Results & Variance')
+                        Tab::make(__('competition.tab.results'))
                             ->schema([
                                 Placeholder::make('variance_table')
                                     ->label('')
@@ -83,7 +84,7 @@ class CompetitionForm
                                         ? new HtmlString(view('filament.forms.components.variance-tab', [
                                             'record' => $record,
                                         ])->render())
-                                        : new HtmlString('<p class="text-sm text-gray-500">Save the competition first to view results.</p>')
+                                        : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
                                     )
                                     ->columnSpanFull(),
                             ]),

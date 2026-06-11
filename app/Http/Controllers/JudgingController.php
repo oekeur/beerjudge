@@ -58,7 +58,7 @@ class JudgingController extends Controller
             ])->values(),
         ];
 
-        $descriptors = ScoresheetController::DESCRIPTORS;
+        $descriptors = ScoresheetController::descriptors();
 
         return view('judging.show', compact('competition', 'judge', 'serverData', 'descriptors'));
     }

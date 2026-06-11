@@ -13,7 +13,12 @@ class JudgeVarianceWidget extends BaseWidget
 {
     public ?int $competitionId = null;
 
-    protected static ?string $heading = 'Judge Score Variance';
+    protected static ?string $heading = null;
+
+    public function getHeading(): string
+    {
+        return __('widget.variance.heading');
+    }
 
     public function table(Table $table): Table
     {
@@ -33,14 +38,14 @@ class JudgeVarianceWidget extends BaseWidget
                     ->whereRaw("(select count(*) from {$sheetsTable} where {$entriesTable}.id = {$sheetsTable}.entry_id and status = ?) >= 2", ['submitted'])
             )
             ->columns([
-                Tables\Columns\TextColumn::make('bottle_number')->label('#')->sortable(),
-                Tables\Columns\TextColumn::make('name')->label('Beer'),
-                Tables\Columns\TextColumn::make('sheet_count')->label('Sheets'),
+                Tables\Columns\TextColumn::make('bottle_number')->label(__('widget.variance.column.number'))->sortable(),
+                Tables\Columns\TextColumn::make('name')->label(__('widget.variance.column.beer')),
+                Tables\Columns\TextColumn::make('sheet_count')->label(__('widget.variance.column.sheets')),
                 Tables\Columns\TextColumn::make('avg_total')
-                    ->label('Avg Score')
+                    ->label(__('widget.variance.column.avg_score'))
                     ->formatStateUsing(fn ($state) => round($state, 1)),
                 Tables\Columns\TextColumn::make('spread')
-                    ->label('Spread')
+                    ->label(__('widget.variance.column.spread'))
                     ->badge()
                     ->color(fn ($state) => $state > 7 ? 'danger' : 'success')
                     ->formatStateUsing(fn ($state) => $state > 7 ? "⚠ {$state} pts" : "{$state} pts"),

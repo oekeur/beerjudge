@@ -13,7 +13,7 @@ class StyleForm
     {
         return $schema
             ->components([
-                Section::make('Identity')
+                Section::make(__('style.section.identity'))
                     ->columns(2)
                     ->schema([
                         TextInput::make('code')
@@ -31,7 +31,7 @@ class StyleForm
                             ->columnSpan(1),
                     ]),
 
-                Section::make('Vital Statistics')
+                Section::make(__('style.section.vital_statistics'))
                     ->columns(2)
                     ->schema([
                         TextInput::make('og_min')->numeric()->columnSpan(1),
@@ -46,7 +46,7 @@ class StyleForm
                         TextInput::make('srm_max')->numeric()->columnSpan(1),
                     ]),
 
-                Section::make('Judging Descriptors')
+                Section::make(__('style.section.judging_descriptors'))
                     ->schema([
                         Textarea::make('overall_impression')->rows(4),
                         Textarea::make('aroma')->rows(5),
@@ -55,7 +55,7 @@ class StyleForm
                         Textarea::make('mouthfeel')->rows(3),
                     ]),
 
-                Section::make('Additional Information')
+                Section::make(__('style.section.additional_information'))
                     ->schema([
                         Textarea::make('comments')->rows(3),
                         Textarea::make('history')->rows(3),

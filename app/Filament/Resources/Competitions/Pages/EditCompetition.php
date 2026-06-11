@@ -18,17 +18,17 @@ class EditCompetition extends EditRecord
 
         $lifecycle = array_values(array_filter([
             $record->status === 'draft' ? Action::make('moveToOpen')
-                ->label('Move to Open')
+                ->label(__('competition.action.move_to_open'))
                 ->color('info')
                 ->action(fn () => $record->update(['status' => 'open']))
                 ->after(fn () => $this->refreshFormData(['status'])) : null,
 
             $record->status === 'open' ? Action::make('moveToJudging')
-                ->label('Move to Judging')
+                ->label(__('competition.action.move_to_judging'))
                 ->color('warning')
                 ->requiresConfirmation()
-                ->modalHeading('Lock Registration')
-                ->modalDescription('This will lock registration and assign bottle numbers. Continue?')
+                ->modalHeading(__('competition.action.lock_registration.heading'))
+                ->modalDescription(__('competition.action.lock_registration.description'))
                 ->action(function () use ($record) {
                     app(BottleNumberAssignmentService::class)->assign($record);
                     $record->update(['status' => 'judging']);
@@ -36,20 +36,14 @@ class EditCompetition extends EditRecord
                 ->after(fn () => $this->refreshFormData(['status'])) : null,
 
             $record->status === 'judging' ? Action::make('moveToClosed')
-                ->label('Move to Closed')
+                ->label(__('competition.action.move_to_closed'))
                 ->color('danger')
                 ->requiresConfirmation()
                 ->action(fn () => $record->update(['status' => 'closed']))
                 ->after(fn () => $this->refreshFormData(['status'])) : null,
 
-            $record->status === 'closed' && ! $record->published_at ? Action::make('publishResults')
-                ->label('Publish Results')
-                ->color('success')
-                ->requiresConfirmation()
-                ->action(fn () => $record->update(['published_at' => now()])) : null,
-
             $record->status === 'closed' ? Action::make('viewResults')
-                ->label('View Results')
+                ->label(__('competition.action.view_results'))
                 ->color('gray')
                 ->url(fn () => route('results.index', $record))
                 ->openUrlInNewTab() : null,

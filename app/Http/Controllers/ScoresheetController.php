@@ -8,29 +8,25 @@ use App\Models\Scoresheet;
 
 class ScoresheetController extends Controller
 {
-    public const DESCRIPTORS = [
-        ['slug' => 'acetaldehyde', 'name' => 'Acetaldehyde',  'description' => 'Green apple-like aroma and flavor.'],
-        ['slug' => 'alcoholic',    'name' => 'Alcoholic',      'description' => 'Aroma, flavor, and warming effect of ethanol and higher alcohols. Sometimes described as hot.'],
-        ['slug' => 'astringent',   'name' => 'Astringent',     'description' => 'Puckering, lingering harshness and/or dryness in the finish; harsh graininess; huskiness.'],
-        ['slug' => 'diacetyl',     'name' => 'Diacetyl',       'description' => 'Artificial butter, butterscotch, or toffee aroma and flavor. Sometimes perceived as a slickness on the tongue.'],
-        ['slug' => 'dms',          'name' => 'DMS',            'description' => 'At low levels a sweet, cooked or canned corn-like aroma and flavor.'],
-        ['slug' => 'estery',       'name' => 'Estery',         'description' => 'Aroma and/or flavor of any ester (fruits, fruit flavorings, or roses).'],
-        ['slug' => 'grassy',       'name' => 'Grassy',         'description' => 'Aroma/flavor of fresh-cut grass or green leaves.'],
-        ['slug' => 'light_struck', 'name' => 'Light-Struck',   'description' => 'Similar to the aroma of a skunk.'],
-        ['slug' => 'metallic',     'name' => 'Metallic',       'description' => 'Tinny, coiny, copper, iron, or blood-like flavor.'],
-        ['slug' => 'musty',        'name' => 'Musty',          'description' => 'Stale, musty, or moldy aromas/flavors.'],
-        ['slug' => 'oxidized',     'name' => 'Oxidized',       'description' => 'Stale, winy/vinous, cardboard, papery, or sherry-like aromas and flavors.'],
-        ['slug' => 'phenolic',     'name' => 'Phenolic',       'description' => 'Spicy (clove, pepper), smoky, plastic, or medicinal aromas/flavors.'],
-        ['slug' => 'solvent',      'name' => 'Solvent',        'description' => 'Aromas and flavors of higher alcohols (fusel alcohols). Similar to acetone or lacquer thinner.'],
-        ['slug' => 'sour_acidic',  'name' => 'Sour/Acidic',   'description' => 'Tartness in aroma and flavor. Can be sharp and clean (lactic), or vinegar-like (acetic).'],
-        ['slug' => 'sulfur',       'name' => 'Sulfur',         'description' => 'The aroma of rotten eggs or burning matches.'],
-        ['slug' => 'vegetal',      'name' => 'Vegetal',        'description' => 'Cooked, canned, or rotten vegetable aroma and flavor (cabbage, onion, celery, asparagus, etc.)'],
-        ['slug' => 'yeasty',       'name' => 'Yeasty',         'description' => 'A bready, sulfury or yeast-like aroma or flavor.'],
+    public const DESCRIPTOR_SLUGS = [
+        'acetaldehyde', 'alcoholic', 'astringent', 'diacetyl', 'dms',
+        'estery', 'grassy', 'light_struck', 'metallic', 'musty',
+        'oxidized', 'phenolic', 'solvent', 'sour_acidic', 'sulfur',
+        'vegetal', 'yeasty',
     ];
+
+    public static function descriptors(): array
+    {
+        return array_map(fn (string $slug) => [
+            'slug' => $slug,
+            'name' => __("descriptor.{$slug}.name"),
+            'description' => __("descriptor.{$slug}.description"),
+        ], self::DESCRIPTOR_SLUGS);
+    }
 
     public static function descriptorSlugs(): array
     {
-        return array_column(self::DESCRIPTORS, 'slug');
+        return self::DESCRIPTOR_SLUGS;
     }
 
     public function upsert(StoreScoresheetRequest $request)
