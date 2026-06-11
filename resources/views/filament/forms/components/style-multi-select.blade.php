@@ -116,7 +116,21 @@
                     x-cloak
                     style="display:flex;flex-wrap:wrap;gap:6px;max-height:5rem;overflow-y:auto;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f4f6"
                 >
-                    <template x-for="item in selectedItems()" :key="item.value">
+                    <span
+                        x-show="totalSelected() === allValues.length"
+                        style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:9999px;font-size:0.75rem;font-weight:500;background:var(--color-primary-100,#fef3c7);color:var(--color-primary-700,#b45309)"
+                    >
+                        <span>All styles</span>
+                        <button
+                            type="button"
+                            x-on:click="deselectAll()"
+                            style="line-height:1;padding:0 3px;font-size:1rem;opacity:0.6"
+                            onmouseover="this.style.opacity='1'"
+                            onmouseout="this.style.opacity='0.6'"
+                        >&times;</button>
+                    </span>
+
+                    <template x-for="item in (totalSelected() < allValues.length ? selectedItems() : [])" :key="item.value">
                         <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:9999px;font-size:0.75rem;font-weight:500;background:var(--color-primary-100,#fef3c7);color:var(--color-primary-700,#b45309)">
                             <span x-text="item.label"></span>
                             <button
@@ -180,8 +194,8 @@
                         }"
                         x-bind:style="{
                             'border-left': activeIdx === idx ? '2px solid var(--color-primary-500)' : '2px solid transparent',
-                            'padding-top': '0.375rem',
-                            'padding-bottom': '0.375rem',
+                            'padding-top': '0.2rem',
+                            'padding-bottom': '0.2rem',
                         }"
                     >
                         <span class="fi-sms-cat-name truncate text-sm font-medium" x-text="cat.name"></span>
