@@ -24,6 +24,5 @@ Route::middleware(['auth', 'active-member'])->group(function () {
     Route::delete('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'destroy'])->name('competitions.judges.destroy');
     Route::get('/competitions/{competition}/results/{member}', [ResultsController::class, 'show'])->name('results.show');
     Route::get('/competitions/{competition}/results', [ResultsController::class, 'index'])
-        ->name('results.index')
-        ->middleware('admin');
+        ->name('results.index');
 });

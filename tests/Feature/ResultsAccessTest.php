@@ -52,13 +52,46 @@ class ResultsAccessTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_results_blocked_if_competition_not_closed(): void
+    public function test_member_results_blocked_if_competition_not_closed(): void
     {
         $style = Style::create(['code' => '2A', 'category_name' => 'SA', 'name' => 'Intl Lager']);
-        $admin = Member::factory()->create(['name' => 'Admin2', 'email' => 'a2@t.com', 'is_admin' => true]);
         $comp = Competition::create(['name' => 'Open Cup', 'year' => 2025, 'status' => 'judging']);
         $brewer = Member::factory()->create(['name' => 'B2', 'email' => 'b2@t.com']);
+        $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results/{$brewer->id}");
+        $response->assertForbidden();
+    }
+
+    public function test_admin_can_view_sheet_before_competition_closes(): void
+    {
+        $style = Style::create(['code' => '2B', 'category_name' => 'SA', 'name' => 'Intl Pale Lager']);
+        $admin = Member::factory()->create(['name' => 'Admin2', 'email' => 'a2@t.com', 'is_admin' => true]);
+        $comp = Competition::create(['name' => 'Judging Cup', 'year' => 2025, 'status' => 'judging']);
+        $brewer = Member::factory()->create(['name' => 'B2', 'email' => 'b2@t.com']);
+        $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
         $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results/{$brewer->id}");
+        $response->assertOk();
+    }
+
+    public function test_admin_can_view_index_before_competition_closes(): void
+    {
+        $admin = Member::factory()->create(['name' => 'Admin3', 'email' => 'a3@t.com', 'is_admin' => true]);
+        $comp = Competition::create(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'judging']);
+        $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results");
+        $response->assertOk();
+    }
+
+    public function test_member_can_view_results_index_when_closed(): void
+    {
+        [$comp, $brewer] = $this->seedData();
+        $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results");
+        $response->assertOk();
+    }
+
+    public function test_member_index_blocked_if_competition_not_closed(): void
+    {
+        $comp = Competition::create(['name' => 'Open Cup 2', 'year' => 2025, 'status' => 'judging']);
+        $brewer = Member::factory()->create(['name' => 'B3', 'email' => 'b3@t.com']);
+        $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results");
         $response->assertForbidden();
     }
 
