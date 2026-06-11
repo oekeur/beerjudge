@@ -90,6 +90,14 @@
             totalSelected() {
                 return (this.state ?? []).length;
             },
+            selectedItems() {
+                const selected = new Set((this.state ?? []).map(String));
+                return this.categories.flatMap(cat =>
+                    Object.entries(cat.labels)
+                        .filter(([v]) => selected.has(String(v)))
+                        .map(([value, label]) => ({ value, label }))
+                );
+            },
         }"
         class="fi-fo-checkbox-list"
     >
@@ -123,11 +131,33 @@
             </span>
         </div>
 
+        {{-- Selected pills --}}
+        @unless ($isDisabled)
+            <div
+                x-show="totalSelected() > 0"
+                x-cloak
+                class="flex flex-wrap gap-1.5 border-l border-r border-b border-gray-200 bg-gray-50 px-3 py-2 dark:border-white/10 dark:bg-white/5"
+                style="max-height:5rem;overflow-y:auto"
+            >
+                <template x-for="item in selectedItems()" :key="item.value">
+                    <span class="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-500/20 dark:text-primary-300">
+                        <span x-text="item.label"></span>
+                        <button
+                            type="button"
+                            x-on:click="toggle(item.value)"
+                            class="rounded-full hover:bg-primary-200 dark:hover:bg-primary-500/30 transition-colors"
+                            style="line-height:1;padding:1px 3px;font-size:0.875rem"
+                        >&times;</button>
+                    </span>
+                </template>
+            </div>
+        @endunless
+
         {{-- Master-detail panels --}}
         <div class="rounded-b-lg border border-t-0 border-gray-200 dark:border-white/10" style="display:flex;height:32rem;overflow:hidden">
 
             {{-- Left: category list --}}
-            <div class="border-r border-gray-200 dark:border-white/10" style="width:15rem;flex-shrink:0;overflow-y:auto">
+            <div class="border-r border-gray-200 dark:border-white/10" style="width:40%;flex-shrink:0;overflow-y:auto">
                 <template x-for="(cat, idx) in visibleCategories()" :key="cat.name">
                     <div
                         x-on:click="activeIdx = idx"
@@ -167,6 +197,15 @@
                                 x-text="countCat(cat) + '/' + cat.values.length"
                             ></span>
                         @endunless
+
+                        <svg
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            class="text-gray-400 dark:text-gray-500"
+                            style="width:12px;height:12px;margin-left:4px;flex-shrink:0;transition:opacity 0.15s"
+                            x-bind:style="activeIdx === idx ? 'width:12px;height:12px;margin-left:4px;flex-shrink:0;opacity:0.8' : 'width:12px;height:12px;margin-left:4px;flex-shrink:0;opacity:0.3'"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                        </svg>
                     </div>
                 </template>
 
@@ -183,7 +222,7 @@
 
                 {{-- Search results: flat cross-category list --}}
                 <template x-if="search.trim() !== ''">
-                    <div style="flex:1;overflow-y:auto">
+                    <div style="flex:1;display:flex;flex-direction:column;overflow-y:auto">
                         <template x-for="item in searchResults()" :key="item.value">
                             <label
                                 class="flex cursor-pointer select-none items-center gap-3 px-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -234,20 +273,19 @@
                                     <button
                                         type="button"
                                         x-on:click="selectCat(activeCategory())"
-                                        class="rounded px-2 py-0.5 text-xs font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-500/10 transition-colors"
+                                        class="rounded border border-primary-300 px-2 py-0.5 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors dark:border-primary-600 dark:text-primary-400 dark:hover:bg-primary-500/10"
                                     >Select all</button>
-                                    <span class="text-gray-300 dark:text-gray-600">·</span>
                                     <button
                                         type="button"
                                         x-on:click="deselectCat(activeCategory())"
-                                        class="rounded px-2 py-0.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-white/5 transition-colors"
+                                        class="rounded border border-gray-200 px-2 py-0.5 text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors dark:border-white/10 dark:text-gray-400 dark:hover:bg-white/5"
                                     >Clear</button>
                                 </div>
                             @endunless
                         </div>
 
                         {{-- Substyle list --}}
-                        <div style="flex:1;overflow-y:auto">
+                        <div style="flex:1;display:flex;flex-direction:column;overflow-y:auto">
                             <template x-for="[value, label] in Object.entries(activeCategory()?.labels ?? {})" :key="value">
                                 <label
                                     class="flex cursor-pointer select-none items-center gap-3 px-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
