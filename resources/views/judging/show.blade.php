@@ -98,11 +98,11 @@
                                 <span class="text-green-600 font-semibold text-sm">{{ __('judging.submitted') }}</span>
                             </div>
                             <div class="text-sm text-gray-600 space-y-1 mb-3" aria-live="polite">
-                                <div>{{ __('judging.section.aroma') }} <strong x-text="sheets[entry.id].aroma"></strong>/12
-                                    · {{ __('judging.section.appearance') }} <strong x-text="sheets[entry.id].appearance"></strong>/3
-                                    · {{ __('judging.section.flavour') }} <strong x-text="sheets[entry.id].flavour"></strong>/20</div>
-                                <div>{{ __('judging.section.mouthfeel') }} <strong x-text="sheets[entry.id].mouthfeel"></strong>/5
-                                    · {{ __('judging.section.overall') }} <strong x-text="sheets[entry.id].overall"></strong>/10</div>
+                                <div>{{ __('judging.section.aroma') }} <strong x-text="sheets[entry.id].aroma"></strong>/12</div>
+                                <div>{{ __('judging.section.appearance') }} <strong x-text="sheets[entry.id].appearance"></strong>/3</div>
+                                <div>{{ __('judging.section.flavour') }} <strong x-text="sheets[entry.id].flavour"></strong>/20</div>
+                                <div>{{ __('judging.section.mouthfeel') }} <strong x-text="sheets[entry.id].mouthfeel"></strong>/5</div>
+                                <div>{{ __('judging.section.overall') }} <strong x-text="sheets[entry.id].overall"></strong>/10</div>
                             </div>
                             <div class="mb-4">
                                 <div class="text-base font-bold">{{ __('judging.total') }} <span x-text="sheetTotal(entry.id)"></span> / 50</div>
