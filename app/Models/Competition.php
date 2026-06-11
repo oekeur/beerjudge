@@ -16,18 +16,22 @@ class Competition extends Model
 
     const STATUS_CLOSED = 'closed';
 
-    protected $attributes = ['status' => 'draft'];
+    protected $attributes = ['status' => self::STATUS_DRAFT];
 
     protected $fillable = [
-        'name', 'year', 'judging_date', 'status', 'published_at',
+        'name', 'year', 'judging_date', 'status',
     ];
 
     protected function casts(): array
     {
         return [
             'judging_date' => 'date',
-            'published_at' => 'datetime',
         ];
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->status === self::STATUS_CLOSED;
     }
 
     public function styles(): BelongsToMany

@@ -21,7 +21,7 @@ class ResultsAccessTest extends TestCase
         $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@t.com']);
         $other = Member::factory()->create(['name' => 'Other', 'email' => 'other@t.com']);
         $comp = Competition::create(['name' => 'Spring Cup', 'year' => 2025, 'status' => 'closed']);
-        $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'name' => 'Pale Ale', 'bottle_number' => 1]);
+        $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
         Scoresheet::create([
             'entry_id' => $entry->id, 'judge_id' => $admin->id,
             'aroma' => 10, 'appearance' => 3, 'flavour' => 18, 'mouthfeel' => 4, 'overall' => 9,
@@ -38,17 +38,9 @@ class ResultsAccessTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_member_blocked_before_publish(): void
+    public function test_member_can_view_own_sheet_when_closed(): void
     {
         [$comp, $brewer] = $this->seedData();
-        $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results/{$brewer->id}");
-        $response->assertForbidden();
-    }
-
-    public function test_member_can_view_own_sheet_after_publish(): void
-    {
-        [$comp, $brewer] = $this->seedData();
-        $comp->update(['published_at' => now()]);
         $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results/{$brewer->id}");
         $response->assertOk();
     }
@@ -56,7 +48,6 @@ class ResultsAccessTest extends TestCase
     public function test_member_cannot_view_other_members_sheet(): void
     {
         [$comp, $brewer, $admin, $other] = $this->seedData();
-        $comp->update(['published_at' => now()]);
         $response = $this->actingAs($other)->get("/competitions/{$comp->id}/results/{$brewer->id}");
         $response->assertForbidden();
     }

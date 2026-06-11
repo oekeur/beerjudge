@@ -7,31 +7,31 @@ use App\Models\Entry;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 
 class ResultsController extends Controller
 {
-    public function show(Competition $competition, Member $member, Request $request)
+    public function show(Competition $competition, Member $member, Request $request): View
     {
-        abort_if($competition->status !== 'closed', 403);
+        abort_unless($competition->isClosed(), 403);
 
         $viewer = $request->user();
-        if (! $viewer->is_admin) {
-            abort_if($competition->published_at === null, 403);
-            abort_if($viewer->id !== $member->id, 403);
-        }
+        abort_if(! $viewer->is_admin && $viewer->id !== $member->id, 403);
 
         $rankedEntries = $this->buildRankedEntries($competition);
-        $memberEntries = $rankedEntries->filter(fn ($row) => $row['entry']->member_id === $member->id)->values();
+        $memberEntries = $rankedEntries
+            ->filter(fn (array $row): bool => $row['entry']->member_id === $member->id)
+            ->values();
 
         return view('results.show', compact('competition', 'member', 'rankedEntries', 'memberEntries'));
     }
 
-    public function index(Competition $competition, Request $request)
+    public function index(Competition $competition, Request $request): View
     {
-        abort_if(! $request->user()->is_admin, 403);
-        abort_if($competition->status !== 'closed', 403);
+        abort_unless($request->user()->is_admin, 403);
+        abort_unless($competition->isClosed(), 403);
 
-        $members = Member::whereHas('entries', fn ($q) => $q->where('competition_id', $competition->id))
+        $members = Member::whereHas('entries', fn ($query) => $query->where('competition_id', $competition->id))
             ->orderBy('name')
             ->get();
 
@@ -41,33 +41,33 @@ class ResultsController extends Controller
     private function buildRankedEntries(Competition $competition): Collection
     {
         $entries = Entry::where('competition_id', $competition->id)
-            ->with(['member', 'style', 'scoresheets' => fn ($q) => $q->where('status', 'submitted')->with('judge')])
+            ->with(['member', 'style', 'scoresheets' => fn ($query) => $query->where('status', 'submitted')->with('judge')])
             ->orderBy('id')
             ->get();
 
-        $rows = $entries->map(function (Entry $entry) {
-            $sheets = $entry->scoresheets;
-            $avgTotal = $sheets->count() > 0 ? $sheets->avg('total') : 0;
-            $avgOverall = $sheets->count() > 0 ? $sheets->avg('overall') : 0;
+        return $entries
+            ->map(function (Entry $entry): array {
+                $sheets = $entry->scoresheets;
+                $averageTotal = round((float) $sheets->avg('total'), 2);
+                $averageOverall = round((float) $sheets->avg('overall'), 2);
 
-            return [
-                'entry' => $entry,
-                'sheets' => $sheets,
-                'avg_total' => round((float) $avgTotal, 2),
-                'avg_overall' => round((float) $avgOverall, 2),
-                'sheet_count' => $sheets->count(),
-                'band' => $this->band((float) $avgTotal),
-            ];
-        });
+                return [
+                    'entry' => $entry,
+                    'sheets' => $sheets,
+                    'avg_total' => $averageTotal,
+                    'avg_overall' => $averageOverall,
+                    'sheet_count' => $sheets->count(),
+                    'band' => $this->band($averageTotal),
+                ];
+            })
+            ->sort(fn (array $a, array $b): int => $b['avg_total'] <=> $a['avg_total']
+                ?: $b['avg_overall'] <=> $a['avg_overall'])
+            ->values()
+            ->map(function (array $row, int $index): array {
+                $row['placement'] = $index + 1;
 
-        $ranked = $rows->sort(fn ($a, $b) => $b['avg_total'] <=> $a['avg_total'] ?: $b['avg_overall'] <=> $a['avg_overall']
-        )->values();
-
-        return $ranked->map(function ($row, $i) {
-            $row['placement'] = $i + 1;
-
-            return $row;
-        });
+                return $row;
+            });
     }
 
     private function band(float $total): string

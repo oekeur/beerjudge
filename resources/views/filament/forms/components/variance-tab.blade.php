@@ -27,11 +27,6 @@
                class="fi-btn fi-btn-size-md fi-btn-color-gray fi-color-gray fi-ac-btn-action inline-flex items-center justify-center gap-1.5 font-semibold rounded-lg px-3 py-2 text-sm shadow-sm ring-1 ring-gray-950/10 bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/20 dark:hover:bg-white/10">
                 View Results
             </a>
-            @if(!$record->published_at)
-                <span class="text-sm text-gray-500 dark:text-gray-400">Results not yet published to members.</span>
-            @else
-                <span class="text-sm text-gray-500 dark:text-gray-400">Published {{ $record->published_at->format('d M Y') }}.</span>
-            @endif
         </div>
     @endif
 
