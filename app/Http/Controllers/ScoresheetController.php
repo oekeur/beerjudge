@@ -41,7 +41,7 @@ class ScoresheetController extends Controller
         $data = $request->validated();
 
         $judge = $request->user();
-        $entry = Entry::with('competition')->findOrFail($data['entry_id']);
+        $entry = Entry::with('competition')->findOrFail((int) $data['entry_id']);
 
         abort_if($entry->competition->status !== 'judging', 422, 'Competition is not in judging phase.');
         abort_if($entry->member_id === $judge->id, 422, 'You cannot score your own entry.');

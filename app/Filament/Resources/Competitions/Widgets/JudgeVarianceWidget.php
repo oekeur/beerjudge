@@ -7,7 +7,6 @@ use App\Models\Scoresheet;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Support\Facades\DB;
 
 class JudgeVarianceWidget extends BaseWidget
 {
@@ -31,11 +30,17 @@ class JudgeVarianceWidget extends BaseWidget
                     ->where('competition_id', $this->competitionId)
                     ->withCount(['scoresheets as sheet_count' => fn ($q) => $q->where('status', 'submitted')])
                     ->withAvg(['scoresheets as avg_total' => fn ($q) => $q->where('status', 'submitted')], 'total')
-                    ->addSelect([
-                        "{$entriesTable}.*",
-                        DB::raw("(SELECT MAX(s.total) - MIN(s.total) FROM {$sheetsTable} s WHERE s.entry_id = {$entriesTable}.id AND s.status = 'submitted') as spread"),
-                    ])
-                    ->whereRaw("(select count(*) from {$sheetsTable} where {$entriesTable}.id = {$sheetsTable}.entry_id and status = ?) >= 2", ['submitted'])
+                    ->addSelect("{$entriesTable}.*")
+                    ->selectSub(
+                        Scoresheet::query()
+                            ->selectRaw('MAX(total) - MIN(total)')
+                            ->whereColumn('entry_id', "{$entriesTable}.id")
+                            ->where('status', 'submitted'),
+                        'spread'
+                    )
+                    ->whereHas('scoresheets', function ($query) {
+                        $query->where('status', 'submitted');
+                    }, '>=', 2)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('bottle_number')->label(__('widget.variance.column.number'))->sortable(),
