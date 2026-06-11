@@ -108,12 +108,17 @@
                                         <label :for="'aroma-' + entry.id" class="font-medium text-gray-800 text-sm">Aroma</label>
                                         <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'aroma')" :aria-label="'View BJCP aroma guideline for ' + entry.style_name">i</button>
                                     </div>
-                                    <div class="flex items-center gap-1" role="group" :aria-label="'Aroma score, 0 to 12'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].aroma = Math.max(0, sheets[entry.id].aroma - 1); onInput(entry.id)">−</button>
-                                        <input :id="'aroma-' + entry.id" type="number" min="0" max="12" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].aroma" @change="onInput(entry.id)" :aria-label="'Aroma score, 0 to 12'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].aroma = Math.min(12, sheets[entry.id].aroma + 1); onInput(entry.id)">+</button>
-                                        <span class="text-xs text-gray-400 ml-1">/12</span>
-                                    </div>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].aroma"></span> / 12</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Aroma score, 0 to 12">
+                                    @for ($n = 0; $n <= 12; $n++)
+                                    <button type="button"
+                                        class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
+                                        :class="sheets[entry.id].aroma === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                        @click="sheets[entry.id].aroma = {{ $n }}; onInput(entry.id)"
+                                        :aria-pressed="sheets[entry.id].aroma === {{ $n }}"
+                                    >{{ $n }}</button>
+                                    @endfor
                                 </div>
                                 <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on malt, hops, esters, and other aromatics" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Aroma notes'"></textarea>
                             </div>
@@ -125,12 +130,17 @@
                                         <label :for="'appearance-' + entry.id" class="font-medium text-gray-800 text-sm">Appearance</label>
                                         <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'appearance')" :aria-label="'View BJCP appearance guideline for ' + entry.style_name">i</button>
                                     </div>
-                                    <div class="flex items-center gap-1" role="group" :aria-label="'Appearance score, 0 to 3'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].appearance = Math.max(0, sheets[entry.id].appearance - 1); onInput(entry.id)">−</button>
-                                        <input :id="'appearance-' + entry.id" type="number" min="0" max="3" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].appearance" @change="onInput(entry.id)" :aria-label="'Appearance score, 0 to 3'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].appearance = Math.min(3, sheets[entry.id].appearance + 1); onInput(entry.id)">+</button>
-                                        <span class="text-xs text-gray-400 ml-1">/3</span>
-                                    </div>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].appearance"></span> / 3</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Appearance score, 0 to 3">
+                                    @for ($n = 0; $n <= 3; $n++)
+                                    <button type="button"
+                                        class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
+                                        :class="sheets[entry.id].appearance === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                        @click="sheets[entry.id].appearance = {{ $n }}; onInput(entry.id)"
+                                        :aria-pressed="sheets[entry.id].appearance === {{ $n }}"
+                                    >{{ $n }}</button>
+                                    @endfor
                                 </div>
                                 <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on color, clarity, and head (retention, color, and texture)" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Appearance notes'"></textarea>
                             </div>
@@ -142,12 +152,17 @@
                                         <label :for="'flavour-' + entry.id" class="font-medium text-gray-800 text-sm">Flavour</label>
                                         <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'flavor')" :aria-label="'View BJCP flavour guideline for ' + entry.style_name">i</button>
                                     </div>
-                                    <div class="flex items-center gap-1" role="group" :aria-label="'Flavour score, 0 to 20'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].flavour = Math.max(0, sheets[entry.id].flavour - 1); onInput(entry.id)">−</button>
-                                        <input :id="'flavour-' + entry.id" type="number" min="0" max="20" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].flavour" @change="onInput(entry.id)" :aria-label="'Flavour score, 0 to 20'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].flavour = Math.min(20, sheets[entry.id].flavour + 1); onInput(entry.id)">+</button>
-                                        <span class="text-xs text-gray-400 ml-1">/20</span>
-                                    </div>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].flavour"></span> / 20</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Flavour score, 0 to 20">
+                                    @for ($n = 0; $n <= 20; $n++)
+                                    <button type="button"
+                                        class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
+                                        :class="sheets[entry.id].flavour === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                        @click="sheets[entry.id].flavour = {{ $n }}; onInput(entry.id)"
+                                        :aria-pressed="sheets[entry.id].flavour === {{ $n }}"
+                                    >{{ $n }}</button>
+                                    @endfor
                                 </div>
                                 <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on malt, hops, fermentation characteristics, balance, finish/aftertaste, and other flavor characteristics" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Flavour notes'"></textarea>
                             </div>
@@ -159,12 +174,17 @@
                                         <label :for="'mouthfeel-' + entry.id" class="font-medium text-gray-800 text-sm">Mouthfeel</label>
                                         <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'mouthfeel')" :aria-label="'View BJCP mouthfeel guideline for ' + entry.style_name">i</button>
                                     </div>
-                                    <div class="flex items-center gap-1" role="group" :aria-label="'Mouthfeel score, 0 to 5'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].mouthfeel = Math.max(0, sheets[entry.id].mouthfeel - 1); onInput(entry.id)">−</button>
-                                        <input :id="'mouthfeel-' + entry.id" type="number" min="0" max="5" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].mouthfeel" @change="onInput(entry.id)" :aria-label="'Mouthfeel score, 0 to 5'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].mouthfeel = Math.min(5, sheets[entry.id].mouthfeel + 1); onInput(entry.id)">+</button>
-                                        <span class="text-xs text-gray-400 ml-1">/5</span>
-                                    </div>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].mouthfeel"></span> / 5</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Mouthfeel score, 0 to 5">
+                                    @for ($n = 0; $n <= 5; $n++)
+                                    <button type="button"
+                                        class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
+                                        :class="sheets[entry.id].mouthfeel === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                        @click="sheets[entry.id].mouthfeel = {{ $n }}; onInput(entry.id)"
+                                        :aria-pressed="sheets[entry.id].mouthfeel === {{ $n }}"
+                                    >{{ $n }}</button>
+                                    @endfor
                                 </div>
                                 <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on body, carbonation, warmth, creaminess, astringency, and other palate sensations" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Mouthfeel notes'"></textarea>
                             </div>
@@ -176,12 +196,17 @@
                                         <label :for="'overall-' + entry.id" class="font-medium text-gray-800 text-sm">Overall Impression</label>
                                         <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'overall_impression')" :aria-label="'View BJCP overall impression guideline for ' + entry.style_name">i</button>
                                     </div>
-                                    <div class="flex items-center gap-1" role="group" :aria-label="'Overall impression score, 0 to 10'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].overall = Math.max(0, sheets[entry.id].overall - 1); onInput(entry.id)">−</button>
-                                        <input :id="'overall-' + entry.id" type="number" min="0" max="10" class="w-12 h-9 text-center border border-gray-300 rounded-lg text-sm font-bold" x-model.number="sheets[entry.id].overall" @change="onInput(entry.id)" :aria-label="'Overall impression score, 0 to 10'">
-                                        <button type="button" class="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 font-bold text-lg flex items-center justify-center" @click="sheets[entry.id].overall = Math.min(10, sheets[entry.id].overall + 1); onInput(entry.id)">+</button>
-                                        <span class="text-xs text-gray-400 ml-1">/10</span>
-                                    </div>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].overall"></span> / 10</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Overall Impression score, 0 to 10">
+                                    @for ($n = 0; $n <= 10; $n++)
+                                    <button type="button"
+                                        class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
+                                        :class="sheets[entry.id].overall === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                        @click="sheets[entry.id].overall = {{ $n }}; onInput(entry.id)"
+                                        :aria-pressed="sheets[entry.id].overall === {{ $n }}"
+                                    >{{ $n }}</button>
+                                    @endfor
                                 </div>
                                 <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="Comment on overall drinking pleasure associated with entry, give suggestions for improvement" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Overall impression notes'"></textarea>
                             </div>
