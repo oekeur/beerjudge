@@ -21,6 +21,27 @@
         </form>
     </header>
 
+    {{-- Judge registration banner --}}
+    @if(! $isJudge)
+        <div class="bg-amber-50 border-b border-amber-200 px-4 py-3 flex items-center justify-between gap-4">
+            <p class="text-sm text-amber-800">{{ __('judging.not_registered') }}</p>
+            <form method="POST" action="{{ route('competitions.judges.store', $competition) }}">
+                @csrf
+                <button type="submit" class="text-sm font-medium text-amber-700 underline whitespace-nowrap">
+                    {{ __('judging.register_as_judge') }}
+                </button>
+            </form>
+        </div>
+    @else
+        <div class="bg-white border-b border-gray-100 px-4 py-2 flex justify-end">
+            <form method="POST" action="{{ route('competitions.judges.destroy', $competition) }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="text-xs text-gray-400 underline">{{ __('judging.leave_as_judge') }}</button>
+            </form>
+        </div>
+    @endif
+
     {{-- Entry list --}}
     <main class="max-w-lg mx-auto px-4 py-4 space-y-3">
 

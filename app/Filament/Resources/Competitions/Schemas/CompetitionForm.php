@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Competitions\Schemas;
 
 use App\Filament\Forms\Components\StyleMultiSelect;
+use App\Models\Competition;
+use App\Models\Member;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -86,6 +88,30 @@ class CompetitionForm
                                         ])->render())
                                         : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
                                     )
+                                    ->columnSpanFull(),
+                            ]),
+
+                        Tab::make(__('competition.tab.judging'))
+                            ->schema([
+                                Select::make('judges')
+                                    ->multiple()
+                                    ->relationship('judges', 'name')
+                                    ->options(fn () => Member::where('is_active', true)->orderBy('name')->pluck('name', 'id'))
+                                    ->searchable()
+                                    ->preload()
+                                    ->columnSpanFull(),
+
+                                Placeholder::make('judging_progress')
+                                    ->label('')
+                                    ->content(function (?Competition $record): HtmlString {
+                                        if (! $record?->exists) {
+                                            return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
+                                        }
+
+                                        return new HtmlString(view('filament.competition.judging-progress', [
+                                            'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
+                                        ])->render());
+                                    })
                                     ->columnSpanFull(),
                             ]),
                     ]),

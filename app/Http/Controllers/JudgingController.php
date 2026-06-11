@@ -67,7 +67,8 @@ class JudgingController extends Controller
         ];
 
         $descriptors = ScoresheetController::descriptors();
+        $isJudge = $competition->judges()->where('member_id', $judge->id)->exists();
 
-        return view('judging.show', compact('competition', 'judge', 'serverData', 'descriptors'));
+        return view('judging.show', compact('competition', 'judge', 'serverData', 'descriptors', 'isJudge'));
     }
 }
