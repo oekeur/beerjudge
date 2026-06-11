@@ -16,11 +16,17 @@ class Style extends Model
         'abv_min', 'abv_max', 'ibu_min', 'ibu_max', 'srm_min', 'srm_max',
     ];
 
+    /**
+     * @return BelongsToMany<Competition, $this>
+     */
     public function competitions(): BelongsToMany
     {
         return $this->belongsToMany(Competition::class, 'competition_style');
     }
 
+    /**
+     * @return HasMany<Entry, $this>
+     */
     public function entries(): HasMany
     {
         return $this->hasMany(Entry::class);

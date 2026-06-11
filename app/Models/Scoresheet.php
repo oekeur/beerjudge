@@ -30,11 +30,17 @@ class Scoresheet extends Model
         });
     }
 
+    /**
+     * @return BelongsTo<Entry, $this>
+     */
     public function entry(): BelongsTo
     {
         return $this->belongsTo(Entry::class);
     }
 
+    /**
+     * @return BelongsTo<Member, $this>
+     */
     public function judge(): BelongsTo
     {
         return $this->belongsTo(Member::class, 'judge_id');

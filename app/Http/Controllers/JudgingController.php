@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Competition;
 use App\Models\Scoresheet;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class JudgingController extends Controller
 {
-    public function show(Competition $competition, Request $request)
+    public function show(Competition $competition, Request $request): View
     {
         abort_if($competition->status !== 'judging', 403);
 

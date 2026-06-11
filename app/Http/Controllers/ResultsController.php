@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Member;
+use App\Models\Scoresheet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -38,6 +39,9 @@ class ResultsController extends Controller
         return view('results.index', compact('competition', 'members'));
     }
 
+    /**
+     * @return Collection<int, array{entry: Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, placement: int}>
+     */
     private function buildRankedEntries(Competition $competition): Collection
     {
         $entries = Entry::where('competition_id', $competition->id)

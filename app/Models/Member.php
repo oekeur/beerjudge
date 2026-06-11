@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\MemberFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Member extends Authenticatable implements FilamentUser
 {
+    /** @use HasFactory<MemberFactory> */
     use HasFactory, Notifiable;
 
     protected $fillable = [
@@ -33,11 +35,17 @@ class Member extends Authenticatable implements FilamentUser
         return $this->is_admin;
     }
 
+    /**
+     * @return HasMany<Entry, $this>
+     */
     public function entries(): HasMany
     {
         return $this->hasMany(Entry::class);
     }
 
+    /**
+     * @return HasMany<Scoresheet, $this>
+     */
     public function scoresheets(): HasMany
     {
         return $this->hasMany(Scoresheet::class, 'judge_id');

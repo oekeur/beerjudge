@@ -18,6 +18,9 @@ class StyleMultiSelect extends CheckboxList
         );
     }
 
+    /**
+     * @return array<string, array<int, string>>
+     */
     public function getCategorizedOptions(): array
     {
         return Style::orderBy('code')
