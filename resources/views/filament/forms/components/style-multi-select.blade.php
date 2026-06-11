@@ -22,11 +22,6 @@
         ->all();
 @endphp
 
-<style>
-    .fi-sms-cat-row:hover .fi-sms-cat-name { text-decoration: underline; }
-    .fi-sms-cat-row.fi-sms-active .fi-sms-cat-name { font-weight: 600; }
-</style>
-
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         x-data="{
@@ -107,38 +102,34 @@
         class="fi-fo-checkbox-list"
     >
         {{-- Toolbar --}}
-        <div class="sticky top-0 z-10 rounded-t-lg border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900" style="z-index:10">
+        <div class="sticky top-0 z-10 rounded-t-lg border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
 
             {{-- Pills row --}}
             @unless ($isDisabled)
                 <div
                     x-show="totalSelected() > 0"
                     x-cloak
-                    style="display:flex;flex-wrap:wrap;gap:6px;max-height:5rem;overflow-y:auto;padding:0.75rem 0.75rem;border-bottom:1px solid #f3f4f6"
+                    class="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto p-3 border-b border-gray-100 dark:border-white/10"
                 >
                     <span
                         x-show="totalSelected() === allValues.length"
-                        style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:9999px;font-size:0.75rem;font-weight:500;background:var(--color-primary-100,#fef3c7);color:var(--color-primary-700,#b45309)"
+                        class="inline-flex items-center gap-1 py-0.5 px-2.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700"
                     >
                         <span>All styles</span>
                         <button
                             type="button"
                             x-on:click="deselectAll()"
-                            style="line-height:1;padding:0 3px;font-size:1rem;opacity:0.6"
-                            onmouseover="this.style.opacity='1'"
-                            onmouseout="this.style.opacity='0.6'"
+                            class="leading-none px-[3px] text-base opacity-60 transition-opacity hover:opacity-100"
                         >&times;</button>
                     </span>
 
                     <template x-for="item in (totalSelected() < allValues.length ? selectedItems() : [])" :key="item.value">
-                        <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:9999px;font-size:0.75rem;font-weight:500;background:var(--color-primary-100,#fef3c7);color:var(--color-primary-700,#b45309)">
+                        <span class="inline-flex items-center gap-1 py-0.5 px-2.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700">
                             <span x-text="item.label"></span>
                             <button
                                 type="button"
                                 x-on:click="toggle(item.value)"
-                                style="line-height:1;padding:0 3px;font-size:1rem;opacity:0.6"
-                                onmouseover="this.style.opacity='1'"
-                                onmouseout="this.style.opacity='0.6'"
+                                class="leading-none px-[3px] text-base opacity-60 transition-opacity hover:opacity-100"
                             >&times;</button>
                         </span>
                     </template>
@@ -146,11 +137,11 @@
             @endunless
 
             {{-- Search row --}}
-            <div style="padding:0.75rem 0.75rem 0.5rem">
+            <div class="px-3 pt-3 pb-2">
                 <x-filament::input.wrapper
                     inline-prefix
                     :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-                    style="width:100%"
+                    class="w-full"
                 >
                     <input
                         type="search"
@@ -163,7 +154,7 @@
             </div>
 
             {{-- Controls row --}}
-            <div style="display:flex;align-items:center;padding:0.5rem 0.75rem;gap:0.5rem">
+            <div class="flex items-center gap-2 px-3 py-2">
                 @unless ($isDisabled)
                     <x-filament::button type="button" color="gray" outlined size="sm" x-on:click="selectAll()">
                         Select all
@@ -172,41 +163,39 @@
                         Deselect all
                     </x-filament::button>
                 @endunless
-                <span class="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300" style="margin-left:auto">
+                <span class="ml-auto rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300">
                     <span x-text="totalSelected()"></span> / {{ $totalCount }}
                 </span>
             </div>
         </div>
 
         {{-- Master-detail panels --}}
-        <div class="rounded-b-lg border border-t-0 border-gray-200 dark:border-white/10" style="display:flex;height:32rem;overflow:hidden">
+        <div class="flex h-[32rem] overflow-hidden rounded-b-lg border border-t-0 border-gray-200 dark:border-white/10">
 
             {{-- Left: category list --}}
-            <div class="border-r border-gray-200 dark:border-white/10" style="width:25%;flex-shrink:0;overflow-y:auto">
+            <div class="w-1/4 shrink-0 overflow-y-auto border-r border-gray-200 dark:border-white/10">
                 <template x-for="(cat, idx) in visibleCategories()" :key="cat.name">
                     <div
                         x-on:click="activeIdx = idx"
                         :title="cat.name"
-                        class="fi-sms-cat-row flex w-full cursor-pointer items-center justify-between px-3 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                        class="group flex w-full cursor-pointer items-center justify-between border-l-2 py-[0.2rem] px-3 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                         x-bind:class="{
-                            'fi-sms-active bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300': activeIdx === idx,
-                            'text-gray-700 dark:text-gray-200': activeIdx !== idx,
-                        }"
-                        x-bind:style="{
-                            'border-left': activeIdx === idx ? '2px solid var(--color-primary-500)' : '2px solid transparent',
-                            'padding-top': '0.2rem',
-                            'padding-bottom': '0.2rem',
+                            'fi-sms-active border-l-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300': activeIdx === idx,
+                            'border-l-transparent text-gray-700 dark:text-gray-200': activeIdx !== idx,
                         }"
                     >
-                        <span class="fi-sms-cat-name truncate text-sm font-medium" x-text="cat.name"></span>
+                        <span
+                            class="truncate text-sm group-hover:underline"
+                            x-bind:class="activeIdx === idx ? 'font-semibold' : 'font-medium'"
+                            x-text="cat.name"
+                        ></span>
 
                         @unless ($isDisabled)
                             <button
                                 type="button"
                                 x-on:click.stop="toggleCat(cat)"
                                 :title="isFull(cat) ? 'Deselect all' : 'Select all'"
-                                class="rounded-full px-1.5 py-0.5 text-xs tabular-nums font-semibold transition-opacity hover:opacity-70"
-                                style="margin-left:0.5rem;flex-shrink:0"
+                                class="ml-2 shrink-0 rounded-full px-1.5 py-0.5 text-xs tabular-nums font-semibold transition-opacity hover:opacity-70"
                                 x-bind:class="{
                                     'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300': isFull(cat),
                                     'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300': isPartial(cat),
@@ -216,8 +205,7 @@
                             ></button>
                         @else
                             <span
-                                class="rounded-full px-1.5 py-0.5 text-xs tabular-nums font-semibold"
-                                style="margin-left:0.5rem;flex-shrink:0"
+                                class="ml-2 shrink-0 rounded-full px-1.5 py-0.5 text-xs tabular-nums font-semibold"
                                 x-bind:class="{
                                     'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300': isFull(cat),
                                     'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300': isPartial(cat),
@@ -238,15 +226,14 @@
             </div>
 
             {{-- Right: content panel --}}
-            <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+            <div class="flex flex-1 flex-col overflow-hidden">
 
                 {{-- Search results: flat cross-category list --}}
                 <template x-if="search.trim() !== ''">
-                    <div style="flex:1;display:flex;flex-direction:column;overflow-y:auto">
+                    <div class="flex flex-1 flex-col overflow-y-auto">
                         <template x-for="item in searchResults()" :key="item.value">
                             <label
-                                class="flex cursor-pointer select-none items-center gap-3 px-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                                style="padding-top:0.625rem;padding-bottom:0.625rem;border-bottom:1px solid rgba(255,255,255,0.04)"
+                                class="flex cursor-pointer select-none items-center gap-3 px-4 py-[0.625rem] border-b border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                                 x-bind:class="isChecked(item.value) ? 'dark:bg-primary-500/5' : ''"
                             >
                                 <input
@@ -257,7 +244,7 @@
                                     {{ $isDisabled ? 'disabled' : '' }}
                                     class="fi-checkbox-input"
                                 />
-                                <span style="flex:1;min-width:0">
+                                <span class="flex-1 min-w-0">
                                     <span class="block text-sm text-gray-700 dark:text-gray-200" x-text="item.label"></span>
                                     <span class="block text-xs text-gray-400 dark:text-gray-500" x-text="item.catName"></span>
                                 </span>
@@ -275,13 +262,12 @@
 
                 {{-- Normal view: category header + substyle checkboxes --}}
                 <template x-if="search.trim() === ''">
-                    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+                    <div class="flex flex-1 flex-col overflow-hidden">
 
                         {{-- Header --}}
                         <div
                             x-show="activeCategory() !== null"
-                            class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 px-4"
-                            style="padding-top:0.625rem;padding-bottom:0.625rem;flex-shrink:0;background:rgba(255,255,255,0.03)"
+                            class="flex shrink-0 items-center justify-between border-b border-gray-200 bg-white/[0.03] px-4 py-[0.625rem] dark:border-white/10"
                         >
                             <span
                                 class="truncate text-sm font-semibold text-gray-800 dark:text-gray-100"
@@ -289,31 +275,26 @@
                             ></span>
 
                             @unless ($isDisabled)
-                                <div class="flex items-center gap-1.5" style="margin-left:0.5rem;flex-shrink:0">
+                                <div class="ml-2 flex shrink-0 items-center gap-1.5">
                                     <button
                                         type="button"
                                         x-on:click="selectCat(activeCategory())"
-                                        style="border-radius:4px;border:1px solid var(--color-primary-300,#fcd34d);padding:2px 8px;font-size:0.75rem;font-weight:500;color:var(--color-primary-600,#d97706);cursor:pointer;transition:background 0.1s;background:transparent"
-                                        onmouseover="this.style.background='var(--color-primary-50,#fffbeb)'"
-                                        onmouseout="this.style.background='transparent'"
+                                        class="cursor-pointer rounded border border-primary-300 bg-transparent px-2 py-0.5 text-xs font-medium text-primary-600 transition-colors hover:bg-primary-50"
                                     >Select all</button>
                                     <button
                                         type="button"
                                         x-on:click="deselectCat(activeCategory())"
-                                        style="border-radius:4px;border:1px solid #e5e7eb;padding:2px 8px;font-size:0.75rem;font-weight:500;color:#6b7280;cursor:pointer;transition:background 0.1s;background:transparent"
-                                        onmouseover="this.style.background='#f9fafb'"
-                                        onmouseout="this.style.background='transparent'"
+                                        class="cursor-pointer rounded border border-gray-200 bg-transparent px-2 py-0.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-50"
                                     >Clear</button>
                                 </div>
                             @endunless
                         </div>
 
                         {{-- Substyle list --}}
-                        <div style="flex:1;display:flex;flex-direction:column;overflow-y:auto">
+                        <div class="flex flex-1 flex-col overflow-y-auto">
                             <template x-for="[value, label] in Object.entries(activeCategory()?.labels ?? {})" :key="value">
                                 <label
-                                    class="flex cursor-pointer select-none items-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                                    style="padding:0.625rem 1rem;gap:0.75rem;border-bottom:1px solid #f3f4f6"
+                                    class="flex cursor-pointer select-none items-center gap-3 px-4 py-[0.625rem] border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                                     x-bind:class="isChecked(value) ? 'dark:bg-primary-500/5' : ''"
                                 >
                                     <input
