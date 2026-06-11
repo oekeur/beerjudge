@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JudgeRegistrationController;
 use App\Http\Controllers\JudgingController;
 use App\Http\Controllers\ResultsController;
@@ -14,9 +15,7 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-Route::get('/', function () {
-    return auth()->check() ? view('welcome') : redirect('/login');
-})->middleware('auth', 'active-member');
+Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('auth', 'active-member');
 
 Route::middleware(['auth', 'active-member'])->group(function () {
     Route::post('/scoresheets', [ScoresheetController::class, 'upsert'])->name('scoresheets.upsert');
