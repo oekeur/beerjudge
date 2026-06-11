@@ -4,6 +4,16 @@ Competition management for a small homebrew club. Members register beers, judges
 
 Deliberately narrow in scope: no payments, no shipping, no BJCP report generation, no multi-club support. Built for roughly ten people running four competitions a year.
 
+## Screenshots
+
+| Judging screen | Scoresheet |
+|---|---|
+| ![Entry list](docs/screenshots/judging-list.png) | ![Scoring interface](docs/screenshots/judging-scoresheet.png) |
+
+| Admin — competition entries | Results |
+|---|---|
+| ![Competition entries](docs/screenshots/admin-competition.png) | ![Results sheet](docs/screenshots/results.png) |
+
 ## Stack
 
 - Laravel 13 + Filament 4 (admin panel)
