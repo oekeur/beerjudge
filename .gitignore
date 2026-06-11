@@ -3,7 +3,7 @@
 /.agents
 /.ai
 /.claire
-/.claude
+/.claude/settings.local.json
 /.junie
 .env
 .env.backup

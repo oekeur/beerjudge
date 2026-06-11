@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan test *)",
+      "Bash(php artisan route:list *)",
+      "Bash(vendor/bin/pint *)"
+    ]
+  }
+}

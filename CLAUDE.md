@@ -6,9 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Laravel app for a ~10-person homebrew club to run four competitions per year. Members register beers, judges score them on the BJCP 50-point scale, and each competition produces a ranked result list. Deliberately narrow in scope: no payments, no shipping, no BJCP report generation, no multi-club support.
 
+## Claude Code setup
+
+`.claude/settings.json` grants shared project permissions (pint, artisan test/route:list). Personal permissions, MCP servers, and machine-specific config go in `.claude/settings.local.json` — that file is gitignored.
+
+`.claude/agents/` and `.claude/skills/` are committed and shared. Add project-level agents or skills there; personal ones go in `~/.claude/`.
+
 ## Skills
 
 The `laravel-best-practices` skill is authoritative for this project. Invoke it before making any non-trivial Laravel change.
+
+**PHPStan errors:** whenever `./vendor/bin/phpstan analyse` reports errors — whether you ran it yourself, a hook triggered it, or a CI step failed — invoke the `phpstan-fix` skill immediately. Do not attempt manual fixes inline; the skill handles it with a Haiku subagent.
 
 Use lean sub-agents where they add value:
 - `Explore` for codebase searches and multi-file reads — keep the main context clean.
