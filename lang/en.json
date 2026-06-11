@@ -14,6 +14,7 @@
     "competition.judging_progress.column.style": "Style",
     "competition.judging_progress.status.submitted": "Submitted",
     "competition.judging_progress.status.draft": "Draft",
+    "competition.judging_progress.own_entry": "Own entry",
     "competition.status.draft": "Draft",
     "competition.status.open": "Open",
     "competition.status.judging": "Judging",

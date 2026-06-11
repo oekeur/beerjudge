@@ -102,7 +102,7 @@ class CompetitionForm
                                     ->columnSpanFull(),
 
                                 Placeholder::make('judging_progress')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->content(function (?Competition $record): HtmlString {
                                         if (! $record?->exists) {
                                             return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
