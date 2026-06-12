@@ -12,18 +12,24 @@
         ->orderBy('bottle_number')
         ->get();
 
-    $judgeCount  = $competition->judges()->count();
+    $allJudges   = $competition->judges;
+    $judgeCount  = $allJudges->count();
     $entryCount  = $entries->count();
     $sheetCount  = $entries->sum(fn ($e) => $e->scoresheets->count());
     $maxSheets   = $judgeCount * $entryCount;
     $completePct = $maxSheets > 0 ? (int) round($sheetCount / $maxSheets * 100) : 0;
 
-    $rows = $entries->map(function (Entry $entry) use ($judgeCount) {
-        $submitted = $entry->scoresheets->count();
-        $pct       = $judgeCount > 0 ? (int) round($submitted / $judgeCount * 100) : 0;
-        $missing   = max(0, $judgeCount - $submitted);
+    $rows = $entries->map(function (Entry $entry) use ($allJudges) {
+        $eligible       = $allJudges->where('id', '!=', $entry->member_id);
+        $submittedIds   = $entry->scoresheets->pluck('judge_id');
+        $missingJudges  = $eligible->whereNotIn('id', $submittedIds);
 
-        return compact('entry', 'submitted', 'pct', 'missing');
+        return [
+            'entry'         => $entry,
+            'submitted'     => $submittedIds->count(),
+            'eligible'      => $eligible->count(),
+            'missingJudges' => $missingJudges,
+        ];
     });
 @endphp
 
@@ -79,23 +85,21 @@
                             <td class="px-4 py-2 text-gray-950 dark:text-white">{{ $row['entry']->member?->name }}</td>
                             <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $row['entry']->style?->code }}</td>
                             <td class="px-4 py-2 text-gray-700 dark:text-gray-300">
-                                @if($judgeCount > 0)
-                                    {{ $row['pct'] }}%
+                                @if($row['eligible'] > 0)
+                                    {{ $row['submitted'] }}/{{ $row['eligible'] }}
                                 @else
                                     —
                                 @endif
                             </td>
                             <td class="px-4 py-2">
-                                @if($judgeCount === 0)
+                                @if($row['eligible'] === 0)
                                     <span class="text-gray-400">—</span>
-                                @elseif($row['missing'] === 0)
+                                @elseif($row['missingJudges']->isEmpty())
                                     <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset bg-success-50 text-success-700 ring-success-600/20 dark:bg-success-400/10 dark:text-success-400 dark:ring-success-400/30">
                                         Done
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset bg-warning-50 text-warning-700 ring-warning-600/20 dark:bg-warning-400/10 dark:text-warning-400 dark:ring-warning-400/30">
-                                        {{ $row['missing'] }} missing
-                                    </span>
+                                    <span class="text-warning-700 dark:text-warning-400">{{ $row['missingJudges']->pluck('name')->join(', ') }}</span>
                                 @endif
                             </td>
                             <td class="px-4 py-2 text-right">
