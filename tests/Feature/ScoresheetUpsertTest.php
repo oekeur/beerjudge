@@ -35,11 +35,12 @@ class ScoresheetUpsertTest extends TestCase
 
     private function makeEntry(Competition $comp, Member $brewer, Style $style): Entry
     {
+        $comp->styles()->syncWithoutDetaching([$style->id]);
+
         return Entry::create([
             'competition_id' => $comp->id,
             'member_id' => $brewer->id,
             'style_id' => $style->id,
-            'name' => 'Test Beer',
         ]);
     }
 

@@ -19,18 +19,6 @@
     $maxSheets   = $judgeCount * $entryCount;
     $completePct = $maxSheets > 0 ? (int) round($sheetCount / $maxSheets * 100) : 0;
 
-    $rows = $entries->map(function (Entry $entry) use ($allJudges) {
-        $eligible       = $allJudges->where('id', '!=', $entry->member_id);
-        $submittedIds   = $entry->scoresheets->pluck('judge_id');
-        $missingJudges  = $eligible->whereNotIn('id', $submittedIds);
-
-        return [
-            'entry'         => $entry,
-            'submitted'     => $submittedIds->count(),
-            'eligible'      => $eligible->count(),
-            'missingJudges' => $missingJudges,
-        ];
-    });
 @endphp
 
 <div class="space-y-6">
@@ -44,8 +32,8 @@
             ['label' => 'Progress',  'value' => $maxSheets > 0 ? "{$completePct}%" : '—'],
         ] as $stat)
             <div class="rounded-xl border border-gray-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-white/5">
-                <p class="text-2xl font-bold text-gray-950 dark:text-white">{{ $stat['value'] }}</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $stat['label'] }}</p>
+                <p class="text-2xl font-bold text-gray-950 dark:text-white">{{ (string) $stat['value'] }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">{{ (string) $stat['label'] }}</p>
             </div>
         @endforeach
     </div>
@@ -63,7 +51,7 @@
     </div>
 
     {{-- Per-entry progress --}}
-    @if($rows->isEmpty())
+    @if($entries->isEmpty())
         <p class="text-sm text-gray-500 dark:text-gray-400">No entries registered yet.</p>
     @else
         <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-white/10">
@@ -79,35 +67,42 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                    @foreach($rows as $row)
+                    @foreach($entries as $entry)
+                        @php
+                            $eligible      = $allJudges->where('id', '!=', $entry->member_id);
+                            $submittedIds  = $entry->scoresheets->pluck('judge_id');
+                            $missingJudges = $eligible->whereNotIn('id', $submittedIds);
+                            $submitted     = $submittedIds->count();
+                            $eligibleCount = $eligible->count();
+                        @endphp
                         <tr class="bg-white dark:bg-gray-900">
-                            <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $row['entry']->bottle_number ?? '—' }}</td>
-                            <td class="px-4 py-2 text-gray-950 dark:text-white">{{ $row['entry']->member?->name }}</td>
-                            <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $row['entry']->style?->code }}</td>
+                            <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $entry->bottle_number ?? '—' }}</td>
+                            <td class="px-4 py-2 text-gray-950 dark:text-white">{{ $entry->member?->name }}</td>
+                            <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $entry->style?->code }}</td>
                             <td class="px-4 py-2">
-                                @if($row['eligible'] > 0)
-                                    @if($row['submitted'] === $row['eligible'])
-                                        <span class="font-semibold text-success-700 dark:text-success-400">{{ $row['submitted'] }}/{{ $row['eligible'] }}</span>
+                                @if($eligibleCount > 0)
+                                    @if($submitted === $eligibleCount)
+                                        <span class="font-semibold text-success-700 dark:text-success-400">{{ $submitted }}/{{ $eligibleCount }}</span>
                                     @else
-                                        <span class="text-gray-700 dark:text-gray-300">{{ $row['submitted'] }}/{{ $row['eligible'] }}</span>
+                                        <span class="text-gray-700 dark:text-gray-300">{{ $submitted }}/{{ $eligibleCount }}</span>
                                     @endif
                                 @else
                                     <span class="text-gray-400">—</span>
                                 @endif
                             </td>
                             <td class="px-4 py-2">
-                                @if($row['eligible'] === 0)
+                                @if($eligibleCount === 0)
                                     <span class="text-gray-400">—</span>
-                                @elseif($row['missingJudges']->isEmpty())
+                                @elseif($missingJudges->isEmpty())
                                     <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset bg-success-50 text-success-700 ring-success-600/20 dark:bg-success-400/10 dark:text-success-400 dark:ring-success-400/30">
                                         Done
                                     </span>
                                 @else
-                                    <span class="text-warning-700 dark:text-warning-400">{{ $row['missingJudges']->pluck('name')->join(', ') }}</span>
+                                    <span class="text-warning-700 dark:text-warning-400">{{ $missingJudges->map(fn (\App\Models\Member $m): string => $m->name)->join(', ') }}</span>
                                 @endif
                             </td>
                             <td class="px-4 py-2 text-right">
-                                <a href="{{ route('results.show', [$competition, $row['entry']->member]) }}"
+                                <a href="{{ route('results.show', [$competition, $entry->member]) }}"
                                    target="_blank"
                                    class="text-xs text-primary-600 hover:underline dark:text-primary-400">
                                     Sheet

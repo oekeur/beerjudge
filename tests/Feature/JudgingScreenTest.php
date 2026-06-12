@@ -17,6 +17,7 @@ class JudgingScreenTest extends TestCase
     {
         $comp = Competition::create(['name' => 'Test Cup', 'year' => 2025, 'status' => 'judging']);
         $style = Style::create(['code' => '1A', 'category_name' => 'Standard American', 'name' => 'Light Lager']);
+        $comp->styles()->attach($style->id);
         $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@test.com']);
         $judge = Member::factory()->create(['name' => 'Judge', 'email' => 'judge@test.com']);
         $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);

@@ -13,6 +13,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class EntriesRelationManager extends RelationManager
 {
@@ -27,7 +28,14 @@ class EntriesRelationManager extends RelationManager
                     ->searchable()
                     ->required(),
                 Select::make('style_id')
-                    ->relationship('style', 'name')
+                    ->relationship(
+                        name: 'style',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query) => $query->whereHas(
+                            'competitions',
+                            fn (Builder $q) => $q->where('competitions.id', $this->getOwnerRecord()->getKey())
+                        )
+                    )
                     ->searchable()
                     ->required()
                     ->getOptionLabelFromRecordUsing(fn (Style $record): string => "{$record->code} — {$record->name}"),

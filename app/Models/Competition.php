@@ -2,13 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
+ * @property int $id
+ * @property string $name
+ * @property int $year
+ * @property string $status
  * @property Carbon|null $judging_date
+ * @property Collection<int, Member> $judges
+ * @property Collection<int, Entry> $entries
  */
 class Competition extends Model
 {

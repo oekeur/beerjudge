@@ -21,6 +21,7 @@ class ResultsAccessTest extends TestCase
         $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@t.com']);
         $other = Member::factory()->create(['name' => 'Other', 'email' => 'other@t.com']);
         $comp = Competition::create(['name' => 'Spring Cup', 'year' => 2025, 'status' => 'closed']);
+        $comp->styles()->attach($style->id);
         $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
         Scoresheet::create([
             'entry_id' => $entry->id, 'judge_id' => $admin->id,
@@ -66,6 +67,7 @@ class ResultsAccessTest extends TestCase
         $style = Style::create(['code' => '2B', 'category_name' => 'SA', 'name' => 'Intl Pale Lager']);
         $admin = Member::factory()->create(['name' => 'Admin2', 'email' => 'a2@t.com', 'is_admin' => true]);
         $comp = Competition::create(['name' => 'Judging Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp->styles()->attach($style->id);
         $brewer = Member::factory()->create(['name' => 'B2', 'email' => 'b2@t.com']);
         $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
         $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results/{$brewer->id}");
@@ -102,6 +104,7 @@ class ResultsAccessTest extends TestCase
         $b1 = Member::factory()->create(['name' => 'High', 'email' => 'high@t.com']);
         $b2 = Member::factory()->create(['name' => 'Low', 'email' => 'low@t.com']);
         $comp = Competition::create(['name' => 'Rank Cup', 'year' => 2025, 'status' => 'closed']);
+        $comp->styles()->attach($style->id);
         $e1 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b1->id, 'style_id' => $style->id, 'bottle_number' => 1]);
         $e2 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b2->id, 'style_id' => $style->id, 'bottle_number' => 2]);
         Scoresheet::create(['entry_id' => $e1->id, 'judge_id' => $admin->id, 'aroma' => 12, 'appearance' => 3, 'flavour' => 20, 'mouthfeel' => 5, 'overall' => 10, 'client_uuid' => fake()->uuid(), 'status' => 'submitted']);

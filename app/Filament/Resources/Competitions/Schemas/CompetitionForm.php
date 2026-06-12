@@ -14,6 +14,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 
@@ -62,10 +63,20 @@ class CompetitionForm
                                             ->searchable()
                                             ->required(),
                                         Select::make('style_id')
-                                            ->relationship('style', 'name')
                                             ->searchable()
                                             ->required()
-                                            ->getOptionLabelFromRecordUsing(fn (Style $record): string => "{$record->code} — {$record->name}"),
+                                            ->options(function (Get $get): array {
+                                                $styleIds = $get('../styles') ?? [];
+                                                $query = Style::orderBy('code');
+                                                if (! empty($styleIds)) {
+                                                    $query->whereIn('id', $styleIds);
+                                                }
+
+                                                return $query->get()
+                                                    ->mapWithKeys(fn (Style $s) => [$s->id => "{$s->code} — {$s->name}"])
+                                                    ->toArray();
+                                            })
+                                            ->live(),
                                         TextInput::make('bottle_number')
                                             ->numeric()
                                             ->nullable(),
