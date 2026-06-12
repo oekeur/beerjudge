@@ -66,7 +66,7 @@ class CompetitionForm
                                             ->searchable()
                                             ->required()
                                             ->options(function (Get $get): array {
-                                                $styleIds = $get('../styles') ?? [];
+                                                $styleIds = $get('../../styles') ?? [];
                                                 $query = Style::orderBy('code');
                                                 if (! empty($styleIds)) {
                                                     $query->whereIn('id', $styleIds);
