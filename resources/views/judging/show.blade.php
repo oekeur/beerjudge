@@ -60,7 +60,17 @@
                 >
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold text-gray-900 truncate text-sm" x-text="entry.brewer_name"></div>
-                        <span role="button" tabindex="0" class="text-xs text-gray-400 truncate mt-0.5 hover:text-amber-600 transition-colors cursor-pointer" @click.stop="openStyleInfo(entry.id)" @keydown.enter.stop="openStyleInfo(entry.id)" :aria-label="'View style info for ' + entry.style_name" x-text="entry.style_name"></span>
+                        <div class="text-xs text-gray-400 mt-0.5 flex items-center gap-1 min-w-0 transition-colors"
+                            :class="sheets[entry.id]?.expanded ? 'cursor-pointer hover:text-amber-600' : ''"
+                            :role="sheets[entry.id]?.expanded ? 'button' : undefined"
+                            :tabindex="sheets[entry.id]?.expanded ? '0' : '-1'"
+                            @click.stop="if (sheets[entry.id]?.expanded) openStyleInfo(entry.id)"
+                            @keydown.enter.stop="if (sheets[entry.id]?.expanded) openStyleInfo(entry.id)"
+                            :aria-label="sheets[entry.id]?.expanded ? 'View style info for ' + entry.style_name : undefined"
+                        >
+                            <span class="truncate" x-text="entry.style_name"></span>
+                            <span x-show="sheets[entry.id]?.expanded" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center flex-shrink-0">i</span>
+                        </div>
                     </div>
 
                     <div class="flex items-center gap-2 flex-shrink-0">
@@ -125,10 +135,10 @@
                             {{-- Aroma --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <label :for="'aroma-' + entry.id" class="font-medium text-gray-800 text-sm">{{ __('judging.section.aroma') }}</label>
-                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'aroma')" :aria-label="'View BJCP aroma guideline for ' + entry.style_name">i</button>
-                                    </div>
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 group" @click.stop="openGuide(entry.id, 'aroma')" :aria-label="'View BJCP aroma guideline for ' + entry.style_name">
+                                        <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.aroma') }}</span>
+                                        <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
+                                    </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].aroma"></span> / 12</span>
                                 </div>
                                 <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Aroma score, 0 to 12">
@@ -147,10 +157,10 @@
                             {{-- Appearance --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <label :for="'appearance-' + entry.id" class="font-medium text-gray-800 text-sm">{{ __('judging.section.appearance') }}</label>
-                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'appearance')" :aria-label="'View BJCP appearance guideline for ' + entry.style_name">i</button>
-                                    </div>
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 group" @click.stop="openGuide(entry.id, 'appearance')" :aria-label="'View BJCP appearance guideline for ' + entry.style_name">
+                                        <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.appearance') }}</span>
+                                        <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
+                                    </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].appearance"></span> / 3</span>
                                 </div>
                                 <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Appearance score, 0 to 3">
@@ -169,10 +179,10 @@
                             {{-- Flavour --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <label :for="'flavour-' + entry.id" class="font-medium text-gray-800 text-sm">{{ __('judging.section.flavour') }}</label>
-                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'flavor')" :aria-label="'View BJCP flavour guideline for ' + entry.style_name">i</button>
-                                    </div>
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 group" @click.stop="openGuide(entry.id, 'flavor')" :aria-label="'View BJCP flavour guideline for ' + entry.style_name">
+                                        <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.flavour') }}</span>
+                                        <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
+                                    </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].flavour"></span> / 20</span>
                                 </div>
                                 <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Flavour score, 0 to 20">
@@ -191,10 +201,10 @@
                             {{-- Mouthfeel --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <label :for="'mouthfeel-' + entry.id" class="font-medium text-gray-800 text-sm">{{ __('judging.section.mouthfeel') }}</label>
-                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'mouthfeel')" :aria-label="'View BJCP mouthfeel guideline for ' + entry.style_name">i</button>
-                                    </div>
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 group" @click.stop="openGuide(entry.id, 'mouthfeel')" :aria-label="'View BJCP mouthfeel guideline for ' + entry.style_name">
+                                        <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.mouthfeel') }}</span>
+                                        <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
+                                    </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].mouthfeel"></span> / 5</span>
                                 </div>
                                 <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Mouthfeel score, 0 to 5">
@@ -213,10 +223,10 @@
                             {{-- Overall --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <label :for="'overall-' + entry.id" class="font-medium text-gray-800 text-sm">{{ __('judging.section.overall') }}</label>
-                                        <button type="button" class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center hover:bg-amber-50 flex-shrink-0" @click.stop="openGuide(entry.id, 'overall_impression')" :aria-label="'View BJCP overall impression guideline for ' + entry.style_name">i</button>
-                                    </div>
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 group" @click.stop="openGuide(entry.id, 'overall_impression')" :aria-label="'View BJCP overall impression guideline for ' + entry.style_name">
+                                        <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.overall') }}</span>
+                                        <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
+                                    </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].overall"></span> / 10</span>
                                 </div>
                                 <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Overall Impression score, 0 to 10">
