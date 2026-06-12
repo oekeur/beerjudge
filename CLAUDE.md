@@ -105,8 +105,7 @@ Judges score any entry except their own (`entry.member_id != judge_id`). Final s
 
 ## Results sheet
 
-- Admin sees results as soon as a competition closes
-- Members see their own sheet only after admin publishes (`published_at` set)
+- All members see the full standings once a competition closes; admins see them at any status
 - One URL per participant: their own scores + judge notes, then the full standings with brewer names revealed
 - Admins can render all participants at once for batch printing
 - Print-styled Blade view; dompdf is optional

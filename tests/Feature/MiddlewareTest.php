@@ -34,19 +34,28 @@ class MiddlewareTest extends TestCase
 
     // RequireAdmin
 
-    public function test_non_admin_member_gets_403_on_admin_route(): void
+    public function test_non_admin_member_gets_403_on_results_when_competition_not_closed(): void
     {
         $member = Member::factory()->create(['is_admin' => false]);
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'closed']);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
 
         $this->actingAs($member)->get("/competitions/{$comp->id}/results")
             ->assertForbidden();
     }
 
-    public function test_admin_passes_admin_middleware(): void
+    public function test_non_admin_member_can_access_results_when_competition_is_closed(): void
+    {
+        $member = Member::factory()->create(['is_admin' => false]);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'closed']);
+
+        $this->actingAs($member)->get("/competitions/{$comp->id}/results")
+            ->assertOk();
+    }
+
+    public function test_admin_can_access_results_regardless_of_status(): void
     {
         $admin = Member::factory()->create(['is_admin' => true]);
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'closed']);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
 
         $this->actingAs($admin)->get("/competitions/{$comp->id}/results")
             ->assertOk();
