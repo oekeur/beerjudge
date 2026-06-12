@@ -84,11 +84,15 @@
                             <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $row['entry']->bottle_number ?? '—' }}</td>
                             <td class="px-4 py-2 text-gray-950 dark:text-white">{{ $row['entry']->member?->name }}</td>
                             <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $row['entry']->style?->code }}</td>
-                            <td class="px-4 py-2 text-gray-700 dark:text-gray-300">
+                            <td class="px-4 py-2">
                                 @if($row['eligible'] > 0)
-                                    {{ $row['submitted'] }}/{{ $row['eligible'] }}
+                                    @if($row['submitted'] === $row['eligible'])
+                                        <span class="font-semibold text-success-700 dark:text-success-400">{{ $row['submitted'] }}/{{ $row['eligible'] }}</span>
+                                    @else
+                                        <span class="text-gray-700 dark:text-gray-300">{{ $row['submitted'] }}/{{ $row['eligible'] }}</span>
+                                    @endif
                                 @else
-                                    —
+                                    <span class="text-gray-400">—</span>
                                 @endif
                             </td>
                             <td class="px-4 py-2">
