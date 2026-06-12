@@ -18,6 +18,7 @@ class BjcpStyleSeeder extends Seeder
             return [
                 'code' => $s['style_id'],
                 'category_name' => $s['category'],
+                'category_description' => $s['category_description'] ?? null,
                 'name' => $s['name'],
                 'version' => '2021',
                 'og_min' => $s['original_gravity']['minimum']['value'] ?? null,
@@ -48,7 +49,7 @@ class BjcpStyleSeeder extends Seeder
             $styles,
             ['code'],
             [
-                'category_name', 'name', 'version',
+                'category_name', 'category_description', 'name', 'version',
                 'og_min', 'og_max', 'fg_min', 'fg_max',
                 'abv_min', 'abv_max', 'ibu_min', 'ibu_max', 'srm_min', 'srm_max',
                 'overall_impression', 'aroma', 'appearance', 'flavor', 'mouthfeel',

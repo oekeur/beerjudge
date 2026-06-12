@@ -60,7 +60,7 @@
                 >
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold text-gray-900 truncate text-sm" x-text="entry.brewer_name"></div>
-                        <div class="text-xs text-gray-400 truncate mt-0.5" x-text="entry.style_name"></div>
+                        <button type="button" class="text-xs text-gray-400 truncate mt-0.5 text-left hover:text-amber-600 transition-colors" @click.stop="openStyleInfo(entry.id)" :aria-label="'View style info for ' + entry.style_name" x-text="entry.style_name"></button>
                     </div>
 
                     <div class="flex items-center gap-2 flex-shrink-0">
@@ -318,6 +318,50 @@
                 <button type="button" class="text-gray-400 hover:text-gray-600 text-xl leading-none" @click="closeGuide()">×</button>
             </div>
             <p class="text-sm text-gray-700 leading-relaxed" x-text="styleGuide.text"></p>
+        </div>
+    </div>
+
+    {{-- Style info bottom sheet (category description, history, style comparison) --}}
+    <div x-show="styleInfo.open" class="fixed inset-0 z-50 flex items-end" @keydown.escape.window="closeStyleInfo()" style="display: none;">
+        <div class="absolute inset-0 bg-black/40" @click="closeStyleInfo()"></div>
+        <div class="relative w-full max-w-lg mx-auto bg-white rounded-t-2xl shadow-xl"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="translate-y-full opacity-0"
+            x-transition:enter-end="translate-y-0 opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="translate-y-0 opacity-100"
+            x-transition:leave-end="translate-y-full opacity-0"
+        >
+            <div class="flex justify-center pt-3 pb-1">
+                <div class="w-8 h-1 bg-gray-200 rounded-full"></div>
+            </div>
+            <div class="flex items-start justify-between px-5 pt-2 pb-3 border-b border-gray-100">
+                <div>
+                    <div class="text-xs font-semibold uppercase tracking-wider text-amber-600" x-text="styleInfo.styleCode + ' · ' + styleInfo.styleName"></div>
+                    <div class="text-xs text-gray-400 mt-0.5" x-text="styleInfo.categoryName"></div>
+                </div>
+                <button type="button" class="text-gray-400 hover:text-gray-600 text-xl leading-none ml-4 mt-0.5" @click="closeStyleInfo()">×</button>
+            </div>
+            <div class="overflow-y-auto px-5 pt-4 pb-8 space-y-5" style="max-height: 60vh">
+                <template x-if="styleInfo.categoryDescription">
+                    <div>
+                        <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Category</div>
+                        <p class="text-sm text-gray-700 leading-relaxed" x-text="styleInfo.categoryDescription"></p>
+                    </div>
+                </template>
+                <template x-if="styleInfo.history">
+                    <div>
+                        <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">History</div>
+                        <p class="text-sm text-gray-700 leading-relaxed" x-text="styleInfo.history"></p>
+                    </div>
+                </template>
+                <template x-if="styleInfo.styleComparison">
+                    <div>
+                        <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Style Comparison</div>
+                        <p class="text-sm text-gray-700 leading-relaxed" x-text="styleInfo.styleComparison"></p>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 

@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Style extends Model
 {
     protected $fillable = [
-        'code', 'category_name', 'name', 'version',
+        'code', 'category_name', 'category_description', 'name', 'version',
         'overall_impression', 'aroma', 'appearance', 'flavor', 'mouthfeel',
         'comments', 'history', 'style_comparison', 'ingredients', 'examples', 'tags',
         'og_min', 'og_max', 'fg_min', 'fg_max',

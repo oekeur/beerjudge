@@ -57,4 +57,19 @@ class JudgingScreenTest extends TestCase
         $response = $this->get("/judging/{$comp->id}");
         $response->assertRedirect('/login');
     }
+
+    public function test_judging_screen_includes_style_info_fields(): void
+    {
+        [$comp, $brewer, $judge, $entry] = $this->makeFixtures();
+        Style::where('code', '1A')->update([
+            'category_description' => 'Standard American beers are easy-drinking, approachable styles.',
+            'history' => 'Developed post-Prohibition in the United States.',
+            'style_comparison' => 'Similar to International Pale Lager but with even less character.',
+        ]);
+        $response = $this->actingAs($judge)->get("/judging/{$comp->id}");
+        $response->assertOk();
+        $response->assertSee('"category_description"', false);
+        $response->assertSee('"history"', false);
+        $response->assertSee('"style_comparison"', false);
+    }
 }

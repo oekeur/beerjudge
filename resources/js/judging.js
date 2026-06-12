@@ -36,6 +36,7 @@ window.judgingApp = function (serverData) {
         syncQueue: [],
         _retryTimer: null,
         styleGuide: { open: false, section: '', text: '' },
+        styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '' },
 
         async init() {
             // Seed from server data
@@ -185,6 +186,23 @@ window.judgingApp = function (serverData) {
 
         closeGuide() {
             this.styleGuide.open = false;
+        },
+
+        openStyleInfo(entryId) {
+            const entry = this.entries.find(e => e.id === entryId);
+            this.styleInfo = {
+                open: true,
+                styleName: entry?.style_name ?? '',
+                styleCode: entry?.style_code ?? '',
+                categoryName: entry?.style_info?.category_name ?? '',
+                categoryDescription: entry?.style_info?.category_description ?? '',
+                history: entry?.style_info?.history ?? '',
+                styleComparison: entry?.style_info?.style_comparison ?? '',
+            };
+        },
+
+        closeStyleInfo() {
+            this.styleInfo.open = false;
         },
 
         async toggleDescriptor(entryId, slug) {

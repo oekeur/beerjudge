@@ -40,6 +40,12 @@ class JudgingController extends Controller
                     'mouthfeel' => $e->style?->mouthfeel,
                     'overall_impression' => $e->style?->overall_impression,
                 ],
+                'style_info' => [
+                    'category_name' => $e->style?->category_name,
+                    'category_description' => $e->style?->category_description,
+                    'history' => $e->style?->history,
+                    'style_comparison' => $e->style?->style_comparison,
+                ],
             ])->values(),
             'bands' => [
                 ['min' => 45, 'name' => __('judging.band.outstanding.name'),  'range' => '45–50', 'description' => __('judging.band.outstanding.description')],
