@@ -55,6 +55,15 @@ class CompetitionForm
 
                         Tab::make(__('competition.tab.entries'))
                             ->schema([
+                                Placeholder::make('entry_link')
+                                    ->label(__('competition.entry_link'))
+                                    ->content(fn (?Competition $record) => $record?->exists
+                                        ? route('competitions.entries.create', $record)
+                                        : __('competition.save_first')
+                                    )
+                                    ->columnSpanFull()
+                                    ->visibleOn('edit'),
+
                                 Repeater::make('entries')
                                     ->relationship()
                                     ->schema([
@@ -99,6 +108,15 @@ class CompetitionForm
                                     ->searchable()
                                     ->preload()
                                     ->columnSpanFull(),
+
+                                Placeholder::make('judge_link')
+                                    ->label(__('competition.judge_link'))
+                                    ->content(fn (?Competition $record) => $record?->exists
+                                        ? route('judging.show', ['competition' => $record->id, 'register' => 1])
+                                        : __('competition.save_first')
+                                    )
+                                    ->columnSpanFull()
+                                    ->visibleOn('edit'),
 
                                 Placeholder::make('judging_progress')
                                     ->hiddenLabel()

@@ -23,4 +23,14 @@ class MemberFactory extends Factory
             'is_active' => true,
         ];
     }
+
+    public function admin(): static
+    {
+        return $this->state(['is_admin' => true]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(['is_active' => false]);
+    }
 }

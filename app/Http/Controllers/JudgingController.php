@@ -73,6 +73,10 @@ class JudgingController extends Controller
             ])->values(),
         ];
 
+        if ($request->boolean('register')) {
+            $competition->judges()->syncWithoutDetaching([$judge->id]);
+        }
+
         $descriptors = ScoresheetController::descriptors();
         $isJudge = $competition->judges()->where('member_id', $judge->id)->exists();
 
