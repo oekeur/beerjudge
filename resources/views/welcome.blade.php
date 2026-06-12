@@ -1,5 +1,7 @@
 @php
-    $appTitle = config('app.club_name') ? config('app.club_name').' BeerJudge' : 'BeerJudge';
+    /** @var \Illuminate\Support\Collection<string, \Illuminate\Database\Eloquent\Collection<int, \App\Models\Competition>> $competitions */
+    $clubName = is_string($v = config('app.club_name')) ? $v : '';
+    $appTitle = $clubName !== '' ? $clubName . ' BeerJudge' : 'BeerJudge';
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
@@ -15,7 +17,7 @@
         <div class="max-w-3xl mx-auto flex items-center justify-between">
             <span class="text-lg font-semibold text-amber-900 tracking-tight">{{ $appTitle }}</span>
             <div class="flex items-center gap-4">
-                @if(auth()->user()->is_admin)
+                @if(auth()->user()?->is_admin)
                     <a href="/admin" class="text-sm text-amber-700 hover:text-amber-900 hover:underline">
                         Admin panel
                     </a>
@@ -50,11 +52,15 @@
             </div>
         @else
             @foreach($sections as $status => $label)
-                @if($competitions->has($status))
+                @php
+                    /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Competition> $statusGroup */
+                    $statusGroup = $competitions->get($status) ?? new \Illuminate\Database\Eloquent\Collection();
+                @endphp
+                @if($statusGroup->isNotEmpty())
                     <section class="mb-8">
                         <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">{{ $label }}</h2>
                         <div class="flex flex-col gap-3">
-                            @foreach($competitions[$status] as $competition)
+                            @foreach($statusGroup as $competition)
                                 <div class="bg-white border rounded-lg shadow-sm px-5 py-4 hover:shadow-md transition-shadow
                                     {{ $status === 'judging' ? 'border-amber-400/60' : ($status === 'open' ? 'border-amber-200/70' : 'border-gray-200/80') }}
                                 ">
@@ -63,7 +69,7 @@
                                             <p class="font-medium text-gray-900">{{ $competition->name }}</p>
                                             @if($competition->judging_date)
                                                 <p class="text-sm text-gray-500 mt-0.5">
-                                                    {{ $competition->judging_date->format('j M Y') }}
+                                                    {{ \Carbon\Carbon::parse($competition->judging_date)->format('j M Y') }}
                                                 </p>
                                             @endif
                                         </div>

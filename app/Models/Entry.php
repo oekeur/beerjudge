@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read float|null $avg_total
+ * @property-read int|null $sheet_count
+ * @property-read float|null $max_total
+ * @property-read float|null $min_total
+ */
 class Entry extends Model
 {
     protected $fillable = [

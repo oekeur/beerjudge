@@ -2,10 +2,13 @@
     $judges = $competition->judges->sortBy('name');
     $entries = $competition->entries->sortBy('bottle_number');
 
-    $scoreSheetMap = $entries
-        ->flatMap->scoresheets
-        ->filter(fn ($s) => $judges->contains('id', $s->judge_id))
-        ->keyBy(fn ($s) => $s->entry_id . '_' . $s->judge_id);
+    /** @var \Illuminate\Support\Collection<int, \App\Models\Scoresheet> $allScoresheets */
+    $allScoresheets = $entries->flatMap->scoresheets;
+
+    /** @var \Illuminate\Support\Collection<string, \App\Models\Scoresheet> $scoreSheetMap */
+    $scoreSheetMap = $allScoresheets
+        ->filter(fn (\App\Models\Scoresheet $s) => $judges->contains('id', $s->judge_id))
+        ->keyBy(fn (\App\Models\Scoresheet $s) => $s->entry_id . '_' . $s->judge_id);
 @endphp
 
 <h3 class="text-sm font-semibold text-gray-950 dark:text-white mb-3">{{ __('competition.judging_progress.heading') }}</h3>
@@ -31,8 +34,8 @@
                 @foreach($entries as $entry)
                     <tr class="bg-white dark:bg-gray-900">
                         <td class="px-3 py-2 whitespace-nowrap tabular-nums text-gray-950 dark:text-white">{{ $entry->bottle_number ?? '—' }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300">{{ $entry->member->name }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap text-gray-500 dark:text-gray-400">{{ $entry->style->code }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300">{{ $entry->member?->name }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-gray-500 dark:text-gray-400">{{ $entry->style?->code }}</td>
                         @foreach($judges as $judge)
                             @php
                                 $isOwnEntry = $entry->member_id === $judge->id;

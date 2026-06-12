@@ -22,7 +22,8 @@
         "nunomaduro/collision": "^8.6",
         "phpstan/phpstan": "^2.2",
         "phpunit/phpunit": "^12.5.12",
-        "shipmonk/dead-code-detector": "^1.2"
+        "shipmonk/dead-code-detector": "^1.2",
+        "tomasvotruba/bladestan": "dev-main"
     },
     "autoload": {
         "psr-4": {

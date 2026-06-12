@@ -27,7 +27,12 @@ class ResultsController extends Controller
             ->filter(fn (array $row): bool => $row['entry']->member_id === $member->id)
             ->values();
 
-        return view('results.show', compact('competition', 'member', 'rankedEntries', 'memberEntries'));
+        return view('results.show', [
+            'competition' => $competition,
+            'member' => $member,
+            'rankedEntries' => $rankedEntries,
+            'memberEntries' => $memberEntries,
+        ]);
     }
 
     public function index(Competition $competition, Request $request): View

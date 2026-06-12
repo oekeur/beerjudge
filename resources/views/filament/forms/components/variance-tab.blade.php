@@ -1,20 +1,17 @@
 @php
+    use App\Models\Competition;
     use App\Models\Entry;
-    use App\Models\Scoresheet;
-    use Illuminate\Support\Facades\DB;
 
-    $entriesTable = (new Entry)->getTable();
-    $sheetsTable = (new Scoresheet)->getTable();
+    /** @var \App\Models\Competition $record */
 
+    /** @var \Illuminate\Support\Collection<int, \App\Models\Entry> $entries */
     $entries = Entry::query()
         ->where('competition_id', $record->id)
-        ->withCount(['scoresheets as sheet_count' => fn ($q) => $q->where('status', 'submitted')])
-        ->withAvg(['scoresheets as avg_total' => fn ($q) => $q->where('status', 'submitted')], 'total')
-        ->addSelect([
-            "{$entriesTable}.*",
-            DB::raw("(SELECT MAX(s.total) - MIN(s.total) FROM {$sheetsTable} s WHERE s.entry_id = {$entriesTable}.id AND s.status = 'submitted') as spread"),
-        ])
-        ->whereRaw("(select count(*) from {$sheetsTable} where {$entriesTable}.id = {$sheetsTable}.entry_id and status = ?) >= 2", ['submitted'])
+        ->withCount(['scoresheets as sheet_count' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted')])
+        ->withAvg(['scoresheets as avg_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted')], 'total')
+        ->withMax(['scoresheets as max_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted')], 'total')
+        ->withMin(['scoresheets as min_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted')], 'total')
+        ->whereHas('scoresheets', fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted'), '>=', 2)
         ->orderBy('bottle_number')
         ->get();
 @endphp
@@ -51,15 +48,15 @@
                             <tr class="bg-white dark:bg-gray-900">
                                 <td class="px-4 py-2 text-gray-950 dark:text-white">{{ $entry->bottle_number ?? '—' }}</td>
                                 <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $entry->sheet_count }}</td>
-                                <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ round($entry->avg_total, 1) }}</td>
+                                <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ round((float) $entry->avg_total, 1) }}</td>
                                 <td class="px-4 py-2">
-                                    @if($entry->spread > 7)
+                                    @if(((float) ($entry->max_total ?? 0) - (float) ($entry->min_total ?? 0)) > 7)
                                         <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset bg-danger-50 text-danger-700 ring-danger-600/20 dark:bg-danger-400/10 dark:text-danger-400 dark:ring-danger-400/30">
-                                            ⚠ {{ $entry->spread }} pts
+                                            ⚠ {{ ((float) ($entry->max_total ?? 0) - (float) ($entry->min_total ?? 0)) }} pts
                                         </span>
                                     @else
                                         <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset bg-success-50 text-success-700 ring-success-600/20 dark:bg-success-400/10 dark:text-success-400 dark:ring-success-400/30">
-                                            {{ $entry->spread }} pts
+                                            {{ ((float) ($entry->max_total ?? 0) - (float) ($entry->min_total ?? 0)) }} pts
                                         </span>
                                     @endif
                                 </td>

@@ -1,9 +1,14 @@
+@php
+    $member = (isset($member) && $member instanceof \App\Models\Member) ? $member : new \App\Models\Member();
+    $memberName = $member->name;
+    $memberId = $member->id;
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Results — {{ $competition->name }} — {{ $member->name }}</title>
+    <title>Results — {{ $competition->name }} — {{ $memberName }}</title>
     @vite(['resources/css/app.css'])
     <style>
         @media print {
@@ -24,7 +29,7 @@
     {{-- Header --}}
     <div class="mb-8">
         <h1 class="text-2xl font-bold">{{ $competition->name }} — Results</h1>
-        <p class="text-gray-600">{{ $member->name }}
+        <p class="text-gray-600">{{ $memberName }}
             @if($competition->judging_date)
                 · {{ $competition->judging_date->format('F j, Y') }}
             @endif
@@ -37,10 +42,13 @@
         <h2 class="text-lg font-bold border-b border-gray-300 pb-1 mb-4">Your Entries</h2>
 
         @foreach($memberEntries as $row)
+        @php
+            /** @var array{entry: \App\Models\Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, \App\Models\Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, placement: int} $row */
+        @endphp
         <div class="mb-8">
             <div class="flex justify-between items-baseline mb-2">
                 <h3 class="text-base font-semibold">
-                    {{ $row['entry']->style->code }} · {{ $row['entry']->style->name }}
+                    {{ $row['entry']->style?->code }} · {{ $row['entry']->style?->name }}
                 </h3>
                 <span class="text-sm text-gray-500">#{{ $row['entry']->bottle_number }}</span>
             </div>
@@ -74,7 +82,7 @@
                 <tbody>
                     @foreach($row['sheets'] as $sheet)
                     <tr class="border-t border-gray-200">
-                        <td class="py-1 px-2 text-gray-700">{{ $sheet->judge->name }}</td>
+                        <td class="py-1 px-2 text-gray-700">{{ $sheet->judge?->name }}</td>
                         <td class="text-center py-1 px-2">{{ $sheet->aroma }}</td>
                         <td class="text-center py-1 px-2">{{ $sheet->appearance }}</td>
                         <td class="text-center py-1 px-2">{{ $sheet->flavour }}</td>
@@ -120,10 +128,13 @@
             </thead>
             <tbody>
                 @foreach($rankedEntries as $row)
-                <tr class="border-t border-gray-200 {{ $row['entry']->member_id === $member->id ? 'bg-amber-50' : '' }}">
+                @php
+                    /** @var array{entry: \App\Models\Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, \App\Models\Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, placement: int} $row */
+                @endphp
+                <tr class="border-t border-gray-200 {{ $row['entry']->member_id === $memberId ? 'bg-amber-50' : '' }}">
                     <td class="py-1 px-2 font-bold text-gray-900">{{ $row['placement'] }}</td>
-                    <td class="py-1 px-2 text-gray-700">{{ $row['entry']->member->name }}</td>
-                    <td class="py-1 px-2 text-gray-600">{{ $row['entry']->style->code }}</td>
+                    <td class="py-1 px-2 text-gray-700">{{ $row['entry']->member?->name }}</td>
+                    <td class="py-1 px-2 text-gray-600">{{ $row['entry']->style?->code }}</td>
                     <td class="text-center py-1 px-2 font-semibold">{{ number_format($row['avg_total'], 1) }}</td>
                     <td class="text-center py-1 px-2 text-xs font-medium
                         {{ $row['avg_total'] >= 38 ? 'text-green-700' : ($row['avg_total'] >= 30 ? 'text-teal-700' : ($row['avg_total'] >= 21 ? 'text-yellow-700' : 'text-red-700')) }}">

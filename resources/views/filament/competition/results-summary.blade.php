@@ -18,7 +18,7 @@
     $maxSheets   = $judgeCount * $entryCount;
     $completePct = $maxSheets > 0 ? (int) round($sheetCount / $maxSheets * 100) : 0;
 
-    $rows = $entries->map(function ($entry) use ($judgeCount) {
+    $rows = $entries->map(function (Entry $entry) use ($judgeCount) {
         $submitted = $entry->scoresheets->count();
         $pct       = $judgeCount > 0 ? (int) round($submitted / $judgeCount * 100) : 0;
         $missing   = max(0, $judgeCount - $submitted);
@@ -76,8 +76,8 @@
                     @foreach($rows as $row)
                         <tr class="bg-white dark:bg-gray-900">
                             <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $row['entry']->bottle_number ?? '—' }}</td>
-                            <td class="px-4 py-2 text-gray-950 dark:text-white">{{ $row['entry']->member->name }}</td>
-                            <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $row['entry']->style->code }}</td>
+                            <td class="px-4 py-2 text-gray-950 dark:text-white">{{ $row['entry']->member?->name }}</td>
+                            <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $row['entry']->style?->code }}</td>
                             <td class="px-4 py-2 text-gray-700 dark:text-gray-300">
                                 @if($judgeCount > 0)
                                     {{ $row['pct'] }}%
