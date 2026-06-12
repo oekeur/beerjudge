@@ -34,6 +34,11 @@
                 class="w-full bg-amber-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-amber-700">
                 {{ __('auth.login') }}
             </button>
+            <p class="mt-4 text-center text-sm text-gray-500">
+                <a href="{{ route('auth.magic-link.request') }}" class="text-amber-700 hover:underline">
+                    {{ __('auth.magic_link_login') }}
+                </a>
+            </p>
         </form>
     </div>
 </body>

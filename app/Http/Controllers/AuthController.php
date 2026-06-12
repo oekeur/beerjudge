@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Models\MagicLink;
+use App\Models\Member;
+use App\Notifications\MagicLinkNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,5 +40,47 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login');
+    }
+
+    public function showMagicLinkForm(): View
+    {
+        return view('auth.magic-link-request');
+    }
+
+    public function sendMagicLink(Request $request): RedirectResponse
+    {
+        $request->validate(['email' => ['required', 'email']]);
+
+        $member = Member::where('email', $request->input('email'))->first();
+
+        if ($member !== null) {
+            $plain = MagicLink::createForMember($member);
+            $url = route('auth.magic-link.verify', ['token' => $plain]);
+            $member->notify(new MagicLinkNotification($url));
+        }
+
+        return back()->with('success', __('auth.magic_link_sent'));
+    }
+
+    public function verifyMagicLink(string $token, Request $request): RedirectResponse
+    {
+        $magicLink = MagicLink::findByPlaintext($token);
+
+        if ($magicLink === null || ! $magicLink->isValid()) {
+            return redirect()->route('login')->withErrors(['email' => __('auth.magic_link_invalid')]);
+        }
+
+        $magicLink->markUsed();
+
+        $member = $magicLink->member;
+
+        abort_if($member === null, 401);
+
+        Auth::login($member);
+        $request->session()->regenerate();
+
+        return $member->is_admin
+            ? redirect()->intended('/admin')
+            : redirect()->intended('/');
     }
 }

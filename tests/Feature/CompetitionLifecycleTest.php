@@ -16,14 +16,12 @@ class CompetitionLifecycleTest extends TestCase
 
     public function test_bottle_number_assignment_is_sequential(): void
     {
-        $style = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
         $comp = Competition::create(['name' => 'Test', 'year' => 2025, 'status' => 'open']);
-        $comp->styles()->attach($style->id);
+        $styles = collect(['1A', '1B', '1C'])->map(fn ($code) => Style::create(['code' => $code, 'category_name' => 'SA', 'name' => $code]));
+        $comp->styles()->attach($styles->pluck('id'));
         $member = Member::factory()->create(['name' => 'M', 'email' => 'm@t.com']);
 
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
+        $styles->each(fn ($s) => Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $s->id]));
 
         app(BottleNumberAssignmentService::class)->assign($comp);
 
@@ -33,14 +31,12 @@ class CompetitionLifecycleTest extends TestCase
 
     public function test_bottle_number_assignment_produces_unique_numbers(): void
     {
-        $style = Style::create(['code' => '1B', 'category_name' => 'SA', 'name' => 'American Lager']);
         $comp = Competition::create(['name' => 'Test2', 'year' => 2025, 'status' => 'judging']);
-        $comp->styles()->attach($style->id);
+        $styles = collect(['2A', '2B', '2C'])->map(fn ($code) => Style::create(['code' => $code, 'category_name' => 'SA', 'name' => $code]));
+        $comp->styles()->attach($styles->pluck('id'));
         $member = Member::factory()->create(['name' => 'M2', 'email' => 'm2@t.com']);
 
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
-        Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id]);
+        $styles->each(fn ($s) => Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $s->id]));
 
         app(BottleNumberAssignmentService::class)->assign($comp);
 
