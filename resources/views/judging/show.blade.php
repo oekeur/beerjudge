@@ -60,7 +60,7 @@
                 >
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold text-gray-900 truncate text-sm" x-text="entry.brewer_name"></div>
-                        <button type="button" class="text-xs text-gray-400 truncate mt-0.5 text-left hover:text-amber-600 transition-colors" @click.stop="openStyleInfo(entry.id)" :aria-label="'View style info for ' + entry.style_name" x-text="entry.style_name"></button>
+                        <span role="button" tabindex="0" class="text-xs text-gray-400 truncate mt-0.5 hover:text-amber-600 transition-colors cursor-pointer" @click.stop="openStyleInfo(entry.id)" @keydown.enter.stop="openStyleInfo(entry.id)" :aria-label="'View style info for ' + entry.style_name" x-text="entry.style_name"></span>
                     </div>
 
                     <div class="flex items-center gap-2 flex-shrink-0">
