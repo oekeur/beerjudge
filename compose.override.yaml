@@ -1,0 +1,14 @@
+services:
+  app:
+    environment:
+      APP_DEBUG: "true"
+    ports:
+      - "8080:80"
+
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
