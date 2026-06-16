@@ -33,6 +33,10 @@
     "competition.invite_type_time_bound": "Time-bound (multiple uses until expiry)",
     "competition.invite_expires_at": "Expires at",
     "competition.invite_created": "Invite link created",
+    "competition.invite_links_active": "Active multi-use invite links",
+    "competition.invite_expires": "Expires",
+    "competition.invite_copy": "Copy",
+    "competition.invite_copied": "Copied!",
 
     "member.filter.pending_approval": "Pending approval",
     "member.action.approve": "Approve",
