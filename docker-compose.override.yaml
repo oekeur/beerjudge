@@ -4,6 +4,12 @@ services:
       APP_DEBUG: "true"
     ports:
       - "8080:80"
+    volumes:
+      - .:/var/www
+      - vendor:/var/www/vendor
+      - build:/var/www/public/build
+      - storage:/var/www/storage
+      - bootstrap_cache:/var/www/bootstrap/cache
 
   postgres:
     ports:
@@ -12,3 +18,9 @@ services:
   redis:
     ports:
       - "6379:6379"
+
+volumes:
+  vendor:
+  build:
+  storage:
+  bootstrap_cache:

@@ -5,17 +5,18 @@ RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-scripts \
-    --no-interaction
+    --no-interaction \
+    --ignore-platform-reqs
 
-FROM node:20-alpine AS assets
+FROM node:24-alpine AS assets
 WORKDIR /app
 COPY package.json package-lock.json vite.config.js ./
 COPY resources/ resources/
 COPY app/ app/
 COPY --from=composer-deps /app/vendor vendor/
-RUN npm ci && npm run build
+RUN npm install --no-audit --no-fund && npm run build
 
-FROM php:8.3-fpm-alpine AS runtime
+FROM php:8.5-fpm-alpine AS runtime
 
 RUN apk add --no-cache \
     nginx \
@@ -36,13 +37,10 @@ RUN apk add --no-cache \
     make \
     && docker-php-ext-install -j$(nproc) \
     pdo_pgsql \
-    mbstring \
-    xml \
     zip \
     pcntl \
     intl \
     bcmath \
-    opcache \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del .build-deps
@@ -53,7 +51,12 @@ COPY . .
 COPY --from=composer-deps /app/vendor vendor/
 COPY --from=assets /app/public/build public/build/
 
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN mkdir -p bootstrap/cache \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    && chown -R www-data:www-data storage bootstrap/cache
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
