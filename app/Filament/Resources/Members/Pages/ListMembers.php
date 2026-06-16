@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Carbon;
+use Livewire\Component as LivewireComponent;
 
 class ListMembers extends ListRecords
 {
@@ -45,7 +46,7 @@ class ListMembers extends ListRecords
                         ->visible(fn (Get $get) => $get('type') === Invitation::TYPE_TIME_BOUND)
                         ->requiredIf('type', Invitation::TYPE_TIME_BOUND),
                 ])
-                ->action(function (array $data): void {
+                ->action(function (array $data, LivewireComponent $livewire): void {
                     $type = is_string($data['type']) ? $data['type'] : Invitation::TYPE_SINGLE_USE;
                     $expiresAt = is_string($data['expires_at'] ?? null) ? Carbon::parse($data['expires_at']) : null;
 
@@ -57,20 +58,13 @@ class ListMembers extends ListRecords
 
                     $url = route('register', ['token' => $invitation->token]);
 
+                    $livewire->js('navigator.clipboard.writeText('.json_encode($url).')');
+
                     Notification::make()
                         ->title(__('competition.invite_created'))
                         ->body($url)
                         ->persistent()
                         ->success()
-                        ->actions([
-                            Action::make('copy')
-                                ->label(__('competition.invite_copy'))
-                                ->extraAttributes([
-                                    'x-data' => '{ copied: false }',
-                                    'x-on:click' => "navigator.clipboard.writeText('".addslashes($url)."'); copied = true; setTimeout(() => copied = false, 2000)",
-                                    'x-text' => "copied ? '".__('competition.invite_copied')."' : '".__('competition.invite_copy')."'",
-                                ]),
-                        ])
                         ->send();
                 }),
             CreateAction::make(),

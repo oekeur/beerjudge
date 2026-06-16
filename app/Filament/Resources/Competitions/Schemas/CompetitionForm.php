@@ -7,11 +7,11 @@ use App\Models\Competition;
 use App\Models\Member;
 use App\Models\Style;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Html;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -55,12 +55,10 @@ class CompetitionForm
 
                         Tab::make(__('competition.tab.entries'))
                             ->schema([
-                                Placeholder::make('entry_link')
-                                    ->label(__('competition.entry_link'))
-                                    ->content(fn (?Competition $record) => $record?->exists
-                                        ? new HtmlString(self::copyableLinkHtml(route('competitions.entries.create', $record)))
-                                        : __('competition.save_first')
-                                    )
+                                Html::make(fn (?Competition $record) => $record?->exists
+                                    ? new HtmlString(self::copyableLinkHtml(route('competitions.entries.create', $record)))
+                                    : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
+                                )
                                     ->columnSpanFull()
                                     ->visibleOn('edit'),
 
@@ -109,55 +107,47 @@ class CompetitionForm
                                     ->preload()
                                     ->columnSpanFull(),
 
-                                Placeholder::make('judge_link')
-                                    ->label(__('competition.judge_link'))
-                                    ->content(fn (?Competition $record) => $record?->exists
-                                        ? new HtmlString(self::copyableLinkHtml(route('judging.show', ['competition' => $record->id, 'register' => 1])))
-                                        : __('competition.save_first')
-                                    )
+                                Html::make(fn (?Competition $record) => $record?->exists
+                                    ? new HtmlString(self::copyableLinkHtml(route('judging.show', ['competition' => $record->id, 'register' => 1])))
+                                    : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
+                                )
                                     ->columnSpanFull()
                                     ->visibleOn('edit'),
 
-                                Placeholder::make('judging_progress')
-                                    ->hiddenLabel()
-                                    ->content(function (?Competition $record): HtmlString {
-                                        if (! $record?->exists) {
-                                            return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
-                                        }
+                                Html::make(function (?Competition $record): HtmlString {
+                                    if (! $record?->exists) {
+                                        return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
+                                    }
 
-                                        return new HtmlString(view('filament.competition.judging-progress', [
-                                            'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
-                                        ])->render());
-                                    })
+                                    return new HtmlString(view('filament.competition.judging-progress', [
+                                        'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
+                                    ])->render());
+                                })
                                     ->columnSpanFull(),
                             ]),
 
                         Tab::make(__('competition.tab.dashboard'))
                             ->schema([
-                                Placeholder::make('results_summary')
-                                    ->hiddenLabel()
-                                    ->content(function (?Competition $record): HtmlString {
-                                        if (! $record?->exists) {
-                                            return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
-                                        }
+                                Html::make(function (?Competition $record): HtmlString {
+                                    if (! $record?->exists) {
+                                        return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
+                                    }
 
-                                        return new HtmlString(view('filament.competition.results-summary', [
-                                            'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
-                                        ])->render());
-                                    })
+                                    return new HtmlString(view('filament.competition.results-summary', [
+                                        'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
+                                    ])->render());
+                                })
                                     ->columnSpanFull(),
                             ]),
 
                         Tab::make(__('competition.tab.results'))
                             ->schema([
-                                Placeholder::make('variance_table')
-                                    ->label('')
-                                    ->content(fn (?Competition $record) => $record
-                                        ? new HtmlString(view('filament.forms.components.variance-tab', [
-                                            'record' => $record,
-                                        ])->render())
-                                        : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
-                                    )
+                                Html::make(fn (?Competition $record) => $record
+                                    ? new HtmlString(view('filament.forms.components.variance-tab', [
+                                        'record' => $record,
+                                    ])->render())
+                                    : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
+                                )
                                     ->columnSpanFull(),
                             ]),
                     ]),
@@ -168,6 +158,8 @@ class CompetitionForm
     {
         $escaped = e($url);
         $json = json_encode($url);
+        $labelCopy = json_encode(__('competition.invite_copy'));
+        $labelCopied = json_encode(__('competition.invite_copied'));
 
         return <<<HTML
         <div class="flex items-center gap-2 text-sm">
@@ -180,7 +172,7 @@ class CompetitionForm
             >
                 <svg x-show="!copied" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                 <svg x-show="copied" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                <span x-text="copied ? '{{ __('competition.invite_copied') }}' : '{{ __('competition.invite_copy') }}'"></span>
+                <span x-text="copied ? {$labelCopied} : {$labelCopy}"></span>
             </button>
         </div>
         HTML;
