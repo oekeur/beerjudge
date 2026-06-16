@@ -157,9 +157,9 @@ class CompetitionForm
     private static function copyableLinkHtml(string $url): string
     {
         $escaped = e($url);
-        $json = json_encode($url);
-        $labelCopy = json_encode(__('competition.invite_copy'));
-        $labelCopied = json_encode(__('competition.invite_copied'));
+        $json = e((string) json_encode($url));
+        $labelCopy = e((string) json_encode(__('competition.invite_copy')));
+        $labelCopied = e((string) json_encode(__('competition.invite_copied')));
 
         return <<<HTML
         <div class="flex items-center gap-2 text-sm">
