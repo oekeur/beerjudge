@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Styles;
 
+use App\Filament\Resources\Styles\Pages\CreateStyle;
 use App\Filament\Resources\Styles\Pages\EditStyle;
 use App\Filament\Resources\Styles\Pages\ListStyles;
 use App\Filament\Resources\Styles\Schemas\StyleForm;
@@ -32,7 +33,7 @@ class StyleResource extends Resource
 
     public static function canCreate(): bool
     {
-        return false;
+        return true;
     }
 
     public static function canEdit(Model $record): bool
@@ -42,7 +43,11 @@ class StyleResource extends Resource
 
     public static function canDelete(Model $record): bool
     {
-        return false;
+        if (! $record instanceof Style) {
+            return false;
+        }
+
+        return $record->source === 'custom';
     }
 
     public static function getRelations(): array
@@ -54,6 +59,7 @@ class StyleResource extends Resource
     {
         return [
             'index' => ListStyles::route('/'),
+            'create' => CreateStyle::route('/create'),
             'edit' => EditStyle::route('/{record}/edit'),
         ];
     }

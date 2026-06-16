@@ -8,14 +8,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
+ * @property string $source
  * @property string $code
  * @property string $name
  * @property string $category_name
  */
 class Style extends Model
 {
+    /** @var array<string, string> */
+    public const SOURCE_LABELS = [
+        'bjcp_beer' => 'BJCP Beer',
+        'bjcp_mead' => 'BJCP Mead',
+        'bjcp_cider' => 'BJCP Cider',
+        'custom' => 'Custom',
+    ];
+
     protected $fillable = [
-        'code', 'category_name', 'category_description', 'name', 'version',
+        'source', 'code', 'category_name', 'category_description', 'name', 'version',
         'overall_impression', 'aroma', 'appearance', 'flavor', 'mouthfeel',
         'comments', 'history', 'style_comparison', 'ingredients', 'examples', 'tags',
         'og_min', 'og_max', 'fg_min', 'fg_max',
