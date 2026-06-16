@@ -33,6 +33,10 @@
     "competition.invite_type_time_bound": "Tijdgebonden (meerdere keren tot verloopdatum)",
     "competition.invite_expires_at": "Verloopt op",
     "competition.invite_created": "Uitnodigingslink aangemaakt",
+    "competition.invite_links_active": "Actieve meervoudige uitnodigingslinks",
+    "competition.invite_expires": "Verloopt",
+    "competition.invite_copy": "Kopiëren",
+    "competition.invite_copied": "Gekopieerd!",
 
     "member.filter.pending_approval": "Wacht op goedkeuring",
     "member.action.approve": "Goedkeuren",

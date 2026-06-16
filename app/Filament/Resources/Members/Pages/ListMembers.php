@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Members\Pages;
 
 use App\Filament\Resources\Members\MemberResource;
+use App\Filament\Resources\Members\Widgets\InviteLinksWidget;
 use App\Models\Invitation;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -16,6 +17,11 @@ use Illuminate\Support\Carbon;
 class ListMembers extends ListRecords
 {
     protected static string $resource = MemberResource::class;
+
+    protected function getHeaderWidgets(): array
+    {
+        return [InviteLinksWidget::class];
+    }
 
     protected function getHeaderActions(): array
     {
@@ -56,6 +62,15 @@ class ListMembers extends ListRecords
                         ->body($url)
                         ->persistent()
                         ->success()
+                        ->actions([
+                            Action::make('copy')
+                                ->label(__('competition.invite_copy'))
+                                ->extraAttributes([
+                                    'x-data' => '{ copied: false }',
+                                    'x-on:click' => "navigator.clipboard.writeText('".addslashes($url)."'); copied = true; setTimeout(() => copied = false, 2000)",
+                                    'x-text' => "copied ? '".__('competition.invite_copied')."' : '".__('competition.invite_copy')."'",
+                                ]),
+                        ])
                         ->send();
                 }),
             CreateAction::make(),
