@@ -97,6 +97,20 @@ scoresheet_descriptor  scoresheet_id, descriptor_id, intensity (low/med/high, op
 
 Unique constraint on `(entry_id, judge_id)` — one scoresheet per judge per entry.
 
+## Styles and style sources
+
+Styles have a `source` column that identifies where the style came from. Known source keys:
+
+- `bjcp_beer` — seeded by `BjcpStyleSeeder` from a JSON file of BJCP 2021 beer styles
+- `bjcp_mead`, `bjcp_cider` — reserved; no seeders yet
+- `custom` — created by admins through the Filament UI
+
+**Adding a new official guide:** create a seeder class + JSON data file, add a `SOURCE_LABELS` entry to `Style::SOURCE_LABELS`, and register the seeder in `DatabaseSeeder`. The upsert key is always `['code', 'source']`. Never include `source` in the update columns list — it is part of the identity key, not a value to overwrite.
+
+**`source` field in Filament:** the field uses `->disabled()` in the style form so admins cannot change it through the UI. There is no server-side guard; a crafted POST could override it. Acceptable for a 10-person internal tool.
+
+**`version` nullability:** `version` is nullable. Custom styles have `null`. In Blade, the label for a source group renders as `"{SOURCE_LABEL} {version}"` when version is set, or just `"{SOURCE_LABEL}"` when null.
+
 ## Competition lifecycle
 
 `draft` → `open` (members register entries) → `judging` (registration locks, bottle numbers assigned, judging begins) → `closed` (everything locks, results final).

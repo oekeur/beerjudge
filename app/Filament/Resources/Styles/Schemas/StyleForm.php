@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Styles\Schemas;
 
+use App\Models\Style;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -16,12 +18,19 @@ class StyleForm
                 Section::make(__('style.section.identity'))
                     ->columns(2)
                     ->schema([
+                        Select::make('source')
+                            ->options(Style::SOURCE_LABELS)
+                            ->default('custom')
+                            ->required()
+                            ->disabled()
+                            ->dehydrated()
+                            ->columnSpan(1),
                         TextInput::make('code')
                             ->required()
                             ->columnSpan(1),
                         TextInput::make('version')
-                            ->required()
-                            ->default('2021')
+                            ->nullable()
+                            ->default(null)
                             ->columnSpan(1),
                         TextInput::make('category_name')
                             ->required()

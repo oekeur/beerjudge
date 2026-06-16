@@ -19,16 +19,25 @@ class StyleMultiSelect extends CheckboxList
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array{label: string, categories: array<string, array<int, string>>}>
      */
     public function getCategorizedOptions(): array
     {
-        $categories = [];
+        $sources = [];
 
-        foreach (Style::orderBy('code')->get() as $style) {
-            $categories[$style->category_name][$style->id] = "{$style->code} {$style->name}";
+        foreach (Style::orderBy('source')->orderBy('code')->get() as $style) {
+            $sourceKey = $style->source;
+            $sourceLabel = Style::SOURCE_LABELS[$sourceKey] ?? $sourceKey;
+            $fullLabel = $style->version ? $sourceLabel.' '.$style->version : $sourceLabel;
+
+            if (! isset($sources[$sourceKey])) {
+                $sources[$sourceKey] = ['label' => $fullLabel, 'categories' => []];
+            }
+
+            $sources[$sourceKey]['categories'][$style->category_name][$style->id]
+                = "{$style->code} {$style->name}";
         }
 
-        return $categories;
+        return $sources;
     }
 }
