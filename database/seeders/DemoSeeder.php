@@ -24,10 +24,11 @@ class DemoSeeder extends Seeder
         $m7 = Member::create(['name' => 'Member 7', 'email' => 'member7@beerjudge.local', 'password' => Hash::make('password'), 'is_admin' => false, 'is_active' => true, 'locale' => 'en']);
         $m8 = Member::create(['name' => 'Member 8', 'email' => 'member8@beerjudge.local', 'password' => Hash::make('password'), 'is_admin' => false, 'is_active' => true, 'locale' => 'en']);
 
-        $byCode = Style::whereIn('code', [
-            '01A', '04A', '04B', '04C', '10A', '10B', '12A', '12C',
-            '13A', '13B', '13C', '15A', '15B', '15C', '20B', '21A', '22B', '23A', '25A', '25B',
-        ])->get()->keyBy('code');
+        $byCode = Style::where('source', 'bjcp_beer')
+            ->whereIn('code', [
+                '01A', '04A', '04B', '04C', '10A', '10B', '12A', '12C',
+                '13A', '13B', '13C', '15A', '15B', '15C', '20B', '21A', '22B', '23A', '25A', '25B',
+            ])->get()->keyBy('code');
 
         $s = fn (string $code): Style => $byCode[$code] ?? Style::first();
 
@@ -76,7 +77,7 @@ class DemoSeeder extends Seeder
             'status' => 'judging',
         ]);
 
-        $subsetA = Style::whereIn('code', ['01A', '04A', '04C', '10A', '12C', '13C', '15A', '15B', '21A', '23A', '25A', '25B'])->pluck('id');
+        $subsetA = Style::where('source', 'bjcp_beer')->whereIn('code', ['01A', '04A', '04C', '10A', '12C', '13C', '15A', '15B', '21A', '23A', '25A', '25B'])->pluck('id');
         if ($subsetA->isEmpty()) {
             $subsetA = Style::inRandomOrder()->limit(12)->pluck('id');
         }
@@ -126,7 +127,7 @@ class DemoSeeder extends Seeder
             'status' => 'open',
         ]);
 
-        $subsetB = Style::whereIn('code', ['04B', '10B', '12A', '13A', '13B', '15C', '20B', '22B'])->pluck('id');
+        $subsetB = Style::where('source', 'bjcp_beer')->whereIn('code', ['04B', '10B', '12A', '13A', '13B', '15C', '20B', '22B'])->pluck('id');
         if ($subsetB->isEmpty()) {
             $subsetB = Style::inRandomOrder()->limit(8)->pluck('id');
         }

@@ -44,6 +44,13 @@ class BjcpStyleSeeder extends Seeder
             $ogMax = is_array($og['maximum'] ?? null) ? ($og['maximum']['value'] ?? null) : null;
             $fgMin = is_array($fg['minimum'] ?? null) ? ($fg['minimum']['value'] ?? null) : null;
             $fgMax = is_array($fg['maximum'] ?? null) ? ($fg['maximum']['value'] ?? null) : null;
+
+            // Some styles store OG/FG as gravity points (e.g. 1055) instead of specific gravity (1.055)
+            $toSg = fn (mixed $v): mixed => is_numeric($v) && $v > 2 ? $v / 1000 : $v;
+            $ogMin = $toSg($ogMin);
+            $ogMax = $toSg($ogMax);
+            $fgMin = $toSg($fgMin);
+            $fgMax = $toSg($fgMax);
             $abvMin = is_array($abv['minimum'] ?? null) ? ($abv['minimum']['value'] ?? null) : null;
             $abvMax = is_array($abv['maximum'] ?? null) ? ($abv['maximum']['value'] ?? null) : null;
             $ibuMin = is_array($ibu['minimum'] ?? null) ? ($ibu['minimum']['value'] ?? null) : null;
