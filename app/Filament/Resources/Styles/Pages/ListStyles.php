@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Styles\Pages;
 
 use App\Filament\Resources\Styles\StyleResource;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListStyles extends ListRecords
@@ -11,6 +12,8 @@ class ListStyles extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            CreateAction::make(),
+        ];
     }
 }
