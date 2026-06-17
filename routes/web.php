@@ -5,6 +5,7 @@ use App\Http\Controllers\EntryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JudgeRegistrationController;
 use App\Http\Controllers\JudgingController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\ScoresheetController;
@@ -18,6 +19,11 @@ Route::middleware('guest')->group(function () {
     Route::get('/magic-link/{token}', [AuthController::class, 'verifyMagicLink'])->name('auth.magic-link.verify');
     Route::get('/join/{token}', [RegistrationController::class, 'show'])->name('register');
     Route::post('/join/{token}', [RegistrationController::class, 'store']);
+
+    Route::get('/password/reset', [PasswordResetController::class, 'showRequestForm'])->name('password.request');
+    Route::post('/password/reset', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/password/reset/confirm', [PasswordResetController::class, 'resetPassword'])->name('password.update');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
