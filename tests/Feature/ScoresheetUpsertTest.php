@@ -151,4 +151,28 @@ class ScoresheetUpsertTest extends TestCase
         $response = $this->postJson('/scoresheets', ['client_uuid' => fake()->uuid()]);
         $response->assertStatus(401);
     }
+
+    public function test_judge_cannot_use_another_judges_uuid(): void
+    {
+        $comp = $this->makeJudgingCompetition();
+        $style = $this->makeStyle();
+        $brewer = $this->makeMember(['email' => 'brewer_x@test.com']);
+        $judgeA = $this->makeMember(['email' => 'judge_a@test.com']);
+        $judgeB = $this->makeMember(['email' => 'judge_b@test.com']);
+        $entryA = $this->makeEntry($comp, $brewer, $style);
+        $entryB = $this->makeEntry($comp, $judgeA, $style); // brewed by judgeA so judgeB can judge it
+
+        $sharedUuid = fake()->uuid();
+
+        // Judge A creates a sheet with this UUID
+        $this->actingAs($judgeA)->postJson('/scoresheets', $this->payload($entryA->id, $sharedUuid, ['aroma' => 10]))
+            ->assertOk();
+
+        // Judge B POSTs with the same UUID — must be rejected
+        $this->actingAs($judgeB)->postJson('/scoresheets', $this->payload($entryB->id, $sharedUuid, ['aroma' => 3]))
+            ->assertStatus(422);
+
+        // Judge A's sheet is unchanged
+        $this->assertEquals(10, Scoresheet::where('client_uuid', $sharedUuid)->value('aroma'));
+    }
 }

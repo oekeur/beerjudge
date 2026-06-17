@@ -46,9 +46,16 @@ class ScoresheetController extends Controller
 
         abort_if($entry->competition?->status !== 'judging', 422, 'Competition is not in judging phase.');
         abort_if($entry->member_id === $judge->id, 422, 'You cannot score your own entry.');
+        abort_if(
+            Scoresheet::where('client_uuid', $data['client_uuid'])->where('judge_id', '!=', $judge->id)->exists(),
+            422,
+            'UUID already in use by another judge.'
+        );
 
         // Look up existing sheet: by client_uuid first, then by (entry_id, judge_id)
-        $sheet = Scoresheet::where('client_uuid', $data['client_uuid'])->first()
+        $sheet = Scoresheet::where('client_uuid', $data['client_uuid'])
+            ->where('judge_id', $judge->id)
+            ->first()
             ?? Scoresheet::where('entry_id', $entryId)
                 ->where('judge_id', $judge->id)
                 ->first();
