@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    image: ghcr.io/oekeur/beerjudge:latest
     env_file: .env.production
     environment:
       DB_CONNECTION: pgsql
