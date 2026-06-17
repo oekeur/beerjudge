@@ -30,6 +30,11 @@
                     class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                     required>
             </div>
+            <p class="text-right text-xs mb-6 -mt-4">
+                <a href="{{ route('password.request') }}" class="text-amber-700 hover:underline">
+                    {{ __('auth.forgot_password') }}
+                </a>
+            </p>
             <button type="submit"
                 class="w-full bg-amber-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-amber-700">
                 {{ __('auth.login') }}
