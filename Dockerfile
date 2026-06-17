@@ -43,7 +43,8 @@ RUN apk add --no-cache \
     bcmath \
     && pecl install redis \
     && docker-php-ext-enable redis \
-    && apk del .build-deps
+    && apk del .build-deps \
+    && echo "zend.exception_ignore_args = Off" > /usr/local/etc/php/conf.d/sentry.ini
 
 WORKDIR /var/www
 
