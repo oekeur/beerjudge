@@ -29,7 +29,8 @@ Every session works in its own git worktree by default unless the user explicitl
 **On session start (unless told otherwise):**
 1. Create a worktree: `git worktree add ../beerjudge-<branch-slug> -b <branch-name>`
 2. Copy the env file: `cp /home/oscar/projects/beerjudge/.env ../beerjudge-<branch-slug>/.env` — worktrees don't inherit `.env` and tests will fail with "No application encryption key" without it.
-3. Do all work there.
+3. Symlink vendor: `ln -s /home/oscar/projects/beerjudge/vendor ../beerjudge-<branch-slug>/vendor` — worktrees don't share `vendor/`; Artisan, PHPStan, and Pint all fail without it.
+4. Do all work there.
 
 **On session end:**
 1. Commit all changes in the worktree.
