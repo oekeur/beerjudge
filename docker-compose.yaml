@@ -16,6 +16,7 @@ services:
 
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USERNAME:-beerjudge}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
@@ -30,6 +31,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     volumes:
       - redis_data:/data
     healthcheck:
