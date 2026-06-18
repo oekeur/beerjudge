@@ -2,7 +2,6 @@ services:
   app:
     build: .
     image: ghcr.io/oekeur/beerjudge:latest
-    env_file: .env.production
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: postgres
@@ -14,9 +13,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    networks:
-      - default
-      - proxy
 
   postgres:
     image: postgres:16-alpine
@@ -31,8 +27,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - default
 
   redis:
     image: redis:7-alpine
@@ -43,13 +37,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-    networks:
-      - default
 
 volumes:
   postgres_data:
   redis_data:
-
-networks:
-    proxy:
-      external: true
