@@ -1,15 +1,16 @@
+# Auto-merged by Docker Compose for local dev (docker-compose up).
+# Production: docker-compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
 services:
   app:
-    environment:
-      APP_DEBUG: "true"
+    env_file: .env
     ports:
-      - "8080:80"
+      - "8000:80"
     volumes:
       - .:/var/www
       - vendor:/var/www/vendor
-      - build:/var/www/public/build
       - storage:/var/www/storage
       - bootstrap_cache:/var/www/bootstrap/cache
+    entrypoint: /entrypoint.dev.sh
 
   postgres:
     ports:
@@ -19,8 +20,18 @@ services:
     ports:
       - "6379:6379"
 
+  vite:
+    image: node:24-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - vite_node_modules:/app/node_modules
+
 volumes:
   vendor:
-  build:
   storage:
   bootstrap_cache:
+  vite_node_modules:

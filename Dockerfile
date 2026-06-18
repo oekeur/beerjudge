@@ -61,8 +61,10 @@ RUN mkdir -p bootstrap/cache \
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/supervisord.dev.conf /etc/supervisord.dev.conf
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY docker/entrypoint.dev.sh /entrypoint.dev.sh
+RUN chmod +x /entrypoint.sh /entrypoint.dev.sh
 
 EXPOSE 80
 
