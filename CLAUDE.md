@@ -12,6 +12,14 @@ A Laravel app for a ~10-person homebrew club to run four competitions per year. 
 
 `.claude/agents/` and `.claude/skills/` are committed and shared. Add project-level agents or skills there; personal ones go in `~/.claude/`.
 
+## Debugging errors
+
+When any error or unexpected behaviour is reported, the first two tool calls must be:
+1. `mcp__laravel-boost__last-error` — gets the most recent exception with full stack trace
+2. `mcp__laravel-boost__read-log-entries` (5–10 entries) — gets the Laravel log tail
+
+Do this before reading code, running artisan commands, or forming any hypothesis. The displayed error (e.g. in the browser) is often a symptom; the log reveals the root cause.
+
 ## Skills
 
 The `laravel-best-practices` skill is authoritative for this project. Invoke it before making any non-trivial Laravel change.
