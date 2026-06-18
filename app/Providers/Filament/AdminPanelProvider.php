@@ -18,6 +18,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -62,6 +63,43 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
                 SetLocale::class,
-            ]);
+            ])
+            ->renderHook('panels::head.end', function (): HtmlString {
+                $dsn = (string) (config('sentry.dsn') ?? '');
+                $user = auth()->user();
+                $userJson = $user !== null
+                    ? json_encode(['name' => $user->name, 'email' => $user->email])
+                    : 'null';
+
+                return new HtmlString(<<<HTML
+<meta name="sentry-dsn" content="{$dsn}">
+<meta name="sentry-user" content='{$userJson}'>
+<script type="module">
+import { init, feedbackIntegration, setUser } from 'https://browser.sentry-cdn.com/10.58.0/bundle.esm.min.js';
+
+const dsn = document.querySelector('meta[name="sentry-dsn"]')?.content ?? '';
+if (!dsn) {
+    // No DSN configured — skip Sentry initialisation
+} else {
+    init({
+        dsn,
+        integrations: [
+            feedbackIntegration({ colorScheme: 'light', autoInject: true }),
+        ],
+    });
+
+    try {
+        const raw = document.querySelector('meta[name="sentry-user"]')?.content ?? 'null';
+        const userData = JSON.parse(raw);
+        if (userData && typeof userData === 'object') {
+            setUser(userData);
+        }
+    } catch (_) {
+        // Malformed user meta — skip setUser
+    }
+}
+</script>
+HTML);
+            });
     }
 }
