@@ -13,7 +13,13 @@
 <body class="min-h-screen bg-amber-50 flex items-center justify-center">
     <div class="w-full max-w-sm bg-white rounded-xl shadow p-8">
         <h1 class="text-2xl font-bold text-amber-900 mb-2">{{ $appTitle }}</h1>
-        <p class="text-sm text-gray-500 mb-6">{{ __('auth.register_intro') }}</p>
+        <p class="text-sm text-gray-500 mb-4">{{ __('auth.register_intro') }}</p>
+        <div class="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 mb-3">
+            After registering, an admin will need to approve your account before you can log in.
+        </div>
+        <div class="rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-800 mb-6">
+            <span class="font-medium">Beta version</span> — expect rough edges. Email notifications are not set up yet, so you won't receive a confirmation email.
+        </div>
         <form method="POST" action="{{ url('/join/' . $token) }}">
             @csrf
             @if ($errors->any())
