@@ -12,11 +12,11 @@ function emptySheet(entryId) {
     return {
         client_uuid: crypto.randomUUID(),
         entry_id: entryId,
-        aroma: 0,
-        appearance: 0,
-        flavour: 0,
-        mouthfeel: 0,
-        overall: 0,
+        aroma: null,
+        appearance: null,
+        flavour: null,
+        mouthfeel: null,
+        overall: null,
         aroma_notes: '',
         appearance_notes: '',
         flavour_notes: '',
@@ -26,6 +26,7 @@ function emptySheet(entryId) {
         status: 'draft',
         syncStatus: 'idle',
         expanded: false,
+        submitAttempted: false,
     };
 }
 
@@ -189,7 +190,17 @@ window.judgingApp = function (serverData) {
             }, 5000);
         },
 
+        isScoreComplete(entryId) {
+            const s = this.sheets[entryId];
+            return s && s.aroma !== null && s.appearance !== null
+                && s.flavour !== null && s.mouthfeel !== null && s.overall !== null;
+        },
+
         async submitSheet(entryId) {
+            if (!this.isScoreComplete(entryId)) {
+                this.sheets[entryId].submitAttempted = true;
+                return;
+            }
             this.sheets[entryId].status = 'submitted';
             await this.saveSheet(entryId);
         },

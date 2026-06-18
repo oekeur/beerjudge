@@ -18,14 +18,16 @@ class StoreScoresheetRequest extends FormRequest
      */
     public function rules(): array
     {
+        $scoring = $this->input('status') === 'submitted' ? 'required' : 'nullable';
+
         return [
             'client_uuid' => ['required', 'uuid'],
             'entry_id' => ['required', 'integer', 'exists:entries,id'],
-            'aroma' => ['required', 'integer', 'min:0', 'max:12'],
-            'appearance' => ['required', 'integer', 'min:0', 'max:3'],
-            'flavour' => ['required', 'integer', 'min:0', 'max:20'],
-            'mouthfeel' => ['required', 'integer', 'min:0', 'max:5'],
-            'overall' => ['required', 'integer', 'min:0', 'max:10'],
+            'aroma' => [$scoring, 'integer', 'min:0', 'max:12'],
+            'appearance' => [$scoring, 'integer', 'min:0', 'max:3'],
+            'flavour' => [$scoring, 'integer', 'min:0', 'max:20'],
+            'mouthfeel' => [$scoring, 'integer', 'min:0', 'max:5'],
+            'overall' => [$scoring, 'integer', 'min:0', 'max:10'],
             'aroma_notes' => ['nullable', 'string', 'max:2000'],
             'appearance_notes' => ['nullable', 'string', 'max:2000'],
             'flavour_notes' => ['nullable', 'string', 'max:2000'],

@@ -184,14 +184,15 @@
                                         <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.aroma') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].aroma"></span> / 12</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].aroma !== null ? sheets[entry.id].aroma : '—'"></span> / 12</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Aroma score, 0 to 12">
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Aroma score, 0 to 12"
+                                    :class="sheets[entry.id].submitAttempted && sheets[entry.id].aroma === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 12; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].aroma === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                                        @click="sheets[entry.id].aroma = {{ $n }}; onInput(entry.id)"
+                                        @click="sheets[entry.id].aroma = {{ $n }}; sheets[entry.id].submitAttempted = false; onInput(entry.id)"
                                         :aria-pressed="sheets[entry.id].aroma === {{ $n }}"
                                     >{{ $n }}</button>
                                     @endfor
@@ -206,14 +207,15 @@
                                         <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.appearance') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].appearance"></span> / 3</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].appearance !== null ? sheets[entry.id].appearance : '—'"></span> / 3</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Appearance score, 0 to 3">
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Appearance score, 0 to 3"
+                                    :class="sheets[entry.id].submitAttempted && sheets[entry.id].appearance === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 3; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].appearance === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                                        @click="sheets[entry.id].appearance = {{ $n }}; onInput(entry.id)"
+                                        @click="sheets[entry.id].appearance = {{ $n }}; sheets[entry.id].submitAttempted = false; onInput(entry.id)"
                                         :aria-pressed="sheets[entry.id].appearance === {{ $n }}"
                                     >{{ $n }}</button>
                                     @endfor
@@ -228,14 +230,15 @@
                                         <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.flavour') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].flavour"></span> / 20</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].flavour !== null ? sheets[entry.id].flavour : '—'"></span> / 20</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Flavour score, 0 to 20">
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Flavour score, 0 to 20"
+                                    :class="sheets[entry.id].submitAttempted && sheets[entry.id].flavour === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 20; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].flavour === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                                        @click="sheets[entry.id].flavour = {{ $n }}; onInput(entry.id)"
+                                        @click="sheets[entry.id].flavour = {{ $n }}; sheets[entry.id].submitAttempted = false; onInput(entry.id)"
                                         :aria-pressed="sheets[entry.id].flavour === {{ $n }}"
                                     >{{ $n }}</button>
                                     @endfor
@@ -250,14 +253,15 @@
                                         <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.mouthfeel') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].mouthfeel"></span> / 5</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].mouthfeel !== null ? sheets[entry.id].mouthfeel : '—'"></span> / 5</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Mouthfeel score, 0 to 5">
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Mouthfeel score, 0 to 5"
+                                    :class="sheets[entry.id].submitAttempted && sheets[entry.id].mouthfeel === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 5; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].mouthfeel === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                                        @click="sheets[entry.id].mouthfeel = {{ $n }}; onInput(entry.id)"
+                                        @click="sheets[entry.id].mouthfeel = {{ $n }}; sheets[entry.id].submitAttempted = false; onInput(entry.id)"
                                         :aria-pressed="sheets[entry.id].mouthfeel === {{ $n }}"
                                     >{{ $n }}</button>
                                     @endfor
@@ -272,14 +276,15 @@
                                         <span class="font-medium text-gray-800 text-sm group-hover:text-amber-700">{{ __('judging.section.overall') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 text-amber-600 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].overall"></span> / 10</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700"><span x-text="sheets[entry.id].overall !== null ? sheets[entry.id].overall : '—'"></span> / 10</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Overall Impression score, 0 to 10">
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Overall Impression score, 0 to 10"
+                                    :class="sheets[entry.id].submitAttempted && sheets[entry.id].overall === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 10; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].overall === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                                        @click="sheets[entry.id].overall = {{ $n }}; onInput(entry.id)"
+                                        @click="sheets[entry.id].overall = {{ $n }}; sheets[entry.id].submitAttempted = false; onInput(entry.id)"
                                         :aria-pressed="sheets[entry.id].overall === {{ $n }}"
                                     >{{ $n }}</button>
                                     @endfor
