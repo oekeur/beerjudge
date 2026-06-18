@@ -7,7 +7,6 @@ services:
       - "8000:80"
     volumes:
       - .:/var/www
-      - vendor:/var/www/vendor
       - storage:/var/www/storage
       - bootstrap_cache:/var/www/bootstrap/cache
     entrypoint: /entrypoint.dev.sh
@@ -31,7 +30,6 @@ services:
       - vite_node_modules:/app/node_modules
 
 volumes:
-  vendor:
   storage:
   bootstrap_cache:
   vite_node_modules:
