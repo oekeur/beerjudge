@@ -6,6 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Judging · {{ $competition->name }}</title>
     @vite(['resources/css/app.css', 'resources/js/judging.js'])
+    <meta name="sentry-dsn" content="{{ config('sentry.dsn') ?? '' }}">
+    <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
 </head>
 <body class="bg-gray-50 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server))" x-init="init()" data-server='@json($serverData)'>
 

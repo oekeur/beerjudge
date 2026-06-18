@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results — {{ $competition->name }}</title>
     @vite(['resources/css/app.css'])
+    <meta name="sentry-dsn" content="{{ config('sentry.dsn') ?? '' }}">
+    <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
 </head>
 <body class="bg-gray-50 font-sans p-6 max-w-2xl mx-auto">
     <div class="mb-6">

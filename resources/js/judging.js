@@ -1,3 +1,4 @@
+import './sentry.js';
 import Alpine from 'alpinejs';
 import Dexie from 'dexie';
 

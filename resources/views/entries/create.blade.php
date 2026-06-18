@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $appTitle }} — {{ __('entry.title') }}</title>
     @vite(['resources/css/app.css'])
+    <meta name="sentry-dsn" content="{{ config('sentry.dsn') ?? '' }}">
+    <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
 </head>
 <body class="min-h-screen bg-amber-50">
     <div class="max-w-lg mx-auto py-12 px-4">
