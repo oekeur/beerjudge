@@ -102,7 +102,7 @@ window.judgingApp = function (serverData) {
         async saveSheet(entryId) {
             const sheet = this.sheets[entryId];
             try {
-                await db.scoresheets.put({ ...sheet, syncStatus: 'pending', updatedAt: new Date().toISOString() });
+                await db.scoresheets.put({ ...JSON.parse(JSON.stringify(sheet)), syncStatus: 'pending', updatedAt: new Date().toISOString() });
             } catch (e) {
                 console.warn('IDB write failed (pending):', e);
             }
@@ -147,7 +147,7 @@ window.judgingApp = function (serverData) {
                     this.sheets[entryId].status = json.status;
                 }
                 try {
-                    await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'synced' });
+                    await db.scoresheets.put({ ...JSON.parse(JSON.stringify(this.sheets[entryId])), syncStatus: 'synced' });
                 } catch (e) {
                     console.warn('IDB write failed (synced):', e);
                 }
@@ -155,7 +155,7 @@ window.judgingApp = function (serverData) {
                 console.error('syncToServer failed', entryId, String(err));
                 this.sheets[entryId].syncStatus = 'error';
                 try {
-                    await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'error' });
+                    await db.scoresheets.put({ ...JSON.parse(JSON.stringify(this.sheets[entryId])), syncStatus: 'error' });
                 } catch (e) {
                     console.warn('IDB write failed (error):', e);
                 }

@@ -32,7 +32,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('aut
 
 Route::middleware(['auth', 'active-member'])->group(function () {
     Route::post('/scoresheets', [ScoresheetController::class, 'upsert'])->name('scoresheets.upsert');
-    Route::get('/judging/{competition}', [JudgingController::class, 'show'])->name('judging.show');
+    Route::get('/judging/{competition}', [JudgingController::class, 'show'])->name('judging.show')->whereNumber('competition');
     Route::post('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'store'])->name('competitions.judges.store');
     Route::delete('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'destroy'])->name('competitions.judges.destroy');
     Route::get('/competitions/{competition}/results/{member}', [ResultsController::class, 'show'])->name('results.show');
