@@ -72,4 +72,20 @@ class SentryMetaTagTest extends TestCase
         $response->assertSee('Judge Joe', false);
         $response->assertSee('joe@example.com', false);
     }
+
+    public function test_filament_admin_panel_renders_sentry_meta_tags(): void
+    {
+        config(['sentry.dsn' => 'https://abc123@sentry.io/456']);
+
+        $admin = Member::factory()->create(['is_admin' => true]);
+
+        $response = $this->actingAs($admin)->get('/admin');
+
+        $response->assertOk();
+        $response->assertSee('name="sentry-dsn"', false);
+        $response->assertSee('content="https://abc123@sentry.io/456"', false);
+        $response->assertSee('name="sentry-user"', false);
+        $response->assertSee($admin->name, false);
+        $response->assertSee($admin->email, false);
+    }
 }
