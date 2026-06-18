@@ -176,5 +176,24 @@
     "descriptor.vegetal.name": "Groentachtig",
     "descriptor.vegetal.description": "Gekookt, ingeblikt of verrot groentearoma en -smaak (kool, ui, selderij, asperges, etc.)",
     "descriptor.yeasty.name": "Gistachtig",
-    "descriptor.yeasty.description": "Een broodachtig, zwavel- of gistachtig aroma of smaak."
+    "descriptor.yeasty.description": "Een broodachtig, zwavel- of gistachtig aroma of smaak.",
+
+    "nav.home": "Home",
+    "nav.profile": "Profiel",
+    "nav.admin": "Beheerpaneel",
+    "nav.manage_competition": "Wedstrijd beheren",
+    "nav.logout": "Uitloggen",
+
+    "profile.title": "Jouw profiel",
+    "profile.account_details": "Accountgegevens",
+    "profile.change_password": "Wachtwoord wijzigen",
+    "profile.name": "Naam",
+    "profile.email": "E-mailadres",
+    "profile.current_password": "Huidig wachtwoord",
+    "profile.new_password": "Nieuw wachtwoord",
+    "profile.confirm_password": "Bevestig nieuw wachtwoord",
+    "profile.save": "Opslaan",
+    "profile.saved": "Profiel opgeslagen.",
+    "profile.wrong_current_password": "Het ingevoerde huidige wachtwoord is onjuist.",
+    "profile.password_hint": "Laat leeg om je huidige wachtwoord te behouden."
 }

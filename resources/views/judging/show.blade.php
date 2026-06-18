@@ -12,15 +12,38 @@
 <body class="bg-gray-50 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server))" x-init="init()" data-server='@json($serverData)'>
 
     {{-- Header --}}
-    <header class="bg-amber-700 text-white px-4 py-3 flex justify-between items-center sticky top-0 z-10 shadow">
-        <div>
-            <div class="font-bold text-lg leading-tight">{{ $competition->name }}</div>
-            <div class="text-amber-200 text-sm">Hi, {{ $judge->name }}</div>
+    <header class="bg-amber-700 text-white sticky top-0 z-10 shadow">
+        {{-- Navigation row --}}
+        <div class="px-4 pt-2 pb-1 flex items-center justify-between gap-2 border-b border-amber-600/50">
+            <a href="{{ route('home') }}" class="flex items-center gap-1 text-amber-200 text-sm hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7A1 1 0 003 11h1v6a1 1 0 001 1h4a1 1 0 001-1v-3h2v3a1 1 0 001 1h4a1 1 0 001-1v-6h1a1 1 0 00.707-1.707l-7-7z" />
+                </svg>
+                <span>{{ __('nav.home') }}</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('profile.edit') }}" class="text-amber-200 text-sm hover:text-white">
+                    {{ __('nav.profile') }}
+                </a>
+                @if($judge->is_admin)
+                    <a href="/admin" class="text-amber-200 text-sm hover:text-white">
+                        {{ __('nav.admin') }}
+                    </a>
+                    <a href="/admin/competitions/{{ $competition->id }}/edit" class="text-amber-200 text-sm hover:text-white">
+                        {{ __('nav.manage_competition') }}
+                    </a>
+                @endif
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="text-amber-200 text-sm hover:text-white">{{ __('nav.logout') }}</button>
+                </form>
+            </div>
         </div>
-        <form method="POST" action="/logout">
-            @csrf
-            <button type="submit" class="text-amber-200 text-sm underline">{{ __('judging.logout') }}</button>
-        </form>
+        {{-- Context row --}}
+        <div class="px-4 py-2">
+            <div class="font-bold text-base leading-tight">{{ $competition->name }}</div>
+            <div class="text-amber-200 text-xs">{{ $judge->name }}</div>
+        </div>
     </header>
 
     {{-- Judge registration banner --}}

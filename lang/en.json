@@ -176,5 +176,24 @@
     "descriptor.vegetal.name": "Vegetal",
     "descriptor.vegetal.description": "Cooked, canned, or rotten vegetable aroma and flavor (cabbage, onion, celery, asparagus, etc.)",
     "descriptor.yeasty.name": "Yeasty",
-    "descriptor.yeasty.description": "A bready, sulfury or yeast-like aroma or flavor."
+    "descriptor.yeasty.description": "A bready, sulfury or yeast-like aroma or flavor.",
+
+    "nav.home": "Home",
+    "nav.profile": "Profile",
+    "nav.admin": "Admin panel",
+    "nav.manage_competition": "Manage competition",
+    "nav.logout": "Log out",
+
+    "profile.title": "Your profile",
+    "profile.account_details": "Account details",
+    "profile.change_password": "Change password",
+    "profile.name": "Name",
+    "profile.email": "Email",
+    "profile.current_password": "Current password",
+    "profile.new_password": "New password",
+    "profile.confirm_password": "Confirm new password",
+    "profile.save": "Save",
+    "profile.saved": "Profile saved.",
+    "profile.wrong_current_password": "The current password you entered is incorrect.",
+    "profile.password_hint": "Leave blank to keep your current password."
 }

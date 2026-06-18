@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JudgeRegistrationController;
 use App\Http\Controllers\JudgingController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\ScoresheetController;
@@ -31,6 +32,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('auth', 'active-member');
 
 Route::middleware(['auth', 'active-member'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/scoresheets', [ScoresheetController::class, 'upsert'])->name('scoresheets.upsert');
     Route::get('/judging/{competition}', [JudgingController::class, 'show'])->name('judging.show')->whereNumber('competition');
     Route::post('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'store'])->name('competitions.judges.store')->whereNumber('competition');

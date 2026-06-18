@@ -19,13 +19,16 @@
             <div class="flex items-center gap-4">
                 @if(auth()->user()?->is_admin)
                     <a href="/admin" class="text-sm text-amber-700 hover:text-amber-900 hover:underline">
-                        Admin panel
+                        {{ __('nav.admin') }}
                     </a>
                 @endif
+                <a href="{{ route('profile.edit') }}" class="text-sm text-amber-700 hover:text-amber-900 hover:underline">
+                    {{ __('nav.profile') }}
+                </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="text-sm text-gray-500 hover:text-gray-700 hover:underline">
-                        Log out
+                        {{ __('nav.logout') }}
                     </button>
                 </form>
             </div>
