@@ -26,20 +26,24 @@ No Livewire on the judging screen. Livewire re-renders from the server on every 
 
 ## Getting started
 
-### Simple local setup (SQLite)
+### Simple local setup (SQLite, no external services)
+
+No Postgres or Redis needed. Uses SQLite and database-backed sessions/cache/queue. Good for quick feature work and frontend changes.
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 composer install
 php artisan migrate --seed     # seeds the full BJCP 2021 style set
-npm install && npm run build
-php artisan serve
+npm install
+composer run dev:lite          # artisan serve + queue:listen + pail + vite, SQLite mode
 ```
+
+`dev:lite` overrides the database/session/cache drivers at runtime, so your `.env` stays unchanged. The SQLite file is created automatically.
 
 ### Local dev with Postgres + Redis (production parity)
 
-Requires Docker. Starts only the backing services so Vite HMR and fast PHP iteration still work:
+Starts only the backing services so Vite HMR and fast PHP iteration still work natively. Use this when testing queue behaviour, session handling, or anything that needs to match production closely.
 
 ```bash
 cp .env.docker.example .env
@@ -48,7 +52,7 @@ composer install
 npm install
 docker compose up postgres redis   # starts postgres:16 and redis:7, exposed on localhost
 php artisan migrate --seed
-composer run dev                   # artisan serve + queue:listen + vite
+composer run dev                   # artisan serve + queue:listen + pail + vite
 ```
 
 ### Full Docker stack
