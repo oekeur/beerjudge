@@ -37,7 +37,7 @@ Every session works in its own git worktree by default unless the user explicitl
 **On session start (unless told otherwise):**
 1. Create a worktree: `git worktree add ../beerjudge-<branch-slug> -b <branch-name>`
 2. Copy the env file: `cp /home/oscar/projects/beerjudge/.env ../beerjudge-<branch-slug>/.env` — worktrees don't inherit `.env` and tests will fail with "No application encryption key" without it.
-3. Symlink vendor: `ln -s /home/oscar/projects/beerjudge/vendor ../beerjudge-<branch-slug>/vendor` — worktrees don't share `vendor/`; Artisan, PHPStan, and Pint all fail without it.
+3. Copy vendor with hard links: `cp -rl /home/oscar/projects/beerjudge/vendor ../beerjudge-<branch-slug>/vendor && composer -d ../beerjudge-<branch-slug> dump-autoload --quiet` — **do not use a symlink**. PHP resolves symlinks when computing `__FILE__`, so a symlinked vendor always points `$baseDir` at the main repo's `app/` directory; any new class added in the worktree is invisible to the autoloader. Hard links (`cp -rl`) are instant and share disk blocks; `dump-autoload` rebuilds the classmap against the worktree's own `app/`.
 4. Do all work there.
 
 **On session end:**
