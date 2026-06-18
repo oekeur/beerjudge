@@ -47,11 +47,27 @@
     {{-- Entry list --}}
     <main class="max-w-lg mx-auto px-4 py-4 space-y-3">
 
+        <div class="flex items-center justify-between">
+            <span class="text-xs text-gray-400">{{ __('judging.sort_label') }}</span>
+            <div class="flex rounded-lg border border-gray-200 overflow-hidden text-xs font-medium">
+                <button type="button"
+                    class="px-3 py-1.5 transition-colors"
+                    :class="sortMode === 'judging' ? 'bg-amber-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
+                    @click="sortMode = 'judging'"
+                >{{ __('judging.sort_judging') }}</button>
+                <button type="button"
+                    class="px-3 py-1.5 border-l border-gray-200 transition-colors"
+                    :class="sortMode === 'ranked' ? 'bg-amber-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
+                    @click="sortMode = 'ranked'"
+                >{{ __('judging.sort_ranked') }}</button>
+            </div>
+        </div>
+
         <template x-if="entries.length === 0">
             <p class="text-gray-500 text-center py-12">{{ __('judging.no_entries') }}</p>
         </template>
 
-        <template x-for="entry in entries" :key="entry.id">
+        <template x-for="(entry, index) in sortedEntries" :key="entry.id">
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
                 {{-- Entry row header --}}
@@ -60,6 +76,10 @@
                     class="w-full text-left px-4 py-4 flex items-center gap-3"
                     @click="toggleExpanded(entry.id)"
                 >
+                    <div class="w-6 text-right flex-shrink-0">
+                        <span x-show="sortMode === 'judging'" class="text-xs text-gray-300 tabular-nums" x-text="'#' + entry.bottle_number"></span>
+                        <span x-show="sortMode === 'ranked'" class="text-xs text-gray-400 tabular-nums font-medium" x-text="(index + 1) + '.'"></span>
+                    </div>
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold text-gray-900 truncate text-sm" x-text="entry.brewer_name"></div>
                         <div class="text-xs text-gray-400 mt-0.5 flex items-center gap-1 min-w-0 transition-colors"

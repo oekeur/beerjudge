@@ -34,10 +34,23 @@ window.judgingApp = function (serverData) {
         entries: serverData.entries,
         bands: serverData.bands,
         sheets: {},
+        sortMode: 'judging',
         syncQueue: [],
         _retryTimer: null,
         styleGuide: { open: false, section: '', text: '' },
         styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '' },
+
+        get sortedEntries() {
+            if (this.sortMode === 'judging') return this.entries;
+            return [...this.entries].sort((a, b) => {
+                const ta = this.sheetTotal(a.id);
+                const tb = this.sheetTotal(b.id);
+                if (ta !== tb) return tb - ta;
+                const oa = this.sheets[a.id]?.overall ?? 0;
+                const ob = this.sheets[b.id]?.overall ?? 0;
+                return ob - oa;
+            });
+        },
 
         async init() {
             // Seed from server data

@@ -112,6 +112,9 @@
     "judging.placeholder.flavour": "Beschrijf mout, hop, vergistingskarakteristieken, balans, afdronk en andere smaakaspecten",
     "judging.placeholder.mouthfeel": "Beschrijf body, koolzuur, warmte, romigheid, adstringentie en andere mondgewaarwordingen",
     "judging.placeholder.overall": "Beschrijf het algehele drinkplezier, geef suggesties voor verbetering",
+    "judging.sort_label": "Volgorde",
+    "judging.sort_judging": "Beoordelingsvolgorde",
+    "judging.sort_ranked": "Mijn ranglijst",
 
     "judging.band.outstanding.name": "Uitstekend",
     "judging.band.outstanding.description": "Wereldklasse voorbeeld van de stijl.",

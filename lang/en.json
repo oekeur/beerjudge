@@ -112,6 +112,9 @@
     "judging.placeholder.flavour": "Comment on malt, hops, fermentation characteristics, balance, finish/aftertaste, and other flavor characteristics",
     "judging.placeholder.mouthfeel": "Comment on body, carbonation, warmth, creaminess, astringency, and other palate sensations",
     "judging.placeholder.overall": "Comment on overall drinking pleasure associated with entry, give suggestions for improvement",
+    "judging.sort_label": "Order",
+    "judging.sort_judging": "Judging order",
+    "judging.sort_ranked": "My ranking",
 
     "judging.band.outstanding.name": "Outstanding",
     "judging.band.outstanding.description": "World-class example of style.",
