@@ -33,10 +33,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('aut
 Route::middleware(['auth', 'active-member'])->group(function () {
     Route::post('/scoresheets', [ScoresheetController::class, 'upsert'])->name('scoresheets.upsert');
     Route::get('/judging/{competition}', [JudgingController::class, 'show'])->name('judging.show')->whereNumber('competition');
-    Route::post('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'store'])->name('competitions.judges.store');
-    Route::delete('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'destroy'])->name('competitions.judges.destroy');
-    Route::get('/competitions/{competition}/results/{member}', [ResultsController::class, 'show'])->name('results.show');
-    Route::get('/competitions/{competition}/results', [ResultsController::class, 'index'])->name('results.index');
-    Route::get('/competitions/{competition}/entries/create', [EntryController::class, 'create'])->name('competitions.entries.create');
-    Route::post('/competitions/{competition}/entries', [EntryController::class, 'store'])->name('competitions.entries.store');
+    Route::post('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'store'])->name('competitions.judges.store')->whereNumber('competition');
+    Route::delete('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'destroy'])->name('competitions.judges.destroy')->whereNumber('competition');
+    Route::get('/competitions/{competition}/results/{member}', [ResultsController::class, 'show'])->name('results.show')->whereNumber(['competition', 'member']);
+    Route::get('/competitions/{competition}/results', [ResultsController::class, 'index'])->name('results.index')->whereNumber('competition');
+    Route::get('/competitions/{competition}/entries/create', [EntryController::class, 'create'])->name('competitions.entries.create')->whereNumber('competition');
+    Route::post('/competitions/{competition}/entries', [EntryController::class, 'store'])->name('competitions.entries.store')->whereNumber('competition');
 });
