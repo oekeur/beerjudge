@@ -90,6 +90,7 @@ jobs:
           cp .env.browser-test .env
           touch database/browser-test.sqlite
       - run: VITE_SKIP_FONTS=1 npm run build
+      - run: php artisan migrate --force --env=browser-test
       - name: Start app server and wait for it to be ready
         run: |
           APP_ENV=browser-test php artisan serve --host=0.0.0.0 --port=8000 &
