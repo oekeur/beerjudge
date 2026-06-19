@@ -121,7 +121,7 @@
 
                     <div class="flex items-center gap-2 flex-shrink-0">
                         {{-- Score preview --}}
-                        <span class="text-sm font-semibold tabular-nums text-amber-600 dark:text-amber-300"
+                        <span class="text-sm font-semibold tabular-nums text-emerald-600 dark:text-emerald-400"
                             x-show="sheets[entry.id]?.status === 'submitted'"
                             x-text="sheetTotal(entry.id) + ' / 50'">
                         </span>
@@ -133,7 +133,7 @@
                         {{-- Sync badge --}}
                         <span x-show="!sheets[entry.id] || sheets[entry.id].syncStatus === 'idle'" class="text-xs text-gray-300 dark:text-gray-600">—</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'syncing' || sheets[entry.id]?.syncStatus === 'pending'" class="text-xs text-amber-500 animate-pulse">{{ __('judging.saving') }}</span>
-                        <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'submitted'" class="text-xs text-amber-600 dark:text-amber-400 font-medium">{{ __('judging.submitted') }}</span>
+                        <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'submitted'" class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">{{ __('judging.submitted') }}</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'draft'" class="text-xs text-gray-400 dark:text-gray-500">{{ __('judging.saved') }}</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'error'" class="text-xs text-red-500 cursor-pointer" @click.stop="retryNow(entry.id)">{{ __('judging.retry') }}</span>
 
@@ -151,7 +151,7 @@
                     <template x-if="sheets[entry.id]?.status === 'submitted' && sheets[entry.id]?.syncStatus === 'synced'">
                         <div>
                             <div class="flex items-center gap-2 mb-3">
-                                <span class="text-amber-600 dark:text-amber-400 font-semibold text-sm">{{ __('judging.submitted') }}</span>
+                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">{{ __('judging.submitted') }}</span>
                             </div>
                             <table class="text-sm text-gray-600 dark:text-gray-400 mb-3" style="border-spacing: 0" aria-live="polite">
                                 <tr><td class="pr-6">{{ __('judging.section.aroma') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].aroma"></strong></span>/12</td></tr>
@@ -163,8 +163,15 @@
                             <div class="mb-4">
                                 <div class="text-base font-bold">{{ __('judging.total') }} <span x-text="sheetTotal(entry.id)"></span> / 50</div>
                                 <div class="mt-0.5">
-                                    <span class="text-sm font-semibold" x-text="bandInfo(sheetTotal(entry.id)).name"></span><span class="text-sm text-gray-500 dark:text-gray-400 ml-1.5" x-text="'(' + bandInfo(sheetTotal(entry.id)).range + ')'"></span>
-                                    <div class="text-sm text-gray-700 dark:text-gray-300 italic" x-text="bandInfo(sheetTotal(entry.id)).description"></div>
+                                    <span class="text-sm font-semibold"
+                                        :class="{
+                                            'text-emerald-600 dark:text-emerald-400': sheetTotal(entry.id) >= 38,
+                                            'text-lime-600 dark:text-lime-400': sheetTotal(entry.id) >= 30 && sheetTotal(entry.id) < 38,
+                                            'text-amber-600 dark:text-amber-400': sheetTotal(entry.id) >= 21 && sheetTotal(entry.id) < 30,
+                                            'text-red-600 dark:text-red-400': sheetTotal(entry.id) < 21
+                                        }"
+                                        x-text="bandInfo(sheetTotal(entry.id)).name"></span><span class="text-sm text-gray-500 dark:text-gray-400 ml-1.5" x-text="'(' + bandInfo(sheetTotal(entry.id)).range + ')'"></span>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400" x-text="bandInfo(sheetTotal(entry.id)).description"></div>
                                 </div>
                             </div>
                             <button
@@ -335,13 +342,13 @@
                                     <div>
                                         <span class="text-xs font-semibold"
                                             :class="{
-                                                'text-amber-600 dark:text-amber-400': sheetTotal(entry.id) >= 38,
-                                                'text-amber-700 dark:text-amber-500': sheetTotal(entry.id) >= 30 && sheetTotal(entry.id) < 38,
-                                                'text-orange-600 dark:text-orange-400': sheetTotal(entry.id) >= 21 && sheetTotal(entry.id) < 30,
+                                                'text-emerald-600 dark:text-emerald-400': sheetTotal(entry.id) >= 38,
+                                                'text-lime-600 dark:text-lime-400': sheetTotal(entry.id) >= 30 && sheetTotal(entry.id) < 38,
+                                                'text-amber-600 dark:text-amber-400': sheetTotal(entry.id) >= 21 && sheetTotal(entry.id) < 30,
                                                 'text-red-600 dark:text-red-400': sheetTotal(entry.id) < 21
                                             }"
                                             x-text="bandInfo(sheetTotal(entry.id)).name"></span><span class="text-xs text-gray-500 dark:text-gray-400 ml-1.5" x-text="'(' + bandInfo(sheetTotal(entry.id)).range + ')'"></span>
-                                        <div class="text-xs text-gray-600 dark:text-gray-400 italic" x-text="bandInfo(sheetTotal(entry.id)).description"></div>
+                                        <div class="text-xs text-gray-600 dark:text-gray-400" x-text="bandInfo(sheetTotal(entry.id)).description"></div>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3" aria-live="polite">
