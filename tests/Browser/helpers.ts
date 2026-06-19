@@ -1,6 +1,9 @@
 import { type Page, expect } from '@playwright/test'
 import * as fs from 'fs'
 import * as path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const JUDGE_EMAIL = 'judge@browser-test.local'
 export const BREWER_EMAIL = 'brewer@browser-test.local'
