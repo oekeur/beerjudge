@@ -55,9 +55,14 @@ window.judgingApp = function (serverData) {
         },
 
         async mergeFromIndexedDB() {
-            const entryIds = this.entries.map(e => e.id);
-            const idbSheets = await db.scoresheets
-                .where('entry_id').anyOf(entryIds).toArray();
+            let idbSheets = [];
+            try {
+                idbSheets = await db.scoresheets
+                    .where('entry_id').anyOf(this.entries.map(e => e.id)).toArray();
+            } catch (e) {
+                console.warn('IDB read failed:', e);
+                return;
+            }
 
             for (const idb of idbSheets) {
                 if (['pending', 'error'].includes(idb.syncStatus)) {
