@@ -396,9 +396,9 @@
                         {{-- Gradient strip (top:20px so foam floats above it) --}}
                         <div class="absolute inset-x-0 rounded-lg" :style="styleGuide.srm?.gradientStyle"></div>
                         {{-- Left opacity mask --}}
-                        <div x-show="styleGuide.srm?.hasBoth" class="absolute left-0 rounded-l-lg bg-white/60 dark:bg-white/25" :style="'top:20px;height:24px;width:' + styleGuide.srm?.leftMaskPct"></div>
+                        <div x-show="styleGuide.srm?.hasBoth" class="absolute left-0 rounded-l-lg bg-white opacity-60" :style="'top:20px;height:24px;width:' + styleGuide.srm?.leftMaskPct"></div>
                         {{-- Right opacity mask --}}
-                        <div x-show="styleGuide.srm?.hasBoth" class="absolute right-0 rounded-r-lg bg-white/60 dark:bg-white/25" :style="'top:20px;height:24px;width:' + styleGuide.srm?.rightMaskPct"></div>
+                        <div x-show="styleGuide.srm?.hasBoth" class="absolute right-0 rounded-r-lg bg-white opacity-60" :style="'top:20px;height:24px;width:' + styleGuide.srm?.rightMaskPct"></div>
                         {{-- Min glass --}}
                         <div x-show="styleGuide.srm?.srmMin !== null" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + styleGuide.srm?.leftMinPct">
                             <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
