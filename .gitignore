@@ -1,5 +1,10 @@
 *.log
 .DS_Store
+.env.browser-test
+/database/browser-test.sqlite
+/playwright-report
+/test-results
+/tests/Browser/fixtures.json
 /.agents
 /.ai
 /.claire

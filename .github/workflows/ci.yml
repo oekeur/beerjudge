@@ -58,3 +58,44 @@ jobs:
       - run: touch database/database.sqlite
       - run: php artisan migrate --force
       - run: php artisan test --compact
+
+  browser-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+      - run: composer install --no-interaction --prefer-dist
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - name: Create browser-test environment
+        run: |
+          cp .env.example .env.browser-test
+          echo "DB_DATABASE=$(pwd)/database/browser-test.sqlite" >> .env.browser-test
+          echo "APP_URL=http://localhost:8000" >> .env.browser-test
+          echo "QUEUE_CONNECTION=sync" >> .env.browser-test
+          echo "SESSION_DRIVER=database" >> .env.browser-test
+          php artisan key:generate --env=browser-test
+          touch database/browser-test.sqlite
+      - run: VITE_SKIP_FONTS=1 npm run build
+      - run: php artisan serve --port=8000 &
+      - run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
