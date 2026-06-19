@@ -389,42 +389,33 @@
             </div>
             <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" x-text="styleGuide.text"></p>
             {{-- SRM color visualization (appearance section only) --}}
-            <div x-show="styleGuide.srmMin !== null || styleGuide.srmMax !== null" class="mt-4">
+            <div x-show="styleGuide.srm !== null" class="mt-4">
                 <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Color (SRM)</div>
                 <div class="px-4">
                     <div class="relative" style="height: 88px;">
-                        {{-- Gradient strip (lowered so foam floats above it) --}}
-                        <div class="absolute inset-x-0 rounded-lg" :style="srmGradientStyle()"></div>
+                        {{-- Gradient strip (top:20px so foam floats above it) --}}
+                        <div class="absolute inset-x-0 rounded-lg" :style="styleGuide.srm?.gradientStyle"></div>
                         {{-- Left opacity mask --}}
-                        <div x-show="srmHasBoth()" class="absolute left-0 rounded-l-lg bg-white/60 dark:bg-white/25" :style="'top:20px;height:24px;width:' + srmLeftMaskPct()"></div>
+                        <div x-show="styleGuide.srm?.hasBoth" class="absolute left-0 rounded-l-lg bg-white/60 dark:bg-white/25" :style="'top:20px;height:24px;width:' + styleGuide.srm?.leftMaskPct"></div>
                         {{-- Right opacity mask --}}
-                        <div x-show="srmHasBoth()" class="absolute right-0 rounded-r-lg bg-white/60 dark:bg-white/25" :style="'top:20px;height:24px;width:' + srmRightMaskPct()"></div>
+                        <div x-show="styleGuide.srm?.hasBoth" class="absolute right-0 rounded-r-lg bg-white/60 dark:bg-white/25" :style="'top:20px;height:24px;width:' + styleGuide.srm?.rightMaskPct"></div>
                         {{-- Min glass --}}
-                        <div x-show="styleGuide.srmMin !== null" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + srmLeftPct(styleGuide.srmMin)">
+                        <div x-show="styleGuide.srm?.srmMin !== null" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + styleGuide.srm?.leftMinPct">
                             <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
-                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleGuide.srmMin)" stroke="currentColor" stroke-width="1.2"/>
+                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="styleGuide.srm?.minFill" stroke="currentColor" stroke-width="1.2"/>
                                 <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
                                 <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
                             </svg>
-                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srmMin"></span>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srm?.srmMin"></span>
                         </div>
-                        {{-- Max glass (only when different from min) --}}
-                        <div x-show="srmHasBoth() && styleGuide.srmMax !== styleGuide.srmMin" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + srmLeftPct(styleGuide.srmMax)">
+                        {{-- Max glass (only when hasBoth and different from min) --}}
+                        <div x-show="styleGuide.srm?.hasBoth && styleGuide.srm?.srmMax !== styleGuide.srm?.srmMin" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + styleGuide.srm?.leftMaxPct">
                             <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
-                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleGuide.srmMax)" stroke="currentColor" stroke-width="1.2"/>
+                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="styleGuide.srm?.maxFill" stroke="currentColor" stroke-width="1.2"/>
                                 <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
                                 <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
                             </svg>
-                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srmMax"></span>
-                        </div>
-                        {{-- Single glass when both values are equal --}}
-                        <div x-show="srmHasBoth() && styleGuide.srmMax === styleGuide.srmMin" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + srmLeftPct(styleGuide.srmMin)">
-                            <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
-                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleGuide.srmMin)" stroke="currentColor" stroke-width="1.2"/>
-                                <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
-                                <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
-                            </svg>
-                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srmMin"></span>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srm?.srmMax"></span>
                         </div>
                     </div>
                 </div>

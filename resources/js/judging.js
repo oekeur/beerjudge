@@ -54,7 +54,7 @@ window.judgingApp = function (serverData) {
         sortMode: 'judging',
         syncQueue: [],
         _retryTimer: null,
-        styleGuide: { open: false, section: '', text: '', srmMin: null, srmMax: null },
+        styleGuide: { open: false, section: '', text: '', srm: null },
         styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '' },
 
         get sortedEntries() {
@@ -244,12 +244,41 @@ window.judgingApp = function (serverData) {
                 aroma: 'Aroma', appearance: 'Appearance', flavor: 'Flavour',
                 mouthfeel: 'Mouthfeel', overall_impression: 'Overall Impression',
             };
+
+            let srm = null;
+            if (sectionKey === 'appearance') {
+                const srmMin = entry?.srm_min ?? null;
+                const srmMax = entry?.srm_max ?? null;
+                if (srmMin !== null || srmMax !== null) {
+                    const hasBoth = srmMin !== null && srmMax !== null;
+                    const single = srmMin !== null ? srmMin : srmMax;
+                    const padding = hasBoth ? Math.max(3, Math.round((srmMax - srmMin) * 0.3)) : 3;
+                    const displayMin = Math.max(1, (srmMin ?? single) - padding);
+                    const displayMax = Math.min(40, (srmMax ?? single) + padding);
+                    const range = displayMax - displayMin;
+                    const pct = (v) => ((v - displayMin) / range * 100).toFixed(2) + '%';
+                    srm = {
+                        hasBoth,
+                        srmMin,
+                        srmMax,
+                        leftMinPct: srmMin !== null ? pct(srmMin) : '50%',
+                        leftMaxPct: srmMax !== null ? pct(srmMax) : '50%',
+                        leftMaskPct: hasBoth ? pct(srmMin) : '0%',
+                        rightMaskPct: hasBoth ? ((displayMax - srmMax) / range * 100).toFixed(2) + '%' : '0%',
+                        minFill: srmMin !== null ? srmToHex(srmMin) : '#888888',
+                        maxFill: srmMax !== null ? srmToHex(srmMax) : '#888888',
+                        gradientStyle: hasBoth
+                            ? `top:20px;height:24px;background:linear-gradient(to right,${srmToHex(displayMin)},${srmToHex(displayMax)})`
+                            : `top:20px;height:24px;background:${srmToHex(single ?? 1)}`,
+                    };
+                }
+            }
+
             this.styleGuide = {
                 open: true,
                 section: titles[sectionKey] ?? sectionKey,
                 text: entry?.style_guide?.[sectionKey] ?? 'No descriptor available.',
-                srmMin: sectionKey === 'appearance' ? (entry?.srm_min ?? null) : null,
-                srmMax: sectionKey === 'appearance' ? (entry?.srm_max ?? null) : null,
+                srm,
             };
         },
 
@@ -270,43 +299,6 @@ window.judgingApp = function (serverData) {
             };
         },
 
-        srmHasBoth() {
-            return this.styleGuide.srmMin !== null && this.styleGuide.srmMax !== null;
-        },
-        srmSingleVal() {
-            return this.styleGuide.srmMin !== null ? this.styleGuide.srmMin : this.styleGuide.srmMax;
-        },
-        srmPadding() {
-            if (!this.srmHasBoth()) return 3;
-            return Math.max(3, Math.round((this.styleGuide.srmMax - this.styleGuide.srmMin) * 0.3));
-        },
-        srmDisplayMin() {
-            return Math.max(1, (this.styleGuide.srmMin ?? this.srmSingleVal()) - this.srmPadding());
-        },
-        srmDisplayMax() {
-            return Math.min(40, (this.styleGuide.srmMax ?? this.srmSingleVal()) + this.srmPadding());
-        },
-        srmRange() {
-            return this.srmDisplayMax() - this.srmDisplayMin();
-        },
-        srmLeftPct(srm) {
-            if (srm === null) return '50%';
-            return ((srm - this.srmDisplayMin()) / this.srmRange() * 100).toFixed(2) + '%';
-        },
-        srmLeftMaskPct() {
-            const min = this.styleGuide.srmMin ?? this.srmSingleVal();
-            return ((min - this.srmDisplayMin()) / this.srmRange() * 100).toFixed(2) + '%';
-        },
-        srmRightMaskPct() {
-            const max = this.styleGuide.srmMax ?? this.srmSingleVal();
-            return ((this.srmDisplayMax() - max) / this.srmRange() * 100).toFixed(2) + '%';
-        },
-        srmGradientStyle() {
-            if (!this.srmHasBoth()) {
-                return 'top:20px;height:24px;background:' + srmToHex(this.srmSingleVal());
-            }
-            return 'top:20px;height:24px;background:linear-gradient(to right,' + srmToHex(this.srmDisplayMin()) + ',' + srmToHex(this.srmDisplayMax()) + ')';
-        },
 
         closeStyleInfo() {
             this.styleInfo.open = false;
