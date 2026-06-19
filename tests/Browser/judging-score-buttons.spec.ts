@@ -61,8 +61,9 @@ test.describe('judging score buttons', () => {
     test('scoresheet can be submitted and shows read-only view', async ({ page }) => {
         const { judgingCompetitionId } = loadFixtures()
 
-        // Surface any syncToServer console.error so CI logs show the failure reason
+        // Surface browser errors and unhandled rejections so CI logs show the failure reason
         page.on('console', msg => { if (msg.type() === 'error') console.log('[browser error]', msg.text()) })
+        page.on('pageerror', err => console.log('[page error]', err.message))
 
         await login(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
@@ -87,12 +88,9 @@ test.describe('judging score buttons', () => {
         await page.waitForLoadState('networkidle')
 
         // Listen for the submit response before clicking (catches it even if server responds fast).
-        // Filter to the POST that carries status='submitted' so a stray draft save doesn't match.
+        // postData() is not reliably buffered in all Playwright builds so filter on URL+method only.
         const submitResponsePromise = page.waitForResponse(
-            r => {
-                if (!r.url().includes('/scoresheets') || r.request().method() !== 'POST') return false
-                try { return JSON.parse(r.request().postData() ?? '{}').status === 'submitted' } catch { return false }
-            },
+            r => r.url().includes('/scoresheets') && r.request().method() === 'POST',
             { timeout: 15_000 },
         )
 
@@ -101,6 +99,8 @@ test.describe('judging score buttons', () => {
         // Assert server confirmed the submission (fails with status code if not 200).
         const submitResponse = await submitResponsePromise
         expect(submitResponse.status(), `POST /scoresheets returned ${submitResponse.status()}`).toBe(200)
+        const responseBody = await submitResponse.json() as { status: string }
+        expect(responseBody.status, `server returned status=${responseBody.status}, expected 'submitted'`).toBe('submitted')
 
         // Read-only view must appear with "Submitted ✓" badge
         // (x-show condition: syncStatus==='synced' && status==='submitted' — only true after server 200)
