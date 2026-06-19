@@ -1,5 +1,5 @@
 <div id="theme-toggle" class="flex items-center rounded-lg bg-black/10 dark:bg-white/10 p-0.5 gap-0.5">
-    <button data-theme="light" title="Light mode"
+    <button type="button" data-theme="light" title="Light mode"
         class="p-1.5 rounded-md text-current opacity-50 hover:opacity-100 transition-opacity">
         {{-- Sun --}}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4" aria-hidden="true">
