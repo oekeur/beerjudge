@@ -87,7 +87,7 @@ test.describe('judging score buttons', () => {
         // Drain all draft auto-saves before clicking Submit.
         await page.waitForLoadState('networkidle')
 
-        await page.locator('button').filter({ hasText: /Submit/ }).first().click()
+        await page.getByRole('button', { name: /Submit/ }).first().click()
 
         // "Submitted ✓" badge is the server-confirmation signal: Alpine only renders it
         // when syncStatus==='synced' && status==='submitted', which requires a 200 from the server.
