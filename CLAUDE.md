@@ -63,6 +63,10 @@ A custom Filament theme is configured at `resources/css/filament/admin/theme.css
 - The theme's `@source` directives scan `app/Filament/**/*` and `resources/views/filament/**/*`. Any new custom Blade view must live under one of those paths, or add an `@source` entry to `theme.css`.
 - After editing `theme.css` (e.g. adding a new `@source` or a custom CSS rule), run `npm run build`.
 
+## Playwright browser tests
+
+- Target interactive elements with `page.getByRole('button', { name: /label/ })`, not `page.locator('button').filter({ hasText: /label/ })`. `filter({ hasText })` matches `textContent()`, which includes text from `display:none` elements (Alpine `x-show` keeps hidden spans in the DOM). `getByRole` uses the ARIA accessible-name computation, which skips hidden elements. The judging screen has `x-show` sync-status badges inside the entry header button — any text-based locator will match those hidden spans and click the wrong element.
+
 ## Git
 
 - Commit automatically after completing each task — do not wait to be asked.
