@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Judging · {{ $competition->name }}</title>
     @vite(['resources/css/app.css', 'resources/js/judging.js'])
-    <meta name="sentry-dsn" content="{{ config('sentry.dsn') ?? '' }}">
+    <meta name="sentry-dsn" content="{{ is_string(config('sentry.dsn')) ? config('sentry.dsn') : '' }}">
     <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
     <x-theme-init />
 </head>

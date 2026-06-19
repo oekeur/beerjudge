@@ -65,7 +65,7 @@ class AdminPanelProvider extends PanelProvider
                 SetLocale::class,
             ])
             ->renderHook('panels::head.end', function (): HtmlString {
-                $dsn = (string) (config('sentry.dsn') ?? '');
+                $dsn = is_string(config('sentry.dsn')) ? config('sentry.dsn') : '';
                 $user = auth()->user();
                 $userJson = $user !== null
                     ? json_encode(['name' => $user->name, 'email' => $user->email])

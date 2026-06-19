@@ -19,7 +19,11 @@ class EntryController extends Controller
         $styles = $competition->styles()->orderBy('code')->get();
         $myEntries = $competition->entries()->with('style')->where('member_id', $member->id)->get();
 
-        return view('entries.create', compact('competition', 'styles', 'myEntries'));
+        return view('entries.create', [
+            'competition' => $competition,
+            'styles' => $styles,
+            'myEntries' => $myEntries,
+        ]);
     }
 
     public function store(Competition $competition, StoreEntryRequest $request): RedirectResponse

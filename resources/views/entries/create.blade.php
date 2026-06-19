@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $appTitle }} — {{ __('entry.title') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <meta name="sentry-dsn" content="{{ config('sentry.dsn') ?? '' }}">
+    <meta name="sentry-dsn" content="{{ is_string(config('sentry.dsn')) ? config('sentry.dsn') : '' }}">
     <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
     <x-theme-init />
 </head>
