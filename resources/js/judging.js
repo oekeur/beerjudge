@@ -55,9 +55,14 @@ window.judgingApp = function (serverData) {
         },
 
         async mergeFromIndexedDB() {
-            const entryIds = this.entries.map(e => e.id);
-            const idbSheets = await db.scoresheets
-                .where('entry_id').anyOf(entryIds).toArray();
+            let idbSheets = [];
+            try {
+                idbSheets = await db.scoresheets
+                    .where('entry_id').anyOf(this.entries.map(e => e.id)).toArray();
+            } catch (e) {
+                console.warn('IDB read failed:', e);
+                return;
+            }
 
             for (const idb of idbSheets) {
                 if (['pending', 'error'].includes(idb.syncStatus)) {
@@ -95,7 +100,11 @@ window.judgingApp = function (serverData) {
 
         async saveSheet(entryId) {
             const sheet = this.sheets[entryId];
-            await db.scoresheets.put({ ...sheet, syncStatus: 'pending', updatedAt: new Date().toISOString() });
+            try {
+                await db.scoresheets.put({ ...sheet, syncStatus: 'pending', updatedAt: new Date().toISOString() });
+            } catch (e) {
+                console.warn('IDB write failed (pending):', e);
+            }
             this.sheets[entryId].syncStatus = 'pending';
             await this.syncToServer(entryId);
         },
@@ -132,11 +141,23 @@ window.judgingApp = function (serverData) {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const json = await res.json();
                 this.sheets[entryId].syncStatus = 'synced';
-                this.sheets[entryId].status = json.status;
-                await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'synced' });
-            } catch {
+                // Don't let a stale draft-save response downgrade a submitted sheet
+                if (json.status === 'submitted' || this.sheets[entryId].status !== 'submitted') {
+                    this.sheets[entryId].status = json.status;
+                }
+                try {
+                    await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'synced' });
+                } catch (e) {
+                    console.warn('IDB write failed (synced):', e);
+                }
+            } catch (err) {
+                console.error('syncToServer failed', entryId, String(err));
                 this.sheets[entryId].syncStatus = 'error';
-                await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'error' });
+                try {
+                    await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'error' });
+                } catch (e) {
+                    console.warn('IDB write failed (error):', e);
+                }
                 if (!this.syncQueue.includes(entryId)) this.syncQueue.push(entryId);
                 this.scheduleRetry();
             }
