@@ -84,15 +84,16 @@ jobs:
       - run: npx playwright install chromium --with-deps
       - name: Create browser-test environment
         run: |
-          cp .env.example .env.browser-test
-          echo "DB_DATABASE=$(pwd)/database/browser-test.sqlite" >> .env.browser-test
-          echo "APP_URL=http://localhost:8000" >> .env.browser-test
-          echo "QUEUE_CONNECTION=sync" >> .env.browser-test
-          echo "SESSION_DRIVER=database" >> .env.browser-test
+          cp .env.browser-test.example .env.browser-test
+          sed -i "s|DB_DATABASE=.*|DB_DATABASE=$(pwd)/database/browser-test.sqlite|" .env.browser-test
           php artisan key:generate --env=browser-test
+          cp .env.browser-test .env
           touch database/browser-test.sqlite
       - run: VITE_SKIP_FONTS=1 npm run build
-      - run: php artisan serve --port=8000 &
+      - name: Start app server and wait for it to be ready
+        run: |
+          APP_ENV=browser-test php artisan serve --port=8000 &
+          npx wait-on http://localhost:8000 --timeout 15000
       - run: npx playwright test
       - uses: actions/upload-artifact@v4
         if: failure()
