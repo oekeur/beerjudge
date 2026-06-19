@@ -87,10 +87,19 @@ test.describe('judging score buttons', () => {
         // Drain all draft auto-saves before clicking Submit.
         await page.waitForLoadState('networkidle')
 
-        // Listen for the submit response before clicking (catches it even if server responds fast).
-        // postData() is not reliably buffered in all Playwright builds so filter on URL+method only.
+        // Wait for the POST /scoresheets response that the SERVER confirms as 'submitted'.
+        // Filtering by response body guards against concurrent draft auto-saves whose
+        // responses may arrive just after waitForResponse is set up.
         const submitResponsePromise = page.waitForResponse(
-            r => r.url().includes('/scoresheets') && r.request().method() === 'POST',
+            async r => {
+                if (!r.url().includes('/scoresheets') || r.request().method() !== 'POST') return false
+                try {
+                    const body = await r.json() as { status?: string }
+                    return body.status === 'submitted'
+                } catch {
+                    return false
+                }
+            },
             { timeout: 15_000 },
         )
 
