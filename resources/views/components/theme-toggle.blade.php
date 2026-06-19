@@ -15,7 +15,7 @@
         </svg>
         <span class="sr-only">System preference</span>
     </button>
-    <button data-theme="dark" title="Dark mode"
+    <button type="button" data-theme="dark" title="Dark mode"
         class="p-1.5 rounded-md text-current opacity-50 hover:opacity-100 transition-opacity">
         {{-- Moon --}}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4" aria-hidden="true">
