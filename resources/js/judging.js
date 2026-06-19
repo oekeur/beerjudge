@@ -132,7 +132,10 @@ window.judgingApp = function (serverData) {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const json = await res.json();
                 this.sheets[entryId].syncStatus = 'synced';
-                this.sheets[entryId].status = json.status;
+                // Don't let a stale draft-save response downgrade a submitted sheet
+                if (json.status === 'submitted' || this.sheets[entryId].status !== 'submitted') {
+                    this.sheets[entryId].status = json.status;
+                }
                 await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'synced' });
             } catch {
                 this.sheets[entryId].syncStatus = 'error';
