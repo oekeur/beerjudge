@@ -73,15 +73,15 @@
 
         <div class="flex items-center justify-between">
             <span class="text-xs text-gray-400">{{ __('judging.sort_label') }}</span>
-            <div class="flex rounded-lg border border-gray-200 overflow-hidden text-xs font-medium">
+            <div class="flex rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden text-xs font-medium">
                 <button type="button"
                     class="px-3 py-1.5 transition-colors"
-                    :class="sortMode === 'judging' ? 'bg-amber-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
+                    :class="sortMode === 'judging' ? 'bg-amber-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'"
                     @click="sortMode = 'judging'"
                 >{{ __('judging.sort_judging') }}</button>
                 <button type="button"
-                    class="px-3 py-1.5 border-l border-gray-200 transition-colors"
-                    :class="sortMode === 'ranked' ? 'bg-amber-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
+                    class="px-3 py-1.5 border-l border-gray-200 dark:border-gray-700 transition-colors"
+                    :class="sortMode === 'ranked' ? 'bg-amber-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'"
                     @click="sortMode = 'ranked'"
                 >{{ __('judging.sort_ranked') }}</button>
             </div>
@@ -121,7 +121,7 @@
 
                     <div class="flex items-center gap-2 flex-shrink-0">
                         {{-- Score preview --}}
-                        <span class="text-sm font-semibold tabular-nums text-green-700 dark:text-green-400"
+                        <span class="text-sm font-semibold tabular-nums text-amber-600 dark:text-amber-300"
                             x-show="sheets[entry.id]?.status === 'submitted'"
                             x-text="sheetTotal(entry.id) + ' / 50'">
                         </span>
@@ -132,8 +132,8 @@
 
                         {{-- Sync badge --}}
                         <span x-show="!sheets[entry.id] || sheets[entry.id].syncStatus === 'idle'" class="text-xs text-gray-300 dark:text-gray-600">—</span>
-                        <span x-show="sheets[entry.id]?.syncStatus === 'syncing' || sheets[entry.id]?.syncStatus === 'pending'" class="text-xs text-blue-500 animate-pulse">{{ __('judging.saving') }}</span>
-                        <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'submitted'" class="text-xs text-green-600 dark:text-green-400 font-medium">{{ __('judging.submitted') }}</span>
+                        <span x-show="sheets[entry.id]?.syncStatus === 'syncing' || sheets[entry.id]?.syncStatus === 'pending'" class="text-xs text-amber-500 animate-pulse">{{ __('judging.saving') }}</span>
+                        <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'submitted'" class="text-xs text-amber-600 dark:text-amber-400 font-medium">{{ __('judging.submitted') }}</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'draft'" class="text-xs text-gray-400 dark:text-gray-500">{{ __('judging.saved') }}</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'error'" class="text-xs text-red-500 cursor-pointer" @click.stop="retryNow(entry.id)">{{ __('judging.retry') }}</span>
 
@@ -151,7 +151,7 @@
                     <template x-if="sheets[entry.id]?.status === 'submitted' && sheets[entry.id]?.syncStatus === 'synced'">
                         <div>
                             <div class="flex items-center gap-2 mb-3">
-                                <span class="text-green-600 dark:text-green-400 font-semibold text-sm">{{ __('judging.submitted') }}</span>
+                                <span class="text-amber-600 dark:text-amber-400 font-semibold text-sm">{{ __('judging.submitted') }}</span>
                             </div>
                             <table class="text-sm text-gray-600 dark:text-gray-400 mb-3" style="border-spacing: 0" aria-live="polite">
                                 <tr><td class="pr-6">{{ __('judging.section.aroma') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].aroma"></strong></span>/12</td></tr>
@@ -198,7 +198,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="{{ __('judging.placeholder.aroma') }}" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Aroma notes'"></textarea>
+                                <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.aroma') }}" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Aroma notes'"></textarea>
                             </div>
 
                             {{-- Appearance --}}
@@ -221,7 +221,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="{{ __('judging.placeholder.appearance') }}" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Appearance notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.appearance') }}" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Appearance notes'"></textarea>
                             </div>
 
                             {{-- Flavour --}}
@@ -244,7 +244,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="{{ __('judging.placeholder.flavour') }}" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Flavour notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.flavour') }}" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Flavour notes'"></textarea>
                             </div>
 
                             {{-- Mouthfeel --}}
@@ -267,7 +267,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="{{ __('judging.placeholder.mouthfeel') }}" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Mouthfeel notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.mouthfeel') }}" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Mouthfeel notes'"></textarea>
                             </div>
 
                             {{-- Overall --}}
@@ -290,7 +290,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 resize-none" rows="2" placeholder="{{ __('judging.placeholder.overall') }}" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Overall impression notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.overall') }}" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Overall impression notes'"></textarea>
                             </div>
 
                             {{-- Off-Flavor Descriptors --}}
@@ -335,9 +335,9 @@
                                     <div>
                                         <span class="text-xs font-semibold"
                                             :class="{
-                                                'text-green-600 dark:text-green-400': sheetTotal(entry.id) >= 38,
-                                                'text-teal-600 dark:text-teal-400': sheetTotal(entry.id) >= 30 && sheetTotal(entry.id) < 38,
-                                                'text-yellow-600 dark:text-yellow-400': sheetTotal(entry.id) >= 21 && sheetTotal(entry.id) < 30,
+                                                'text-amber-600 dark:text-amber-400': sheetTotal(entry.id) >= 38,
+                                                'text-amber-700 dark:text-amber-500': sheetTotal(entry.id) >= 30 && sheetTotal(entry.id) < 38,
+                                                'text-orange-600 dark:text-orange-400': sheetTotal(entry.id) >= 21 && sheetTotal(entry.id) < 30,
                                                 'text-red-600 dark:text-red-400': sheetTotal(entry.id) < 21
                                             }"
                                             x-text="bandInfo(sheetTotal(entry.id)).name"></span><span class="text-xs text-gray-500 dark:text-gray-400 ml-1.5" x-text="'(' + bandInfo(sheetTotal(entry.id)).range + ')'"></span>
@@ -345,7 +345,7 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3" aria-live="polite">
-                                    <span x-show="sheets[entry.id]?.syncStatus === 'pending' || sheets[entry.id]?.syncStatus === 'syncing'" class="text-xs text-blue-500 animate-pulse">{{ __('judging.saving') }}</span>
+                                    <span x-show="sheets[entry.id]?.syncStatus === 'pending' || sheets[entry.id]?.syncStatus === 'syncing'" class="text-xs text-amber-500 animate-pulse">{{ __('judging.saving') }}</span>
                                     <span x-show="sheets[entry.id]?.syncStatus === 'synced'" class="text-xs text-gray-400 dark:text-gray-500">{{ __('judging.saved') }}</span>
                                     <span x-show="sheets[entry.id]?.syncStatus === 'error'" class="text-xs text-red-500 cursor-pointer" @click="retryNow(entry.id)">{{ __('judging.retry') }}</span>
                                     <button
