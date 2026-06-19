@@ -161,7 +161,7 @@
                                 <tr><td class="pr-6">{{ __('judging.section.overall') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].overall"></strong></span>/10</td></tr>
                             </table>
                             <div class="mb-4">
-                                <div class="text-base font-bold">{{ __('judging.total') }} <span x-text="sheetTotal(entry.id)"></span> / 50</div>
+                                <div class="text-base font-bold text-gray-900 dark:text-white">{{ __('judging.total') }} <span x-text="sheetTotal(entry.id)"></span> / 50</div>
                                 <div class="mt-0.5">
                                     <span class="text-sm font-semibold"
                                         :class="{
