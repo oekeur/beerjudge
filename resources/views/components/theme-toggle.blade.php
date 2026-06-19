@@ -42,13 +42,16 @@
             });
         }
 
+        var media = window.matchMedia('(prefers-color-scheme: dark)');
+
         function setTheme(t) {
             localStorage.setItem('theme', t);
             applyTheme(t);
+
+            media.removeEventListener('change', onSystemChange);
+
             if (t === 'system') {
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onSystemChange);
-            } else {
-                window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', onSystemChange);
+                media.addEventListener('change', onSystemChange);
             }
         }
 
@@ -60,8 +63,9 @@
 
         var current = localStorage.getItem('theme') || 'system';
         applyTheme(current);
+
         if (current === 'system') {
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onSystemChange);
+            media.addEventListener('change', onSystemChange);
         }
 
         toggle.querySelectorAll('button').forEach(function (btn) {
