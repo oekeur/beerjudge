@@ -34,6 +34,7 @@
                         {{ __('nav.manage_competition') }}
                     </a>
                 @endif
+                <x-theme-toggle />
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="text-amber-200 text-sm hover:text-white">{{ __('nav.logout') }}</button>
