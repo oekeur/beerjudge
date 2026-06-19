@@ -192,6 +192,7 @@
     "profile.current_password": "Huidig wachtwoord",
     "profile.new_password": "Nieuw wachtwoord",
     "profile.confirm_password": "Bevestig nieuw wachtwoord",
+    "profile.language": "Taal",
     "profile.save": "Opslaan",
     "profile.saved": "Profiel opgeslagen.",
     "profile.wrong_current_password": "Het ingevoerde huidige wachtwoord is onjuist.",

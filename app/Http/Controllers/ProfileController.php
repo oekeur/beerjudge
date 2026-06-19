@@ -20,10 +20,11 @@ class ProfileController extends Controller
         /** @var Member $member */
         $member = auth()->user();
 
-        /** @var array{name: string, email: string, current_password: string|null, password: string|null} $data */
+        /** @var array{name: string, email: string, locale: string, current_password: string|null, password: string|null} $data */
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:members,email,'.$member->id],
+            'locale' => ['required', 'string', 'in:en,nl'],
             'current_password' => ['nullable', 'string'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
@@ -36,6 +37,7 @@ class ProfileController extends Controller
 
         $member->name = $data['name'];
         $member->email = $data['email'];
+        $member->locale = $data['locale'];
 
         if ($request->filled('password') && is_string($data['password'])) {
             $member->password = Hash::make($data['password']);

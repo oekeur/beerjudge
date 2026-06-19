@@ -81,6 +81,25 @@
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <div>
+                    <label for="locale" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ __('profile.language') }}
+                    </label>
+                    @php
+                        $currentLocale = is_string($v = old('locale', $member->locale)) ? $v : 'en';
+                    @endphp
+                    <select
+                        id="locale" name="locale"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 @error('locale') border-red-400 @enderror"
+                    >
+                        <option value="en" @selected($currentLocale === 'en')>English</option>
+                        <option value="nl" @selected($currentLocale === 'nl')>Nederlands</option>
+                    </select>
+                    @error('locale')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
             </section>
 
             <section class="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-5 space-y-4">
