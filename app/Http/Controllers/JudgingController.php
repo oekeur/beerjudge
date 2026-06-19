@@ -33,6 +33,8 @@ class JudgingController extends Controller
                 'style_code' => $e->style?->code,
                 'style_name' => $e->style?->name,
                 'brewer_name' => $e->member?->name,
+                'srm_min' => $e->style?->srm_min,
+                'srm_max' => $e->style?->srm_max,
                 'style_guide' => [
                     'aroma' => $e->style?->aroma,
                     'appearance' => $e->style?->appearance,
