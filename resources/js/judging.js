@@ -95,7 +95,11 @@ window.judgingApp = function (serverData) {
 
         async saveSheet(entryId) {
             const sheet = this.sheets[entryId];
-            await db.scoresheets.put({ ...sheet, syncStatus: 'pending', updatedAt: new Date().toISOString() });
+            try {
+                await db.scoresheets.put({ ...sheet, syncStatus: 'pending', updatedAt: new Date().toISOString() });
+            } catch (e) {
+                console.warn('IDB write failed (pending):', e);
+            }
             this.sheets[entryId].syncStatus = 'pending';
             await this.syncToServer(entryId);
         },
@@ -136,11 +140,19 @@ window.judgingApp = function (serverData) {
                 if (json.status === 'submitted' || this.sheets[entryId].status !== 'submitted') {
                     this.sheets[entryId].status = json.status;
                 }
-                await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'synced' });
+                try {
+                    await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'synced' });
+                } catch (e) {
+                    console.warn('IDB write failed (synced):', e);
+                }
             } catch (err) {
                 console.error('syncToServer failed', entryId, String(err));
                 this.sheets[entryId].syncStatus = 'error';
-                await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'error' });
+                try {
+                    await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'error' });
+                } catch (e) {
+                    console.warn('IDB write failed (error):', e);
+                }
                 if (!this.syncQueue.includes(entryId)) this.syncQueue.push(entryId);
                 this.scheduleRetry();
             }
