@@ -392,13 +392,13 @@
             <div x-show="styleGuide.srmMin !== null || styleGuide.srmMax !== null" class="mt-4">
                 <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Color (SRM)</div>
                 <div class="px-4">
-                    <div class="relative" style="height: 80px;">
-                        {{-- Gradient strip --}}
+                    <div class="relative" style="height: 88px;">
+                        {{-- Gradient strip (lowered so foam floats above it) --}}
                         <div class="absolute inset-x-0 rounded-lg" :style="srmGradientStyle()"></div>
                         {{-- Left opacity mask --}}
-                        <div x-show="srmHasBoth()" class="absolute left-0 bg-gray-900 opacity-30 rounded-l-lg" :style="'top:4px;height:24px;width:' + srmLeftMaskPct()"></div>
+                        <div x-show="srmHasBoth()" class="absolute left-0 rounded-l-lg bg-white/60 dark:bg-white/25" :style="'top:20px;height:24px;width:' + srmLeftMaskPct()"></div>
                         {{-- Right opacity mask --}}
-                        <div x-show="srmHasBoth()" class="absolute right-0 bg-gray-900 opacity-30 rounded-r-lg" :style="'top:4px;height:24px;width:' + srmRightMaskPct()"></div>
+                        <div x-show="srmHasBoth()" class="absolute right-0 rounded-r-lg bg-white/60 dark:bg-white/25" :style="'top:20px;height:24px;width:' + srmRightMaskPct()"></div>
                         {{-- Min glass --}}
                         <div x-show="styleGuide.srmMin !== null" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + srmLeftPct(styleGuide.srmMin)">
                             <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">

@@ -303,9 +303,9 @@ window.judgingApp = function (serverData) {
         },
         srmGradientStyle() {
             if (!this.srmHasBoth()) {
-                return 'top:4px;height:24px;background:' + srmToHex(this.srmSingleVal());
+                return 'top:20px;height:24px;background:' + srmToHex(this.srmSingleVal());
             }
-            return 'top:4px;height:24px;background:linear-gradient(to right,' + srmToHex(this.srmDisplayMin()) + ',' + srmToHex(this.srmDisplayMax()) + ')';
+            return 'top:20px;height:24px;background:linear-gradient(to right,' + srmToHex(this.srmDisplayMin()) + ',' + srmToHex(this.srmDisplayMax()) + ')';
         },
 
         closeStyleInfo() {
