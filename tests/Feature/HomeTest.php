@@ -29,6 +29,8 @@ class HomeTest extends TestCase
         $response->assertSee('Spring Open');
         $response->assertSee('Autumn Judging');
         $response->assertDontSee('Hidden Draft');
+        $response->assertSee('id="theme-toggle"', false);
+        $response->assertSee("localStorage.getItem('theme') || 'system'", false);
     }
 
     public function test_judging_competition_shows_judge_link(): void
