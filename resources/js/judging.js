@@ -252,9 +252,13 @@ window.judgingApp = function (serverData) {
                 if (srmMin !== null || srmMax !== null) {
                     const hasBoth = srmMin !== null && srmMax !== null;
                     const single = srmMin !== null ? srmMin : srmMax;
-                    const padding = hasBoth ? Math.max(3, Math.round((srmMax - srmMin) * 0.3)) : 3;
-                    const displayMin = Math.max(1, (srmMin ?? single) - padding);
-                    const displayMax = Math.min(40, (srmMax ?? single) + padding);
+                    const rawPad = hasBoth ? Math.max(3, Math.round((srmMax - srmMin) * 0.3)) : 3;
+                    const clampedMin = Math.max(1, (srmMin ?? single) - rawPad);
+                    const clampedMax = Math.min(40, (srmMax ?? single) + rawPad);
+                    // equalize: trim the unconstrained side to match the clamped side
+                    const effectivePad = Math.min((srmMin ?? single) - clampedMin, clampedMax - (srmMax ?? single));
+                    const displayMin = (srmMin ?? single) - effectivePad;
+                    const displayMax = (srmMax ?? single) + effectivePad;
                     const range = displayMax - displayMin;
                     const pct = (v) => Math.round((v - displayMin) / range * 100) + '%';
                     const maskPct = (v) => Math.round(v / range * 100) + '%';
