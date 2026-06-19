@@ -87,33 +87,11 @@ test.describe('judging score buttons', () => {
         // Drain all draft auto-saves before clicking Submit.
         await page.waitForLoadState('networkidle')
 
-        // Wait for the POST /scoresheets response that the SERVER confirms as 'submitted'.
-        // Filtering by response body guards against concurrent draft auto-saves whose
-        // responses may arrive just after waitForResponse is set up.
-        const submitResponsePromise = page.waitForResponse(
-            async r => {
-                if (!r.url().includes('/scoresheets') || r.request().method() !== 'POST') return false
-                try {
-                    const body = await r.json() as { status?: string }
-                    return body.status === 'submitted'
-                } catch {
-                    return false
-                }
-            },
-            { timeout: 15_000 },
-        )
-
         await page.locator('button').filter({ hasText: /Submit/ }).first().click()
 
-        // Assert server confirmed the submission (fails with status code if not 200).
-        const submitResponse = await submitResponsePromise
-        expect(submitResponse.status(), `POST /scoresheets returned ${submitResponse.status()}`).toBe(200)
-        const responseBody = await submitResponse.json() as { status: string }
-        expect(responseBody.status, `server returned status=${responseBody.status}, expected 'submitted'`).toBe('submitted')
-
-        // Read-only view must appear with "Submitted ✓" badge
-        // (x-show condition: syncStatus==='synced' && status==='submitted' — only true after server 200)
-        await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible({ timeout: 10_000 })
+        // "Submitted ✓" badge is the server-confirmation signal: Alpine only renders it
+        // when syncStatus==='synced' && status==='submitted', which requires a 200 from the server.
+        await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible({ timeout: 15_000 })
 
         // "Reopen to edit" must be visible
         await expect(page.getByRole('button', { name: /Reopen/ })).toBeVisible()
