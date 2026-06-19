@@ -247,8 +247,8 @@ window.judgingApp = function (serverData) {
 
             let srm = null;
             if (sectionKey === 'appearance') {
-                const srmMin = entry?.srm_min ?? null;
-                const srmMax = entry?.srm_max ?? null;
+                const srmMin = entry?.srm_min != null ? Number(entry.srm_min) : null;
+                const srmMax = entry?.srm_max != null ? Number(entry.srm_max) : null;
                 if (srmMin !== null || srmMax !== null) {
                     const hasBoth = srmMin !== null && srmMax !== null;
                     const single = srmMin !== null ? srmMin : srmMax;
@@ -256,7 +256,8 @@ window.judgingApp = function (serverData) {
                     const displayMin = Math.max(1, (srmMin ?? single) - padding);
                     const displayMax = Math.min(40, (srmMax ?? single) + padding);
                     const range = displayMax - displayMin;
-                    const pct = (v) => ((v - displayMin) / range * 100).toFixed(2) + '%';
+                    const pct = (v) => Math.round((v - displayMin) / range * 100) + '%';
+                    const maskPct = (v) => Math.round(v / range * 100) + '%';
                     srm = {
                         hasBoth,
                         srmMin,
@@ -264,7 +265,7 @@ window.judgingApp = function (serverData) {
                         leftMinPct: srmMin !== null ? pct(srmMin) : '50%',
                         leftMaxPct: srmMax !== null ? pct(srmMax) : '50%',
                         leftMaskPct: hasBoth ? pct(srmMin) : '0%',
-                        rightMaskPct: hasBoth ? ((displayMax - srmMax) / range * 100).toFixed(2) + '%' : '0%',
+                        rightMaskPct: hasBoth ? maskPct(displayMax - srmMax) : '0%',
                         minFill: srmMin !== null ? srmToHex(srmMin) : '#888888',
                         maxFill: srmMax !== null ? srmToHex(srmMax) : '#888888',
                         gradientStyle: hasBoth
