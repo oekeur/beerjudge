@@ -388,6 +388,47 @@
                 <button type="button" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none" @click="closeGuide()">×</button>
             </div>
             <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" x-text="styleGuide.text"></p>
+            {{-- SRM color visualization (appearance section only) --}}
+            <div x-show="styleGuide.srmMin !== null || styleGuide.srmMax !== null" class="mt-4">
+                <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Color (SRM)</div>
+                <div class="px-4">
+                    <div class="relative" style="height: 80px;">
+                        {{-- Gradient strip --}}
+                        <div class="absolute inset-x-0 rounded-lg" :style="srmGradientStyle()"></div>
+                        {{-- Left opacity mask --}}
+                        <div x-show="srmHasBoth()" class="absolute left-0 bg-gray-900 opacity-30 rounded-l-lg" :style="'top:4px;height:24px;width:' + srmLeftMaskPct()"></div>
+                        {{-- Right opacity mask --}}
+                        <div x-show="srmHasBoth()" class="absolute right-0 bg-gray-900 opacity-30 rounded-r-lg" :style="'top:4px;height:24px;width:' + srmRightMaskPct()"></div>
+                        {{-- Min glass --}}
+                        <div x-show="styleGuide.srmMin !== null" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + srmLeftPct(styleGuide.srmMin)">
+                            <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
+                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleGuide.srmMin)" stroke="currentColor" stroke-width="1.2"/>
+                                <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
+                                <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
+                            </svg>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srmMin"></span>
+                        </div>
+                        {{-- Max glass (only when different from min) --}}
+                        <div x-show="srmHasBoth() && styleGuide.srmMax !== styleGuide.srmMin" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + srmLeftPct(styleGuide.srmMax)">
+                            <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
+                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleGuide.srmMax)" stroke="currentColor" stroke-width="1.2"/>
+                                <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
+                                <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
+                            </svg>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srmMax"></span>
+                        </div>
+                        {{-- Single glass when both values are equal --}}
+                        <div x-show="srmHasBoth() && styleGuide.srmMax === styleGuide.srmMin" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + srmLeftPct(styleGuide.srmMin)">
+                            <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
+                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleGuide.srmMin)" stroke="currentColor" stroke-width="1.2"/>
+                                <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
+                                <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
+                            </svg>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srmMin"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -413,80 +454,6 @@
                 <button type="button" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none ml-4 mt-0.5" @click="closeStyleInfo()">×</button>
             </div>
             <div class="overflow-y-auto px-5 pt-4 pb-8 space-y-5" style="max-height: 60vh">
-                {{-- SRM color visualization --}}
-                <template x-if="styleInfo.srmMin !== null || styleInfo.srmMax !== null">
-                    <div x-data="{
-                        get hasBoth() { return styleInfo.srmMin !== null && styleInfo.srmMax !== null; },
-                        get singleVal() { return styleInfo.srmMin !== null ? styleInfo.srmMin : styleInfo.srmMax; },
-                        get padding() {
-                            if (!this.hasBoth) return 3;
-                            return Math.max(3, Math.round((styleInfo.srmMax - styleInfo.srmMin) * 0.3));
-                        },
-                        get displayMin() { return Math.max(1, (styleInfo.srmMin ?? this.singleVal) - this.padding); },
-                        get displayMax() { return Math.min(40, (styleInfo.srmMax ?? this.singleVal) + this.padding); },
-                        get range() { return this.displayMax - this.displayMin; },
-                        leftPct(srm) { return ((srm - this.displayMin) / this.range * 100).toFixed(2) + '%'; },
-                        leftMaskPct() { return (((styleInfo.srmMin ?? this.singleVal) - this.displayMin) / this.range * 100).toFixed(2) + '%'; },
-                        rightMaskPct() { return ((this.displayMax - (styleInfo.srmMax ?? this.singleVal)) / this.range * 100).toFixed(2) + '%'; },
-                        gradientStyle() {
-                            if (!this.hasBoth) {
-                                return 'background:' + srmToHex(this.singleVal);
-                            }
-                            return 'background:linear-gradient(to right,' + srmToHex(this.displayMin) + ',' + srmToHex(this.displayMax) + ')';
-                        },
-                    }">
-                        <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Color (SRM)</div>
-                        {{-- Gradient strip with masks and glasses --}}
-                        <div class="relative" style="height: 80px;">
-                            {{-- Gradient strip --}}
-                            <div class="absolute inset-x-0 rounded-lg" style="top: 4px; height: 24px;" :style="gradientStyle()"></div>
-                            {{-- Left opacity mask --}}
-                            <template x-if="hasBoth">
-                                <div class="absolute top-1 bottom-0 left-0 bg-gray-900 rounded-l-lg opacity-30" style="top: 4px; height: 24px;" :style="'width:' + leftMaskPct()"></div>
-                            </template>
-                            {{-- Right opacity mask --}}
-                            <template x-if="hasBoth">
-                                <div class="absolute top-1 bottom-0 right-0 bg-gray-900 rounded-r-lg opacity-30" style="top: 4px; height: 24px;" :style="'width:' + rightMaskPct()"></div>
-                            </template>
-                            {{-- Min glass --}}
-                            <template x-if="styleInfo.srmMin !== null">
-                                <div class="absolute flex flex-col items-center" style="top: 0; transform: translateX(-50%);" :style="'left:' + leftPct(styleInfo.srmMin)">
-                                    <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
-                                        {{-- Glass body --}}
-                                        <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleInfo.srmMin)" stroke="currentColor" stroke-width="1.2"/>
-                                        {{-- Foam --}}
-                                        <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
-                                        {{-- Highlight stripe --}}
-                                        <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
-                                    </svg>
-                                    <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleInfo.srmMin"></span>
-                                </div>
-                            </template>
-                            {{-- Max glass (only when different from min) --}}
-                            <template x-if="hasBoth && styleInfo.srmMax !== styleInfo.srmMin">
-                                <div class="absolute flex flex-col items-center" style="top: 0; transform: translateX(-50%);" :style="'left:' + leftPct(styleInfo.srmMax)">
-                                    <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
-                                        <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleInfo.srmMax)" stroke="currentColor" stroke-width="1.2"/>
-                                        <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
-                                        <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
-                                    </svg>
-                                    <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleInfo.srmMax"></span>
-                                </div>
-                            </template>
-                            {{-- Single-value glass when both values are equal --}}
-                            <template x-if="hasBoth && styleInfo.srmMax === styleInfo.srmMin">
-                                <div class="absolute flex flex-col items-center" style="top: 0; transform: translateX(-50%);" :style="'left:' + leftPct(styleInfo.srmMin)">
-                                    <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
-                                        <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="srmToHex(styleInfo.srmMin)" stroke="currentColor" stroke-width="1.2"/>
-                                        <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
-                                        <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
-                                    </svg>
-                                    <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleInfo.srmMin"></span>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
                 <template x-if="styleInfo.categoryDescription">
                     <div>
                         <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Category</div>

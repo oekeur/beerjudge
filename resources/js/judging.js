@@ -54,7 +54,7 @@ window.judgingApp = function (serverData) {
         sortMode: 'judging',
         syncQueue: [],
         _retryTimer: null,
-        styleGuide: { open: false, section: '', text: '' },
+        styleGuide: { open: false, section: '', text: '', srmMin: null, srmMax: null },
         styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '' },
 
         get sortedEntries() {
@@ -248,6 +248,8 @@ window.judgingApp = function (serverData) {
                 open: true,
                 section: titles[sectionKey] ?? sectionKey,
                 text: entry?.style_guide?.[sectionKey] ?? 'No descriptor available.',
+                srmMin: sectionKey === 'appearance' ? (entry?.srm_min ?? null) : null,
+                srmMax: sectionKey === 'appearance' ? (entry?.srm_max ?? null) : null,
             };
         },
 
@@ -265,9 +267,45 @@ window.judgingApp = function (serverData) {
                 categoryDescription: entry?.style_info?.category_description ?? '',
                 history: entry?.style_info?.history ?? '',
                 styleComparison: entry?.style_info?.style_comparison ?? '',
-                srmMin: entry?.srm_min ?? null,
-                srmMax: entry?.srm_max ?? null,
             };
+        },
+
+        srmHasBoth() {
+            return this.styleGuide.srmMin !== null && this.styleGuide.srmMax !== null;
+        },
+        srmSingleVal() {
+            return this.styleGuide.srmMin !== null ? this.styleGuide.srmMin : this.styleGuide.srmMax;
+        },
+        srmPadding() {
+            if (!this.srmHasBoth()) return 3;
+            return Math.max(3, Math.round((this.styleGuide.srmMax - this.styleGuide.srmMin) * 0.3));
+        },
+        srmDisplayMin() {
+            return Math.max(1, (this.styleGuide.srmMin ?? this.srmSingleVal()) - this.srmPadding());
+        },
+        srmDisplayMax() {
+            return Math.min(40, (this.styleGuide.srmMax ?? this.srmSingleVal()) + this.srmPadding());
+        },
+        srmRange() {
+            return this.srmDisplayMax() - this.srmDisplayMin();
+        },
+        srmLeftPct(srm) {
+            if (srm === null) return '50%';
+            return ((srm - this.srmDisplayMin()) / this.srmRange() * 100).toFixed(2) + '%';
+        },
+        srmLeftMaskPct() {
+            const min = this.styleGuide.srmMin ?? this.srmSingleVal();
+            return ((min - this.srmDisplayMin()) / this.srmRange() * 100).toFixed(2) + '%';
+        },
+        srmRightMaskPct() {
+            const max = this.styleGuide.srmMax ?? this.srmSingleVal();
+            return ((this.srmDisplayMax() - max) / this.srmRange() * 100).toFixed(2) + '%';
+        },
+        srmGradientStyle() {
+            if (!this.srmHasBoth()) {
+                return 'top:4px;height:24px;background:' + srmToHex(this.srmSingleVal());
+            }
+            return 'top:4px;height:24px;background:linear-gradient(to right,' + srmToHex(this.srmDisplayMin()) + ',' + srmToHex(this.srmDisplayMax()) + ')';
         },
 
         closeStyleInfo() {
