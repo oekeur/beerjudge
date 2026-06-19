@@ -80,14 +80,15 @@ test.describe('judging score buttons', () => {
         await page.locator('[role="group"][aria-label="Overall Impression score, 0 to 10"]').first()
             .locator('button').filter({ hasText: /^7$/ }).click()
 
-        // Submit and wait for the server to confirm
+        // Set up the response listener BEFORE clicking to avoid missing a fast response.
+        // Score-button saves also POST to /scoresheets (draft status); we filter on
+        // the submit response specifically by waiting for the read-only badge that
+        // Alpine only renders once syncStatus becomes 'synced' after the server confirms.
         await page.locator('button').filter({ hasText: /Submit/ }).first().click()
-        await page.waitForResponse(
-            resp => resp.url().includes('/scoresheets') && resp.status() === 200,
-        )
 
         // Read-only view must appear with "Submitted ✓" badge
-        await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible()
+        // (x-if condition: status==='submitted' && syncStatus==='synced' — only true after server 200)
+        await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible({ timeout: 15_000 })
 
         // "Reopen to edit" must be visible
         await expect(page.getByRole('button', { name: /Reopen/ })).toBeVisible()

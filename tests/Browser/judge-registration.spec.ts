@@ -29,6 +29,11 @@ test.describe('judge registration', () => {
         await page.goto(`/judging/${judgingCompetitionId}?register=1`)
         await page.waitForSelector('main', { state: 'visible' })
 
+        // Navigate to the clean URL so that the Leave form's back() redirect
+        // returns here (no ?register=1) rather than re-registering the judge
+        await page.goto(`/judging/${judgingCompetitionId}`)
+        await page.waitForSelector('main', { state: 'visible' })
+
         // Leave as judge
         const leaveBtn = page.getByRole('button', { name: 'Leave as judge' })
         await expect(leaveBtn).toBeVisible()
