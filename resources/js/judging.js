@@ -137,7 +137,8 @@ window.judgingApp = function (serverData) {
                     this.sheets[entryId].status = json.status;
                 }
                 await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'synced' });
-            } catch {
+            } catch (err) {
+                console.error('syncToServer failed', entryId, String(err));
                 this.sheets[entryId].syncStatus = 'error';
                 await db.scoresheets.put({ ...this.sheets[entryId], syncStatus: 'error' });
                 if (!this.syncQueue.includes(entryId)) this.syncQueue.push(entryId);

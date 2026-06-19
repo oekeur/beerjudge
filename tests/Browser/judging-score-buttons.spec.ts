@@ -61,6 +61,9 @@ test.describe('judging score buttons', () => {
     test('scoresheet can be submitted and shows read-only view', async ({ page }) => {
         const { judgingCompetitionId } = loadFixtures()
 
+        // Surface any syncToServer console.error so CI logs show the failure reason
+        page.on('console', msg => { if (msg.type() === 'error') console.log('[browser error]', msg.text()) })
+
         await login(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
         await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
@@ -81,17 +84,27 @@ test.describe('judging score buttons', () => {
             .locator('button').filter({ hasText: /^7$/ }).click()
 
         // Drain all draft auto-saves before clicking Submit.
-        // Each score-button click fires a fire-and-forget fetch to /scoresheets.
-        // If any of those draft responses arrive AFTER the submit response they
-        // overwrite status='submitted' → 'draft' in Alpine state, hiding the badge.
-        // networkidle means ≥500 ms with no open connections — all draft fetches done.
         await page.waitForLoadState('networkidle')
+
+        // Listen for the submit response before clicking (catches it even if server responds fast).
+        // Filter to the POST that carries status='submitted' so a stray draft save doesn't match.
+        const submitResponsePromise = page.waitForResponse(
+            r => {
+                if (!r.url().includes('/scoresheets') || r.request().method() !== 'POST') return false
+                try { return JSON.parse(r.request().postData() ?? '{}').status === 'submitted' } catch { return false }
+            },
+            { timeout: 15_000 },
+        )
 
         await page.locator('button').filter({ hasText: /Submit/ }).first().click()
 
+        // Assert server confirmed the submission (fails with status code if not 200).
+        const submitResponse = await submitResponsePromise
+        expect(submitResponse.status(), `POST /scoresheets returned ${submitResponse.status()}`).toBe(200)
+
         // Read-only view must appear with "Submitted ✓" badge
         // (x-show condition: syncStatus==='synced' && status==='submitted' — only true after server 200)
-        await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible({ timeout: 15_000 })
+        await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible({ timeout: 10_000 })
 
         // "Reopen to edit" must be visible
         await expect(page.getByRole('button', { name: /Reopen/ })).toBeVisible()
