@@ -80,14 +80,17 @@ test.describe('judging score buttons', () => {
         await page.locator('[role="group"][aria-label="Overall Impression score, 0 to 10"]').first()
             .locator('button').filter({ hasText: /^7$/ }).click()
 
-        // Set up the response listener BEFORE clicking to avoid missing a fast response.
-        // Score-button saves also POST to /scoresheets (draft status); we filter on
-        // the submit response specifically by waiting for the read-only badge that
-        // Alpine only renders once syncStatus becomes 'synced' after the server confirms.
+        // Drain all draft auto-saves before clicking Submit.
+        // Each score-button click fires a fire-and-forget fetch to /scoresheets.
+        // If any of those draft responses arrive AFTER the submit response they
+        // overwrite status='submitted' → 'draft' in Alpine state, hiding the badge.
+        // networkidle means ≥500 ms with no open connections — all draft fetches done.
+        await page.waitForLoadState('networkidle')
+
         await page.locator('button').filter({ hasText: /Submit/ }).first().click()
 
         // Read-only view must appear with "Submitted ✓" badge
-        // (x-if condition: status==='submitted' && syncStatus==='synced' — only true after server 200)
+        // (x-show condition: syncStatus==='synced' && status==='submitted' — only true after server 200)
         await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible({ timeout: 15_000 })
 
         // "Reopen to edit" must be visible

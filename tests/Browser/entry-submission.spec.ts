@@ -29,7 +29,9 @@ test.describe('entry submission', () => {
         await expect(page.locator('p.text-green-700')).toBeVisible()
 
         // The submitted entry must appear in "Your entries" list
-        await expect(page.locator('text=Test Lager')).toBeVisible()
+        // Use getByRole('listitem') to avoid strict-mode violation: the style
+        // dropdown <option> also contains "Test Lager" and would match text=Test Lager
+        await expect(page.getByRole('listitem').filter({ hasText: 'Test Lager' }).first()).toBeVisible()
     })
 
     test('submitting without selecting a style shows a validation error', async ({ page }) => {
@@ -38,7 +40,12 @@ test.describe('entry submission', () => {
         await login(page, BREWER_EMAIL)
         await page.goto(`/competitions/${openCompetitionId}/entries/create`)
 
-        // Submit with the default empty option selected
+        // Disable HTML5 native validation so the empty select value reaches
+        // the server — without this the browser intercepts the submit and
+        // Laravel never responds with a validation error.
+        await page.evaluate(() => {
+            (document.querySelector('form') as HTMLFormElement).noValidate = true
+        })
         await page.click('button[type="submit"]')
 
         // Validation error must be displayed
