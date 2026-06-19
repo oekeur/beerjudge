@@ -1,4 +1,4 @@
-# Production overlay. Use with: docker-compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
+# Production overlay. Use with: docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
 services:
   app:
     env_file: .env.production
