@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ScoresheetStatus;
 use App\Http\Requests\StoreScoresheetRequest;
 use App\Models\Entry;
 use App\Models\Scoresheet;
@@ -9,33 +10,6 @@ use Illuminate\Http\JsonResponse;
 
 class ScoresheetController extends Controller
 {
-    public const DESCRIPTOR_SLUGS = [
-        'acetaldehyde', 'alcoholic', 'astringent', 'diacetyl', 'dms',
-        'estery', 'grassy', 'light_struck', 'metallic', 'musty',
-        'oxidized', 'phenolic', 'solvent', 'sour_acidic', 'sulfur',
-        'vegetal', 'yeasty',
-    ];
-
-    /**
-     * @return array<int, array{slug: string, name: string, description: string}>
-     */
-    public static function descriptors(): array
-    {
-        return array_map(fn (string $slug) => [
-            'slug' => $slug,
-            'name' => __("descriptor.{$slug}.name"),
-            'description' => __("descriptor.{$slug}.description"),
-        ], self::DESCRIPTOR_SLUGS);
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public static function descriptorSlugs(): array
-    {
-        return self::DESCRIPTOR_SLUGS;
-    }
-
     public function upsert(StoreScoresheetRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -44,7 +18,7 @@ class ScoresheetController extends Controller
         $judge = $this->member($request);
         $entry = Entry::with('competition')->findOrFail($entryId);
 
-        abort_if($entry->competition?->status !== 'judging', 422, 'Competition is not in judging phase.');
+        abort_unless($entry->competition?->isJudging() === true, 422, 'Competition is not in judging phase.');
         abort_if($entry->member_id === $judge->id, 422, 'You cannot score your own entry.');
         abort_if(
             Scoresheet::where('client_uuid', $data['client_uuid'])->where('judge_id', '!=', $judge->id)->exists(),
@@ -76,7 +50,7 @@ class ScoresheetController extends Controller
             'descriptors' => $data['descriptors'] ?? [],
             'client_uuid' => $data['client_uuid'],
             'status' => $data['status'],
-            'submitted_at' => $data['status'] === 'submitted' ? now() : null,
+            'submitted_at' => $data['status'] === ScoresheetStatus::Submitted->value ? now() : null,
         ];
 
         if ($sheet) {

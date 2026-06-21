@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\CompetitionStatus;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Member;
@@ -15,7 +16,7 @@ class EntryFormTest extends TestCase
 
     private function makeOpenCompetition(): Competition
     {
-        $comp = Competition::create(['name' => 'Spring Cup', 'year' => 2025, 'status' => Competition::STATUS_OPEN]);
+        $comp = Competition::create(['name' => 'Spring Cup', 'year' => 2025, 'status' => CompetitionStatus::Open]);
         $style = Style::create(['code' => '1A', 'category_name' => 'Standard American Beer', 'name' => 'Light Lager']);
         $comp->styles()->attach($style->id);
 
@@ -84,7 +85,7 @@ class EntryFormTest extends TestCase
     public function test_entry_form_rejects_draft_competition(): void
     {
         $member = Member::factory()->create();
-        $comp = Competition::create(['name' => 'Draft Cup', 'year' => 2025, 'status' => Competition::STATUS_DRAFT]);
+        $comp = Competition::create(['name' => 'Draft Cup', 'year' => 2025, 'status' => CompetitionStatus::Draft]);
 
         $this->actingAs($member)
             ->get(route('competitions.entries.create', $comp))
@@ -94,7 +95,7 @@ class EntryFormTest extends TestCase
     public function test_entry_form_rejects_judging_competition(): void
     {
         $member = Member::factory()->create();
-        $comp = Competition::create(['name' => 'Judging Cup', 'year' => 2025, 'status' => Competition::STATUS_JUDGING]);
+        $comp = Competition::create(['name' => 'Judging Cup', 'year' => 2025, 'status' => CompetitionStatus::Judging]);
 
         $this->actingAs($member)
             ->get(route('competitions.entries.create', $comp))
@@ -104,7 +105,7 @@ class EntryFormTest extends TestCase
     public function test_entry_form_rejects_closed_competition(): void
     {
         $member = Member::factory()->create();
-        $comp = Competition::create(['name' => 'Closed Cup', 'year' => 2025, 'status' => Competition::STATUS_CLOSED]);
+        $comp = Competition::create(['name' => 'Closed Cup', 'year' => 2025, 'status' => CompetitionStatus::Closed]);
 
         $this->actingAs($member)
             ->get(route('competitions.entries.create', $comp))

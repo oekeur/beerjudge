@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Competitions\Schemas;
 
+use App\Enums\CompetitionStatus;
 use App\Filament\Forms\Components\StyleMultiSelect;
 use App\Models\Competition;
 use App\Models\Member;
@@ -37,13 +38,8 @@ class CompetitionForm
                                 DatePicker::make('judging_date')
                                     ->nullable(),
                                 Select::make('status')
-                                    ->options([
-                                        'draft' => __('competition.status.draft'),
-                                        'open' => __('competition.status.open'),
-                                        'judging' => __('competition.status.judging'),
-                                        'closed' => __('competition.status.closed'),
-                                    ])
-                                    ->default('draft'),
+                                    ->options(CompetitionStatus::class)
+                                    ->default(CompetitionStatus::Draft),
                             ]),
 
                         Tab::make(__('competition.tab.styles'))

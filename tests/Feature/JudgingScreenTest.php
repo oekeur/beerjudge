@@ -72,4 +72,24 @@ class JudgingScreenTest extends TestCase
         $response->assertSee('"history"', false);
         $response->assertSee('"style_comparison"', false);
     }
+
+    public function test_judging_screen_includes_srm_fields_when_set(): void
+    {
+        [$comp, $brewer, $judge, $entry] = $this->makeFixtures();
+        Style::where('code', '1A')->update(['srm_min' => 2.0, 'srm_max' => 4.0]);
+        $response = $this->actingAs($judge)->get("/judging/{$comp->id}");
+        $response->assertOk();
+        $response->assertSee('"srm_min":2', false);
+        $response->assertSee('"srm_max":4', false);
+    }
+
+    public function test_judging_screen_srm_fields_are_null_when_not_set(): void
+    {
+        [$comp, $brewer, $judge, $entry] = $this->makeFixtures();
+        // Style created in makeFixtures has no srm_min/srm_max set
+        $response = $this->actingAs($judge)->get("/judging/{$comp->id}");
+        $response->assertOk();
+        $response->assertSee('"srm_min":null', false);
+        $response->assertSee('"srm_max":null', false);
+    }
 }

@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#b45309">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Judging · {{ $competition->name }}</title>
     @vite(['resources/css/app.css', 'resources/js/judging.js'])
@@ -10,7 +16,7 @@
     <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
     <x-theme-init />
 </head>
-<body class="bg-gray-50 dark:bg-gray-950 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server))" x-init="init()" data-server='@json($serverData)'>
+<body class="bg-stone-100 dark:bg-gray-950 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server))" x-init="init()" data-server='@json($serverData)'>
 
     {{-- Header --}}
     <header class="bg-amber-700 text-white sticky top-0 z-10 shadow">
@@ -122,7 +128,8 @@
 
                     <div class="flex items-center gap-2 flex-shrink-0">
                         {{-- Score preview --}}
-                        <span class="text-sm font-semibold tabular-nums text-emerald-600 dark:text-emerald-400"
+                        <span class="text-sm font-semibold tabular-nums"
+                            :style="'color:' + scoreColor(sheetTotal(entry.id))"
                             x-show="sheets[entry.id]?.status === 'submitted'"
                             x-text="sheetTotal(entry.id) + ' / 50'">
                         </span>
@@ -387,6 +394,38 @@
                 <button type="button" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none" @click="closeGuide()">×</button>
             </div>
             <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" x-text="styleGuide.text"></p>
+            {{-- SRM color visualization (appearance section only) --}}
+            <div x-show="styleGuide.srm !== null" class="mt-4">
+                <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Color (SRM)</div>
+                <div class="px-4">
+                    <div class="relative" style="height: 88px;">
+                        {{-- Gradient strip (top:20px so foam floats above it) --}}
+                        <div class="absolute inset-x-0 rounded-lg" :style="styleGuide.srm?.gradientStyle"></div>
+                        {{-- Left opacity mask --}}
+                        <div x-show="styleGuide.srm?.hasBoth" class="absolute left-0 rounded-l-lg bg-white opacity-60" :style="'top:20px;height:24px;width:' + styleGuide.srm?.leftMaskPct"></div>
+                        {{-- Right opacity mask --}}
+                        <div x-show="styleGuide.srm?.hasBoth" class="absolute right-0 rounded-r-lg bg-white opacity-60" :style="'top:20px;height:24px;width:' + styleGuide.srm?.rightMaskPct"></div>
+                        {{-- Min glass --}}
+                        <div x-show="styleGuide.srm?.srmMin !== null" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + styleGuide.srm?.leftMinPct">
+                            <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
+                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="styleGuide.srm?.minFill" stroke="currentColor" stroke-width="1.2"/>
+                                <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
+                                <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
+                            </svg>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srm?.srmMin"></span>
+                        </div>
+                        {{-- Max glass (only when hasBoth and different from min) --}}
+                        <div x-show="styleGuide.srm?.hasBoth && styleGuide.srm?.srmMax !== styleGuide.srm?.srmMin" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + styleGuide.srm?.leftMaxPct">
+                            <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
+                                <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="styleGuide.srm?.maxFill" stroke="currentColor" stroke-width="1.2"/>
+                                <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
+                                <rect x="7" y="10" width="3" height="28" rx="1.5" fill="white" fill-opacity="0.18"/>
+                            </svg>
+                            <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srm?.srmMax"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

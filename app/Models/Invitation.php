@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTokenExpiry;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,8 @@ use Illuminate\Support\Str;
  */
 class Invitation extends Model
 {
+    use HasTokenExpiry;
+
     const TYPE_SINGLE_USE = 'single_use';
 
     const TYPE_TIME_BOUND = 'time_bound';
@@ -51,24 +54,6 @@ class Invitation extends Model
             ->where(function (Builder $q) {
                 $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
             });
-    }
-
-    public function isValid(): bool
-    {
-        if ($this->used_at !== null) {
-            return false;
-        }
-
-        if ($this->expires_at !== null && $this->expires_at->isPast()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function markUsed(): void
-    {
-        $this->update(['used_at' => now()]);
     }
 
     /**

@@ -12,6 +12,17 @@ use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\ScoresheetController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/sw.js', function () {
+    $path = public_path('build/sw.js');
+    abort_if(! file_exists($path), 404);
+
+    return response(file_get_contents($path), 200, [
+        'Content-Type' => 'application/javascript',
+        'Service-Worker-Allowed' => '/',
+        'Cache-Control' => 'no-cache, no-store, must-revalidate',
+    ]);
+});
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');

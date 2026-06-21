@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CompetitionStatus;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,22 +13,14 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property int $year
- * @property string $status
+ * @property CompetitionStatus $status
  * @property Carbon|null $judging_date
  * @property Collection<int, Member> $judges
  * @property Collection<int, Entry> $entries
  */
 class Competition extends Model
 {
-    const STATUS_DRAFT = 'draft';
-
-    const STATUS_OPEN = 'open';
-
-    const STATUS_JUDGING = 'judging';
-
-    const STATUS_CLOSED = 'closed';
-
-    protected $attributes = ['status' => self::STATUS_DRAFT];
+    protected $attributes = ['status' => 'draft'];
 
     protected $fillable = [
         'name', 'year', 'judging_date', 'status',
@@ -37,12 +30,28 @@ class Competition extends Model
     {
         return [
             'judging_date' => 'date',
+            'status' => CompetitionStatus::class,
         ];
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->status === CompetitionStatus::Draft;
+    }
+
+    public function isOpen(): bool
+    {
+        return $this->status === CompetitionStatus::Open;
+    }
+
+    public function isJudging(): bool
+    {
+        return $this->status === CompetitionStatus::Judging;
     }
 
     public function isClosed(): bool
     {
-        return $this->status === self::STATUS_CLOSED;
+        return $this->status === CompetitionStatus::Closed;
     }
 
     /**

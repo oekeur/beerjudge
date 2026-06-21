@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\CompetitionStatus;
 use App\Models\Competition;
 use App\Models\Member;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -14,7 +15,7 @@ class JudgeParticipationLinkTest extends TestCase
     public function test_register_param_auto_registers_judge(): void
     {
         $member = Member::factory()->create();
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => Competition::STATUS_JUDGING]);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => CompetitionStatus::Judging]);
 
         $this->actingAs($member)->get("/judging/{$comp->id}?register=1");
 
@@ -24,7 +25,7 @@ class JudgeParticipationLinkTest extends TestCase
     public function test_without_register_param_does_not_auto_register(): void
     {
         $member = Member::factory()->create();
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => Competition::STATUS_JUDGING]);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => CompetitionStatus::Judging]);
 
         $this->actingAs($member)->get("/judging/{$comp->id}");
 
@@ -34,7 +35,7 @@ class JudgeParticipationLinkTest extends TestCase
     public function test_auto_register_works_on_open_status(): void
     {
         $member = Member::factory()->create();
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => Competition::STATUS_OPEN]);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => CompetitionStatus::Open]);
 
         $this->actingAs($member)->get("/judging/{$comp->id}?register=1");
 
@@ -48,7 +49,7 @@ class JudgeParticipationLinkTest extends TestCase
     public function test_auto_register_is_idempotent(): void
     {
         $member = Member::factory()->create();
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => Competition::STATUS_JUDGING]);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => CompetitionStatus::Judging]);
         $comp->judges()->attach($member->id);
 
         $this->actingAs($member)->get("/judging/{$comp->id}?register=1");
@@ -59,7 +60,7 @@ class JudgeParticipationLinkTest extends TestCase
     public function test_closed_competition_does_not_auto_register(): void
     {
         $member = Member::factory()->create();
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => Competition::STATUS_CLOSED]);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => CompetitionStatus::Closed]);
 
         $this->actingAs($member)->get("/judging/{$comp->id}?register=1");
 

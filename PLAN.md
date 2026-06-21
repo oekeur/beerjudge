@@ -1,74 +1,85 @@
-# Plan: Sentry User Feedback Widget
+# Plan: SRM beer color visualization on judging screen
 
-**Goal:** Add the persistent Sentry User Feedback Widget to the judging screen and Filament admin panel so users can submit feedback at any time without requiring an error to have occurred.
-**Out of scope:** Session Replay integration, custom feedback UI (using Sentry's embeddable widget as-is), feedback on auth/results pages.
-**Constraints:** `@sentry/browser` is not yet installed (package.json has only alpinejs + dexie); DSN is already in config; no shared Blade layout — each view is standalone.
-
----
-
-## Phase 1: Install Sentry JS SDK and create a shared init module
-
-**Outcome:** `@sentry/browser` is importable in the Vite build; a reusable `sentry.js` module initialises Sentry with `feedbackIntegration()` using a DSN read from a `<meta>` tag.
-
-Tasks:
-- [x] Run `npm install @sentry/browser` to add the package.
-- [x] Create `resources/js/sentry.js` — reads DSN from `<meta name="sentry-dsn">`, reads user name/email from `<meta name="sentry-user">` (JSON), calls `Sentry.init()` with `feedbackIntegration({ colorScheme: 'light', autoInject: true })`, and pre-fills user contact info on the widget via `Sentry.setUser()`.
-- [x] The module should be a no-op (silent early return) when the meta tag is absent, so it is safe to import unconditionally.
-
-Unknowns:
-- [RISK] The DSN is in `config('sentry.dsn')` which may be `null` in local dev. The module must guard against an empty DSN and skip `Sentry.init()` entirely to avoid a Sentry console error.
-- Is the installed `@sentry/browser` version compatible with `feedbackIntegration`? Minimum required is 7.85.0 — check after install.
+**Goal:** Display an SRM color visualization in the style info modal on the judging screen: a horizontal gradient strip that extends slightly beyond the style's min/max range, with two beer glass SVGs at the boundary positions, and reduced opacity on the out-of-range portions. Judges get a visual reference for what color the beer should be and what out-of-range looks like.
+**Out of scope:** SRM display elsewhere (Filament admin, results page); interactive SRM picker; SRM editing on the judging screen; styles without SRM data get a placeholder, not an error.
+**Constraints:** Judging screen is Blade + Alpine.js — no Livewire, no additional JS packages. SRM min/max are already in the database but not exposed to the frontend.
 
 ---
 
-## Phase 2: Non-Filament Blade views (judging screen + app pages)
+## Phase 1: Expose SRM data to the frontend
 
-**Outcome:** The Sentry feedback widget appears on all authenticated non-admin pages: judging screen, entry registration, results. User name/email are pre-filled.
+**Outcome:** Each entry object in the Alpine `serverData` payload includes `srm_min` and `srm_max` (nullable floats), and the controller test covers this.
 
 Tasks:
-- [x] Add `<meta name="sentry-dsn" content="{{ config('sentry.dsn') ?? '' }}">` and `<meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>` to the `<head>` of every non-Filament Blade view that loads Vite assets: `judging/show.blade.php`, `entries/create.blade.php`, `results/index.blade.php`, `results/show.blade.php`. (Auth and welcome views are unauthenticated — skip them.)
-- [x] Import the shared module in `resources/js/app.js`: `import './sentry.js';` — this covers all views loading `app.js`.
-- [x] Import the shared module in `resources/js/judging.js`: `import './sentry.js';` — this covers the judging screen which loads `judging.js` instead of `app.js`.
-- [x] Run `npm run build` and smoke-test: confirm the widget button appears on the judging screen and the entry registration page.
+- [x] In `JudgingController::show()`, add `srm_min` and `srm_max` to the per-entry data map (the entry's `style` relation is already eager-loaded; just add the two fields).
+- [x] Run `php artisan test --compact --filter=Judging` to confirm no regressions.
+- [x] Add assertions to the judging controller test that both SRM fields appear in the response payload for entries whose style has SRM data.
 
 Unknowns:
-- `judging.js` uses Alpine + Dexie and calls `Alpine.start()`. Sentry must be initialised before Alpine finishes mounting, but order within the same module entry point is sequential — this should be safe. Verify in practice.
-- `results/show.blade.php` only loads `app.css` (no `app.js`) — the meta tags will be present but Sentry JS won't load on that page. Either also load `app.js` there, or accept that the results page won't show the widget. Flag during execution.
+- Does the current eager-load of `style` on the entries query include `srm_min`/`srm_max`, or are they excluded by a `$hidden` list? Check the Style model.
+- [RISK] Some styles have null SRM (e.g. custom styles). The frontend must handle null gracefully on both fields independently.
 
 ---
 
-## Phase 3: Filament admin panel
+## Phase 2: SRM-to-color conversion
 
-**Outcome:** The Sentry feedback widget appears on all Filament admin pages for logged-in admins.
+**Outcome:** A small JavaScript utility function `srmToHex(srm)` is available in `judging.js`, returning a hex color string from a numeric SRM value using a lookup table.
 
 Tasks:
-- [x] In `app/Providers/Filament/AdminPanelProvider.php`, add a `renderHook` for `'panels::head.end'` that returns a Blade string containing the two `<meta>` tags and a `<script type="module">` that imports `@sentry/browser` from a CDN ESM build (or, if Filament supports Vite asset injection, include it via `@vite`).
-- [x] Decide between CDN ESM and Vite injection (see Open decisions below). The simplest approach is a CDN ESM `<script type="module">` similar to the existing 500 page, since Filament's panel build is separate from `app.js`.
-- [x] Confirm the widget appears on the Filament dashboard after the panel loads.
+- [x] Add `srmToHex(srm)` to `resources/js/judging.js` (or extract to `resources/js/srm.js` and import it). The function should clamp SRM to 1–40 and return a hex string.
+- [x] Use a hardcoded SRM 1–40 lookup table (more accurate than the Morey equation at extremes, equally small).
+- [x] Round float SRM values to nearest integer before lookup.
 
 Unknowns:
-- [RISK] Filament's admin panel compiles its own assets separately from the Vite build (it uses `filament/filament`'s own JS pipeline). You cannot simply import `resources/js/sentry.js` from PHP-rendered Blade; it must either use a CDN ESM bundle or be a separate Vite entry point loaded via `@vite`.
-- Does Filament v4's `renderHook` accept raw HTML strings? Check `Filament\Support\Facades\FilamentView::renderHook` signature.
-- `app.js` is currently empty (`//`). If other non-Filament, non-judging views (e.g. `entries/create.blade.php`, `results/`) should also get the widget, `app.js` would be the right place for that — but this phase is scoped to Filament only.
+- No significant unknowns; lookup table approach is well-established.
 
 ---
 
-## Phase 4: Tests
+## Phase 3: Extended gradient strip with boundary glasses
 
-**Outcome:** PHPUnit assertions confirm the meta tags are rendered on both the judging screen and admin panel; no regression in existing scoresheet tests.
+**Outcome:** A horizontal visualization renders in the style info modal showing: a gradient band extended ~3 SRM units beyond the style's min and max, two beer glass SVGs positioned at the actual min and max, and reduced opacity (e.g. 30%) on the portions outside the glasses. When SRM is null, the section is hidden.
+
+**Visual layout (left to right):**
+```
+[faded grad] [glass srm_min] [--gradient--] [glass srm_max] [faded grad]
+                SRM 9                              SRM 12
+```
 
 Tasks:
-- [x] Add a test to `tests/Feature/JudgingTest.php` (or a new file) asserting that an authenticated judge sees `<meta name="sentry-dsn">` on the judging screen.
-- [x] Add a test asserting that when `SENTRY_DSN` is empty, the meta tag has an empty content value and no JS error is thrown (this can be an assertion on the rendered HTML, not browser-level).
-- [x] Run `php artisan test --compact` to confirm no regressions.
+- [x] Compute display bounds: `displayMin = max(1, srm_min - padding)`, `displayMax = min(40, srm_max + padding)` where padding = `max(3, Math.round((srm_max - srm_min) * 0.3))`.
+- [x] Build the gradient strip as a CSS `linear-gradient` on a `<div>`, sampling `srmToHex()` at each integer step across the display range.
+- [x] Overlay two reduced-opacity mask `<div>`s covering the out-of-bounds left and right portions (position absolute, `opacity-30`, same background color as the strip at that edge — or a dark/light neutral).
+- [x] Position two beer glass SVGs at the min/max points using percentage-based `left` offsets computed from the display range.
+- [x] Glass SVG: simple pint glass silhouette (tapered body, foam top, highlight stripe). Fill = `srmToHex(srm_min/max)`. Size: ~32px wide × 64px tall.
+- [x] Labels below each glass: "SRM {value}". Use `text-amber-700 dark:text-amber-400`.
+- [x] When only one SRM value is set, show a single glass with no strip (or a flat swatch). When both are null, hide the section with `x-show`.
+- [x] [RISK] Confirm SVG `fill` attribute binding works in Alpine before committing to the full layout.
 
 Unknowns:
-- None anticipated — these are straightforward view/rendering assertions.
+- [RISK] Alpine scope inside the style info bottom sheet: the sheet uses a separate `styleInfo` Alpine object. SRM values are on the entry, not in `styleInfo`. Verify whether `entry` is accessible in the modal template scope, or whether srm_min/srm_max need to be added to the `styleInfo` object when `openStyleInfo()` is called.
+- Padding formula: fixed ±3 SRM may be too narrow for wide-range styles (SRM 2–30) and too wide for narrow ones (SRM 11–12). The proportional fallback (`max(3, 30% of range)`) handles this but needs smoke-testing.
+- Out-of-bounds masking: semi-transparent overlay vs. reduced opacity on the gradient itself. Overlay div is simpler; opacity on the gradient requires splitting it into three CSS segments.
+
+---
+
+## Phase 4: Integrate into the style info modal
+
+**Outcome:** The style info bottom sheet in `judging/show.blade.php` gains a "Color" section above the text content, hidden when both SRM values are null.
+
+Tasks:
+- [x] Locate the style info modal template and add the visualization component above the existing description/history/style-comparison sections.
+- [x] Run `npm run build` and smoke-test on at least two styles: one with a narrow SRM range and one with a wide range.
+- [x] Verify dark mode: gradient colors are inherently dark-mode-safe (they're literal beer colors); labels and glass outlines need `dark:` variants.
+
+Unknowns:
+- None beyond what Phase 3 surfaces.
 
 ---
 
 ## Open decisions
 
-- [x] **Filament: CDN ESM.** Inject a `<script type="module">` loading `@sentry/browser` from CDN via `renderHook`.
-- [x] **Widget scope: all authenticated pages.** Import `sentry.js` in `app.js` so the widget also appears on entry registration and results pages.
-- [x] **English labels.** Leave Sentry's default English strings.
+- [x] **Visualization approach:** Extended gradient strip with two boundary glasses and reduced opacity outside the range. (Decided 2026-06-19)
+- [x] **Layout placement:** Modal only. (Decided 2026-06-19)
+- [x] **SRM lookup table vs Morey equation:** Lookup table. (Decided in brainstorm)
+- [ ] **Single value display:** When only `srm_min` or only `srm_max` is set, show a flat swatch with that one value. No strip.
+- [ ] **Padding formula:** Confirm `max(3, round(range * 0.3))` feels right after smoke-testing.

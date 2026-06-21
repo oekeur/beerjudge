@@ -7,17 +7,17 @@
     /** @var \Illuminate\Support\Collection<int, \App\Models\Entry> $entries */
     $entries = Entry::query()
         ->where('competition_id', $record->id)
-        ->withCount(['scoresheets as sheet_count' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted')])
-        ->withAvg(['scoresheets as avg_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted')], 'total')
-        ->withMax(['scoresheets as max_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted')], 'total')
-        ->withMin(['scoresheets as min_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted')], 'total')
-        ->whereHas('scoresheets', fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', 'submitted'), '>=', 2)
+        ->withCount(['scoresheets as sheet_count' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', \App\Enums\ScoresheetStatus::Submitted)])
+        ->withAvg(['scoresheets as avg_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', \App\Enums\ScoresheetStatus::Submitted)], 'total')
+        ->withMax(['scoresheets as max_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', \App\Enums\ScoresheetStatus::Submitted)], 'total')
+        ->withMin(['scoresheets as min_total' => fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', \App\Enums\ScoresheetStatus::Submitted)], 'total')
+        ->whereHas('scoresheets', fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where('status', \App\Enums\ScoresheetStatus::Submitted), '>=', 2)
         ->orderBy('bottle_number')
         ->get();
 @endphp
 
 <div class="space-y-4">
-    @if($record->status === 'closed')
+    @if($record->isClosed())
         <div class="flex items-center gap-3">
             <a href="{{ route('results.index', $record) }}"
                target="_blank"

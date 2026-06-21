@@ -1,5 +1,11 @@
 import './sentry.js';
 import Alpine from 'alpinejs';
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {})
+    })
+}
 import Dexie from 'dexie';
 
 const db = new Dexie('beerjudge');
@@ -7,6 +13,22 @@ db.version(1).stores({
     scoresheets: 'client_uuid, entry_id, syncStatus',
 });
 
+
+const SRM_HEX = [
+    '#FFE699', '#FFD878', '#FFCA5A', '#FFBF42', '#FBB123',
+    '#F8A600', '#F39C00', '#EA8F00', '#E58500', '#DE7C00',
+    '#D77200', '#CF6900', '#CB6200', '#C35900', '#BB5100',
+    '#B54C00', '#B04500', '#A63E00', '#A13700', '#9B3200',
+    '#952D00', '#8E2900', '#882300', '#821E00', '#7B1A00',
+    '#771900', '#701400', '#6A0E00', '#660D00', '#5E0B00',
+    '#5A0A00', '#560A00', '#520900', '#4C0700', '#470600',
+    '#440600', '#3F0500', '#3B0400', '#360400', '#330200',
+];
+
+window.srmToHex = function srmToHex(srm) {
+    const index = Math.max(0, Math.min(39, Math.round(srm) - 1));
+    return SRM_HEX[index];
+};
 
 function emptySheet(entryId) {
     return {
@@ -38,7 +60,7 @@ window.judgingApp = function (serverData) {
         sortMode: 'judging',
         syncQueue: [],
         _retryTimer: null,
-        styleGuide: { open: false, section: '', text: '' },
+        styleGuide: { open: false, section: '', text: '', srm: null },
         styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '' },
 
         get sortedEntries() {
@@ -103,6 +125,11 @@ window.judgingApp = function (serverData) {
 
         bandInfo(total) {
             return this.bands.find(b => total >= b.min) ?? this.bands[this.bands.length - 1];
+        },
+
+        scoreColor(total) {
+            const hue = Math.round((total / 50) * 120);
+            return `hsl(${hue}, 78%, var(--score-lum))`;
         },
 
         toggleExpanded(entryId) {
@@ -223,10 +250,46 @@ window.judgingApp = function (serverData) {
                 aroma: 'Aroma', appearance: 'Appearance', flavor: 'Flavour',
                 mouthfeel: 'Mouthfeel', overall_impression: 'Overall Impression',
             };
+
+            let srm = null;
+            if (sectionKey === 'appearance') {
+                const srmMin = entry?.srm_min != null ? Number(entry.srm_min) : null;
+                const srmMax = entry?.srm_max != null ? Number(entry.srm_max) : null;
+                if (srmMin !== null || srmMax !== null) {
+                    const hasBoth = srmMin !== null && srmMax !== null;
+                    const single = srmMin !== null ? srmMin : srmMax;
+                    const rawPad = hasBoth ? Math.max(3, Math.round((srmMax - srmMin) * 0.3)) : 3;
+                    const clampedMin = Math.max(1, (srmMin ?? single) - rawPad);
+                    const clampedMax = Math.min(40, (srmMax ?? single) + rawPad);
+                    // equalize: trim the unconstrained side to match the clamped side
+                    const effectivePad = Math.min((srmMin ?? single) - clampedMin, clampedMax - (srmMax ?? single));
+                    const displayMin = (srmMin ?? single) - effectivePad;
+                    const displayMax = (srmMax ?? single) + effectivePad;
+                    const range = displayMax - displayMin;
+                    const pct = (v) => Math.round((v - displayMin) / range * 100) + '%';
+                    const maskPct = (v) => Math.round(v / range * 100) + '%';
+                    srm = {
+                        hasBoth,
+                        srmMin,
+                        srmMax,
+                        leftMinPct: srmMin !== null ? pct(srmMin) : '50%',
+                        leftMaxPct: srmMax !== null ? pct(srmMax) : '50%',
+                        leftMaskPct: hasBoth ? pct(srmMin) : '0%',
+                        rightMaskPct: hasBoth ? maskPct(displayMax - srmMax) : '0%',
+                        minFill: srmMin !== null ? srmToHex(srmMin) : '#888888',
+                        maxFill: srmMax !== null ? srmToHex(srmMax) : '#888888',
+                        gradientStyle: hasBoth
+                            ? `top:20px;height:24px;background:linear-gradient(to right,${srmToHex(displayMin)},${srmToHex(displayMax)})`
+                            : `top:20px;height:24px;background:${srmToHex(single ?? 1)}`,
+                    };
+                }
+            }
+
             this.styleGuide = {
                 open: true,
                 section: titles[sectionKey] ?? sectionKey,
                 text: entry?.style_guide?.[sectionKey] ?? 'No descriptor available.',
+                srm,
             };
         },
 
@@ -246,6 +309,7 @@ window.judgingApp = function (serverData) {
                 styleComparison: entry?.style_info?.style_comparison ?? '',
             };
         },
+
 
         closeStyleInfo() {
             this.styleInfo.open = false;
