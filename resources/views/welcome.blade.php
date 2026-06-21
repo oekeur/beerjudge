@@ -1,7 +1,5 @@
 @php
     /** @var \Illuminate\Support\Collection<string, \Illuminate\Database\Eloquent\Collection<int, \App\Models\Competition>> $competitions */
-    $clubName = is_string($v = config('app.club_name')) ? $v : '';
-    $appTitle = $clubName !== '' ? $clubName . ' BeerJudge' : 'BeerJudge';
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">

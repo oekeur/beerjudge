@@ -1,7 +1,3 @@
-@php
-    $clubName = is_string($v = config('app.club_name')) ? $v : '';
-    $appTitle = $clubName !== '' ? $clubName . ' BeerJudge' : 'BeerJudge';
-@endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
