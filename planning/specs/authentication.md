@@ -47,6 +47,10 @@ Session-based auth throughout — the session cookie covers both the Filament ad
 
 `POST /logout` — destroys the session and redirects to `/login`.
 
+## Views
+
+All auth views (`/login`, `/magic-link`, `/password-reset*`) use the `<x-app-head>` anonymous Blade component for their page head — charset, viewport, PWA meta, favicon, Vite CSS, and theme initialisation are all handled there.
+
 ## Out of scope
 
 Public or anonymous registration. OAuth / social login. Two-factor auth. API tokens or bearer auth.

@@ -56,6 +56,10 @@ The Filament Competition > Results tab shows a variance table. For each entry wi
 
 No scores are adjusted. The flag is informational only. No `reviewed_at` field exists yet to mark a flag as handled.
 
+## Views
+
+Both results views use `<x-app-head>` for their page head. `results/show` passes the print stylesheet (`@media print`) via the component slot.
+
 ## Out of scope
 
 PDF generation (dompdf). Per-style rankings or category placements. Automated email of results links (planned — see roadmap). Per-member score history across competitions (planned — see roadmap). Awards, medals, or best-in-show designations.

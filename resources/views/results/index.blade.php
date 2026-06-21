@@ -1,17 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#b45309">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <title>Results — {{ $competition->name }}</title>
-    @vite(['resources/css/app.css'])
-    <x-theme-init />
+    <x-app-head :title="'Results — ' . $competition->name" />
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 font-sans p-6 max-w-2xl mx-auto">
     <div class="mb-6 flex items-start justify-between gap-4">

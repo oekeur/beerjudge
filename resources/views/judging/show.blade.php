@@ -1,20 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#b45309">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Judging · {{ $competition->name }}</title>
-    @vite(['resources/css/app.css', 'resources/js/judging.js'])
-    <meta name="sentry-dsn" content="{{ is_string(config('sentry.dsn')) ? config('sentry.dsn') : '' }}">
-    <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
-    <x-theme-init />
+    <x-app-head :title="'Judging · ' . $competition->name" :vite="['resources/css/app.css', 'resources/js/judging.js']">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="sentry-dsn" content="{{ is_string(config('sentry.dsn')) ? config('sentry.dsn') : '' }}">
+        <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
+    </x-app-head>
 </head>
 <body class="bg-stone-100 dark:bg-gray-950 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server))" x-init="init()" data-server='@json($serverData)'>
 

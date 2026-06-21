@@ -6,24 +6,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#b45309">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <title>Results — {{ $competition->name }} — {{ $memberName }}</title>
-    @vite(['resources/css/app.css'])
-    <x-theme-init />
-    <style>
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; color: black; }
-            .page-break { page-break-after: always; }
-        }
-    </style>
+    <x-app-head :title="'Results — ' . $competition->name . ' — ' . $memberName">
+        <style>
+            @media print {
+                .no-print { display: none !important; }
+                body { background: white; color: black; }
+                .page-break { page-break-after: always; }
+            }
+        </style>
+    </x-app-head>
 </head>
 <body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white font-sans p-6 max-w-4xl mx-auto">
 

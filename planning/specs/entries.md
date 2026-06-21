@@ -43,6 +43,10 @@ Bottle numbers are assigned by the admin during the transition to `judging` stat
 
 The Entries tab in CompetitionResource displays all entries as a repeater. Admins can edit any field (member, style, bottle number, brewer notes, sort order) and reorder entries via drag-and-drop.
 
+## View
+
+The entry registration view uses `<x-app-head :vite="['resources/css/app.css', 'resources/js/app.js']">` for its page head. Sentry DSN and user meta tags are passed via the component slot.
+
 ## Out of scope
 
 Entry withdrawal after submission (no delete route for members). Entry editing after the competition moves to `judging`. Multiple bottles per entry. Photo uploads. Entry fees.
