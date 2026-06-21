@@ -11,12 +11,14 @@ test.describe('judging score buttons', () => {
 
         // Wait for Alpine to render entry cards via x-for
         await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
+        await page.waitForLoadState('networkidle')
 
         // Expand the first entry's scoresheet
         await page.locator('main button.w-full.text-left').first().click()
+        await page.waitForLoadState('networkidle')
 
         const aromaGroup = page.locator('[role="group"][aria-label="Aroma score, 0 to 12"]').first()
-        await aromaGroup.waitFor({ state: 'visible' })
+        await aromaGroup.waitFor({ state: 'visible', timeout: 10_000 })
 
         const btn5 = aromaGroup.locator('button').filter({ hasText: /^5$/ })
         const btn8 = aromaGroup.locator('button').filter({ hasText: /^8$/ })
@@ -39,10 +41,12 @@ test.describe('judging score buttons', () => {
         await clearIndexedDB(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
         await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
+        await page.waitForLoadState('networkidle')
         await page.locator('main button.w-full.text-left').first().click()
+        await page.waitForLoadState('networkidle')
 
         const aromaGroup = page.locator('[role="group"][aria-label="Aroma score, 0 to 12"]').first()
-        await aromaGroup.waitFor({ state: 'visible' })
+        await aromaGroup.waitFor({ state: 'visible', timeout: 10_000 })
 
         // Score each section: 8 + 3 + 14 + 4 + 9 = 38
         await aromaGroup.locator('button').filter({ hasText: /^8$/ }).click()
@@ -73,8 +77,10 @@ test.describe('judging score buttons', () => {
         await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
         await page.locator('main button.w-full.text-left').first().click()
 
+        await page.waitForLoadState('networkidle')
+
         const aromaGroup = page.locator('[role="group"][aria-label="Aroma score, 0 to 12"]').first()
-        await aromaGroup.waitFor({ state: 'visible' })
+        await aromaGroup.waitFor({ state: 'visible', timeout: 10_000 })
 
         // Score minimally to be able to submit
         await aromaGroup.locator('button').filter({ hasText: /^8$/ }).click()
@@ -94,6 +100,12 @@ test.describe('judging score buttons', () => {
 
         // "Submitted ✓" badge is the server-confirmation signal: Alpine only renders it
         // when syncStatus==='synced' && status==='submitted', which requires a 200 from the server.
+        // Wait for the submit request to complete successfully
+        await page.waitForResponse(response => 
+            response.url().includes('/scoresheets') && response.status() === 200,
+            { timeout: 15_000 }
+        )
+        
         await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible({ timeout: 15_000 })
 
         // "Reopen to edit" must be visible
