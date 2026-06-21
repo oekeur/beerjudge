@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTokenExpiry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -16,6 +17,8 @@ use Illuminate\Support\Str;
  */
 class MagicLink extends Model
 {
+    use HasTokenExpiry;
+
     protected $fillable = ['member_id', 'token', 'expires_at', 'used_at'];
 
     protected function casts(): array
@@ -42,16 +45,6 @@ class MagicLink extends Model
     public static function findByPlaintext(string $plain): ?self
     {
         return self::where('token', hash('sha256', $plain))->first();
-    }
-
-    public function isValid(): bool
-    {
-        return $this->used_at === null && $this->expires_at->isFuture();
-    }
-
-    public function markUsed(): void
-    {
-        $this->update(['used_at' => now()]);
     }
 
     /**

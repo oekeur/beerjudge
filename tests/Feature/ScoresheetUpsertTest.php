@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ScoresheetStatus;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Member;
@@ -141,7 +142,7 @@ class ScoresheetUpsertTest extends TestCase
 
         $response->assertOk();
         $sheet = Scoresheet::where('client_uuid', $uuid)->first();
-        $this->assertEquals('submitted', $sheet->status);
+        $this->assertEquals(ScoresheetStatus::Submitted, $sheet->status);
         $this->assertNotNull($sheet->submitted_at);
         $this->assertEquals(35, $sheet->total);
     }

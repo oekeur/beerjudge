@@ -8,3 +8,4 @@ parameters:
     paths:
         - app/
     level: 10
+    reportUnmatchedIgnoredErrors: true

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Competitions\Widgets;
 
+use App\Enums\ScoresheetStatus;
 use App\Models\Entry;
 use App\Models\Scoresheet;
 use Filament\Tables;
@@ -29,18 +30,18 @@ class JudgeVarianceWidget extends BaseWidget
             ->query(
                 Entry::query()
                     ->where('competition_id', $this->competitionId)
-                    ->withCount(['scoresheets as sheet_count' => fn (Builder $q) => $q->where('status', 'submitted')])
-                    ->withAvg(['scoresheets as avg_total' => fn (Builder $q) => $q->where('status', 'submitted')], 'total')
+                    ->withCount(['scoresheets as sheet_count' => fn (Builder $q) => $q->where('status', ScoresheetStatus::Submitted)])
+                    ->withAvg(['scoresheets as avg_total' => fn (Builder $q) => $q->where('status', ScoresheetStatus::Submitted)], 'total')
                     ->addSelect("{$entriesTable}.*")
                     ->selectSub(
                         Scoresheet::query()
                             ->selectRaw('MAX(total) - MIN(total)')
                             ->whereColumn('entry_id', "{$entriesTable}.id")
-                            ->where('status', 'submitted'),
+                            ->where('status', ScoresheetStatus::Submitted),
                         'spread'
                     )
                     ->whereHas('scoresheets', function ($query) {
-                        $query->where('status', 'submitted');
+                        $query->where('status', ScoresheetStatus::Submitted);
                     }, '>=', 2)
             )
             ->columns([

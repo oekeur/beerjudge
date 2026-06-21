@@ -2,20 +2,15 @@
 
 namespace Tests\Unit;
 
+use App\Services\CompetitionRankingService;
 use PHPUnit\Framework\TestCase;
 
 class RankingTest extends TestCase
 {
+    /** @param array<int, array{avg_total: float, avg_overall: float}> $rows */
     private function rank(array $rows): array
     {
-        $sorted = collect($rows)->sort(fn ($a, $b) => $b['avg_total'] <=> $a['avg_total'] ?: $b['avg_overall'] <=> $a['avg_overall']
-        )->values()->toArray();
-
-        foreach ($sorted as $i => &$row) {
-            $row['placement'] = $i + 1;
-        }
-
-        return $sorted;
+        return CompetitionRankingService::sortAndPlace(collect($rows))->all();
     }
 
     public function test_ranks_by_avg_total_descending(): void

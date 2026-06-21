@@ -12,18 +12,14 @@ class RegistrationController extends Controller
 {
     public function show(string $token): View
     {
-        $invitation = Invitation::where('token', $token)->firstOrFail();
-
-        abort_unless($invitation->isValid(), 410);
+        $this->resolveInvitation($token);
 
         return view('auth.register', compact('token'));
     }
 
     public function store(string $token, RegisterMemberRequest $request): RedirectResponse
     {
-        $invitation = Invitation::where('token', $token)->firstOrFail();
-
-        abort_unless($invitation->isValid(), 410);
+        $invitation = $this->resolveInvitation($token);
 
         Member::create([
             'name' => $request->validated('name'),
@@ -38,5 +34,14 @@ class RegistrationController extends Controller
         }
 
         return redirect()->route('login')->with('success', __('auth.register_success'));
+    }
+
+    private function resolveInvitation(string $token): Invitation
+    {
+        $invitation = Invitation::where('token', $token)->firstOrFail();
+
+        abort_unless($invitation->isValid(), 410);
+
+        return $invitation;
     }
 }

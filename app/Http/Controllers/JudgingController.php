@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Competition;
 use App\Models\Scoresheet;
+use App\Services\CompetitionRankingService;
+use App\Services\DescriptorService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -11,7 +13,7 @@ class JudgingController extends Controller
 {
     public function show(Competition $competition, Request $request): View
     {
-        abort_if($competition->status !== 'judging', 403);
+        abort_unless($competition->isJudging(), 403);
 
         $judge = $this->member($request);
 
@@ -49,14 +51,12 @@ class JudgingController extends Controller
                     'style_comparison' => $e->style?->style_comparison,
                 ],
             ])->values(),
-            'bands' => [
-                ['min' => 45, 'name' => __('judging.band.outstanding.name'),  'range' => '45–50', 'description' => __('judging.band.outstanding.description')],
-                ['min' => 38, 'name' => __('judging.band.excellent.name'),    'range' => '38–44', 'description' => __('judging.band.excellent.description')],
-                ['min' => 30, 'name' => __('judging.band.very_good.name'),    'range' => '30–37', 'description' => __('judging.band.very_good.description')],
-                ['min' => 21, 'name' => __('judging.band.good.name'),         'range' => '21–29', 'description' => __('judging.band.good.description')],
-                ['min' => 14, 'name' => __('judging.band.fair.name'),         'range' => '14–20', 'description' => __('judging.band.fair.description')],
-                ['min' => 0,  'name' => __('judging.band.problematic.name'),  'range' => '0–13',  'description' => __('judging.band.problematic.description')],
-            ],
+            'bands' => array_map(fn (array $band) => [
+                'min' => $band['min'],
+                'name' => __("judging.band.{$band['key']}.name"),
+                'range' => $band['range'],
+                'description' => __("judging.band.{$band['key']}.description"),
+            ], CompetitionRankingService::bands()),
             'existingSheets' => $existingSheets->map(fn ($s) => [
                 'entry_id' => $s->entry_id,
                 'client_uuid' => $s->client_uuid,
@@ -79,7 +79,7 @@ class JudgingController extends Controller
             $competition->judges()->syncWithoutDetaching([$judge->id]);
         }
 
-        $descriptors = ScoresheetController::descriptors();
+        $descriptors = DescriptorService::descriptors();
         $isJudge = $competition->judges()->where('member_id', $judge->id)->exists();
 
         return view('judging.show', [

@@ -13,7 +13,7 @@ class EntryController extends Controller
 {
     public function create(Competition $competition, Request $request): View
     {
-        abort_unless($competition->status === Competition::STATUS_OPEN, 403);
+        abort_unless($competition->isOpen(), 403);
 
         $member = $this->member($request);
         $styles = $competition->styles()->orderBy('code')->get();
@@ -28,7 +28,7 @@ class EntryController extends Controller
 
     public function store(Competition $competition, StoreEntryRequest $request): RedirectResponse
     {
-        abort_unless($competition->status === Competition::STATUS_OPEN, 403);
+        abort_unless($competition->isOpen(), 403);
 
         Entry::create([
             'competition_id' => $competition->id,

@@ -7,7 +7,7 @@
         ->with([
             'member',
             'style',
-            'scoresheets' => fn (Relation $query) => $query->where('status', 'submitted'),
+            'scoresheets' => fn (Relation $query) => $query->where('status', \App\Enums\ScoresheetStatus::Submitted),
         ])
         ->orderBy('bottle_number')
         ->get();
@@ -45,7 +45,7 @@
            class="fi-btn fi-btn-size-md fi-btn-color-gray fi-color-gray fi-ac-btn-action inline-flex items-center justify-center gap-1.5 font-semibold rounded-lg px-3 py-2 text-sm shadow-sm ring-1 ring-gray-950/10 bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/20 dark:hover:bg-white/10">
             View all results
         </a>
-        @if($competition->status !== 'closed')
+        @if(! $competition->isClosed())
             <span class="text-xs text-warning-600 dark:text-warning-400">Judging in progress.</span>
         @endif
     </div>

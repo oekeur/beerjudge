@@ -21,15 +21,7 @@ class CompetitionsTable
                     ->date()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => __("competition.status.{$state}"))
-                    ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'gray',
-                        'open' => 'info',
-                        'judging' => 'warning',
-                        'closed' => 'success',
-                        default => 'gray',
-                    }),
+                    ->badge(),
             ])
             ->filters([])
             ->recordActions([

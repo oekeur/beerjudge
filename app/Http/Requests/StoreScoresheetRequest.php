@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Controllers\ScoresheetController;
+use App\Enums\ScoresheetStatus;
+use App\Services\DescriptorService;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreScoresheetRequest extends FormRequest
 {
@@ -18,7 +20,7 @@ class StoreScoresheetRequest extends FormRequest
      */
     public function rules(): array
     {
-        $scoring = $this->input('status') === 'submitted' ? 'required' : 'nullable';
+        $scoring = $this->input('status') === ScoresheetStatus::Submitted->value ? 'required' : 'nullable';
 
         return [
             'client_uuid' => ['required', 'uuid'],
@@ -34,8 +36,8 @@ class StoreScoresheetRequest extends FormRequest
             'mouthfeel_notes' => ['nullable', 'string', 'max:2000'],
             'overall_notes' => ['nullable', 'string', 'max:2000'],
             'descriptors' => ['nullable', 'array'],
-            'descriptors.*' => ['string', 'in:'.implode(',', ScoresheetController::descriptorSlugs())],
-            'status' => ['required', 'in:draft,submitted'],
+            'descriptors.*' => ['string', 'in:'.implode(',', DescriptorService::slugs())],
+            'status' => ['required', Rule::enum(ScoresheetStatus::class)],
         ];
     }
 }

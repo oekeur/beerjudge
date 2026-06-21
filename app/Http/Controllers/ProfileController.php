@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Support\PasswordRules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -26,7 +27,7 @@ class ProfileController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:members,email,'.$member->id],
             'locale' => ['required', 'string', 'in:en,nl'],
             'current_password' => ['nullable', 'string'],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'password' => PasswordRules::optional(),
         ]);
 
         if ($request->filled('password')) {
