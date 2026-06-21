@@ -27,3 +27,31 @@ export async function login(page: Page, email = JUDGE_EMAIL): Promise<void> {
     await page.click('button[type="submit"]')
     await expect(page).toHaveURL('/')
 }
+
+/**
+ * Clear IndexedDB to ensure test isolation.
+ * This prevents stale scoresheet data from previous tests affecting the current test.
+ */
+export async function clearIndexedDB(page: Page): Promise<void> {
+    await page.evaluate(() => {
+        return new Promise<void>((resolve, reject) => {
+            const openRequest = indexedDB.open('beerjudge')
+
+            openRequest.onsuccess = () => {
+                const db = openRequest.result
+                try {
+                    const transaction = db.transaction('scoresheets', 'readwrite')
+                    const store = transaction.objectStore('scoresheets')
+                    store.clear()
+
+                    transaction.oncomplete = () => resolve()
+                    transaction.onerror = () => reject(transaction.error)
+                } catch (e) {
+                    resolve()
+                }
+            }
+
+            openRequest.onerror = () => resolve()
+        })
+    })
+}

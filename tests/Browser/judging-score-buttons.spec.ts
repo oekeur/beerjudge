@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { login, loadFixtures } from './helpers'
+import { login, loadFixtures, clearIndexedDB } from './helpers'
 
 test.describe('judging score buttons', () => {
     test('score button selection is reflected via aria-pressed', async ({ page }) => {
         const { judgingCompetitionId } = loadFixtures()
 
         await login(page)
+        await clearIndexedDB(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
 
         // Wait for Alpine to render entry cards via x-for
@@ -35,6 +36,7 @@ test.describe('judging score buttons', () => {
         const { judgingCompetitionId } = loadFixtures()
 
         await login(page)
+        await clearIndexedDB(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
         await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
         await page.locator('main button.w-full.text-left').first().click()
@@ -66,6 +68,7 @@ test.describe('judging score buttons', () => {
         page.on('pageerror', err => console.log('[page error]', err.message))
 
         await login(page)
+        await clearIndexedDB(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
         await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
         await page.locator('main button.w-full.text-left').first().click()

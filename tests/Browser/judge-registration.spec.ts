@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { login, loadFixtures } from './helpers'
+import { login, loadFixtures, clearIndexedDB } from './helpers'
 
 test.describe('judge registration', () => {
     test('unregistered judge sees the register banner and can register', async ({ page }) => {
         const { judgingCompetitionId } = loadFixtures()
 
         await login(page)
+        await clearIndexedDB(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
 
         // Unregistered judge sees the banner with a "Register as judge" button
@@ -24,6 +25,7 @@ test.describe('judge registration', () => {
         const { judgingCompetitionId } = loadFixtures()
 
         await login(page)
+        await clearIndexedDB(page)
 
         // Register first via the query param shortcut
         await page.goto(`/judging/${judgingCompetitionId}?register=1`)

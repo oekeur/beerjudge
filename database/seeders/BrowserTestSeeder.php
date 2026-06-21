@@ -7,12 +7,21 @@ use App\Models\Entry;
 use App\Models\Member;
 use App\Models\Style;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class BrowserTestSeeder extends Seeder
 {
     public function run(): void
     {
+        // Clear any existing test data to ensure isolation between test runs
+        DB::table('scoresheets')->delete();
+        DB::table('entries')->delete();
+        DB::table('competition_style')->delete();
+        DB::table('competitions')->delete();
+        DB::table('styles')->delete();
+        DB::table('members')->delete();
+
         $style = Style::create([
             'source' => 'custom',
             'code' => 'BT1',
