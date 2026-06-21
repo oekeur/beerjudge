@@ -1,0 +1,13 @@
+{
+  "name": "Foebar BeerJudge",
+  "short_name": "BeerJudge",
+  "description": "Homebrew competition judging app for the Foebar Amsterdam Homebrew Group",
+  "start_url": "/judge",
+  "display": "standalone",
+  "background_color": "#1c1917",
+  "theme_color": "#b45309",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

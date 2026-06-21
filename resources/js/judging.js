@@ -1,5 +1,11 @@
 import './sentry.js';
 import Alpine from 'alpinejs';
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {})
+    })
+}
 import Dexie from 'dexie';
 
 const db = new Dexie('beerjudge');
