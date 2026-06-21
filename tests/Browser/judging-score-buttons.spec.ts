@@ -98,15 +98,12 @@ test.describe('judging score buttons', () => {
 
         await page.getByRole('button', { name: /Submit/ }).first().click()
 
-        // "Submitted ✓" badge is the server-confirmation signal: Alpine only renders it
-        // when syncStatus==='synced' && status==='submitted', which requires a 200 from the server.
-        // Wait for the submit request to complete successfully
-        await page.waitForResponse(response => 
-            response.url().includes('/scoresheets') && response.status() === 200,
-            { timeout: 15_000 }
-        )
-        
-        await expect(page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()).toBeVisible({ timeout: 15_000 })
+        // Wait for the user-visible submitted state instead of racing on response timing.
+        const submittedBadge = page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()
+        await expect(submittedBadge).toBeVisible({ timeout: 15_000 })
+
+        // Allow Alpine state transitions to settle before asserting read-only controls.
+        await page.waitForLoadState('networkidle')
 
         // "Reopen to edit" must be visible
         await expect(page.getByRole('button', { name: /Reopen/ })).toBeVisible()
