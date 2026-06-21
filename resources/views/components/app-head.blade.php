@@ -12,4 +12,6 @@
 @if($themeInit)
     <x-theme-init />
 @endif
+<meta name="sentry-dsn" content="{{ is_string(config('sentry.dsn')) ? config('sentry.dsn') : '' }}">
+<meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
 {{ $slot }}

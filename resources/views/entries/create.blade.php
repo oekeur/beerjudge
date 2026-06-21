@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    <x-app-head :title="$appTitle . ' — ' . __('entry.title')" :vite="['resources/css/app.css', 'resources/js/app.js']">
-        <meta name="sentry-dsn" content="{{ is_string(config('sentry.dsn')) ? config('sentry.dsn') : '' }}">
-        <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
-    </x-app-head>
+    <x-app-head :title="$appTitle . ' — ' . __('entry.title')" :vite="['resources/css/app.css', 'resources/js/app.js']" />
 </head>
 <body class="min-h-screen bg-amber-50 dark:bg-gray-950">
     <div class="max-w-lg mx-auto py-12 px-4">
