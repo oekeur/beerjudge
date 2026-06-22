@@ -22,11 +22,12 @@ test.describe('entry submission', () => {
         await styleSelect.selectOption(firstStyleValue!)
         await page.fill('#brewer_notes', 'Brewed with love for browser testing.')
 
-        // Submit the form
-        await page.click('button[type="submit"]')
+        // Submit the entry form specifically — the page also has a logout button[type="submit"] in the nav
+        await page.getByRole('button', { name: /Submit entry/ }).click()
+        await page.waitForLoadState('networkidle')
 
         // Flash success message must appear
-        await expect(page.locator('p.text-green-700')).toBeVisible()
+        await expect(page.getByTestId('flash-success')).toBeVisible()
 
         // The submitted entry must appear in "Your entries" list
         // Use getByRole('listitem') to avoid strict-mode violation: the style
@@ -40,15 +41,18 @@ test.describe('entry submission', () => {
         await login(page, BREWER_EMAIL)
         await page.goto(`/competitions/${openCompetitionId}/entries/create`)
 
-        // Disable HTML5 native validation so the empty select value reaches
-        // the server — without this the browser intercepts the submit and
-        // Laravel never responds with a validation error.
+        // Disable HTML5 native validation on all forms so the empty select value reaches
+        // the server. document.querySelector('form') would hit the logout form in x-app-nav
+        // first, leaving the entry form's native validation active.
         await page.evaluate(() => {
-            (document.querySelector('form') as HTMLFormElement).noValidate = true
+            document.querySelectorAll('form').forEach(f => { (f as HTMLFormElement).noValidate = true })
         })
-        await page.click('button[type="submit"]')
+
+        // Submit the entry form specifically — the page also has a logout button[type="submit"] in the nav
+        await page.getByRole('button', { name: /Submit entry/ }).click()
+        await page.waitForLoadState('networkidle')
 
         // Validation error must be displayed
-        await expect(page.locator('p.text-red-600')).toBeVisible()
+        await expect(page.getByTestId('form-error')).toBeVisible()
     })
 })

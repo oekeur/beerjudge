@@ -19,8 +19,8 @@ test.describe('authentication', () => {
         await page.click('button[type="submit"]')
 
         await expect(page).toHaveURL('/login')
-        await expect(page.locator('p.text-red-600')).toBeVisible()
-        await expect(page.locator('p.text-red-600')).toContainText('Invalid credentials')
+        await expect(page.getByTestId('form-error')).toBeVisible()
+        await expect(page.getByTestId('form-error')).toContainText('Invalid credentials')
     })
 
     test('unauthenticated user is redirected to login', async ({ page }) => {

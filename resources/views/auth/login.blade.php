@@ -4,7 +4,7 @@
     <form method="POST" action="/login">
         @csrf
         @if ($errors->any())
-            <p class="text-red-600 dark:text-red-400 text-sm mb-4">{{ $errors->first() }}</p>
+            <p class="text-red-600 dark:text-red-400 text-sm mb-4" data-testid="form-error">{{ $errors->first() }}</p>
         @endif
         <div class="mb-4">
             <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('auth.email') }}</label>

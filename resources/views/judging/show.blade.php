@@ -91,6 +91,7 @@
                 <button
                     type="button"
                     class="w-full text-left px-4 py-4 flex items-center gap-3"
+                    data-testid="entry-expand-button"
                     @click="toggleExpanded(entry.id)"
                 >
                     <div class="w-6 text-right flex-shrink-0">
@@ -145,7 +146,7 @@
                     <template x-if="sheets[entry.id]?.status === 'submitted' && sheets[entry.id]?.syncStatus === 'synced'">
                         <div>
                             <div class="flex items-center gap-2 mb-3">
-                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">{{ __('judging.submitted') }}</span>
+                                <span class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm" data-testid="scoresheet-submitted">{{ __('judging.submitted') }}</span>
                             </div>
                             <table class="text-sm text-gray-600 dark:text-gray-400 mb-3" style="border-spacing: 0" aria-live="polite">
                                 <tr><td class="pr-6">{{ __('judging.section.aroma') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].aroma"></strong></span>/12</td></tr>
@@ -328,7 +329,7 @@
                             </div>
 
                             {{-- Total + Submit --}}
-                            <div class="border-t border-gray-100 dark:border-gray-800 pt-3 flex items-center justify-between gap-3">
+                            <div class="border-t border-gray-100 dark:border-gray-800 pt-3 flex items-center justify-between gap-3" data-testid="scoresheet-footer">
                                 <div>
                                     <div class="text-lg font-bold text-gray-900 dark:text-white">
                                         <span x-text="sheetTotal(entry.id)"></span> / 50
