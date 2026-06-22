@@ -41,11 +41,11 @@ test.describe('entry submission', () => {
         await login(page, BREWER_EMAIL)
         await page.goto(`/competitions/${openCompetitionId}/entries/create`)
 
-        // Disable HTML5 native validation so the empty select value reaches
-        // the server — without this the browser intercepts the submit and
-        // Laravel never responds with a validation error.
+        // Disable HTML5 native validation on all forms so the empty select value reaches
+        // the server. document.querySelector('form') would hit the logout form in x-app-nav
+        // first, leaving the entry form's native validation active.
         await page.evaluate(() => {
-            (document.querySelector('form') as HTMLFormElement).noValidate = true
+            document.querySelectorAll('form').forEach(f => { (f as HTMLFormElement).noValidate = true })
         })
 
         // Submit the entry form specifically — the page also has a logout button[type="submit"] in the nav
