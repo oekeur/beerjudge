@@ -68,6 +68,13 @@ A custom Filament theme is configured at `resources/css/filament/admin/theme.css
 
 - Target interactive elements with `page.getByRole('button', { name: /label/ })`, not `page.locator('button').filter({ hasText: /label/ })`. `filter({ hasText })` matches `textContent()`, which includes text from `display:none` elements (Alpine `x-show` keeps hidden spans in the DOM). `getByRole` uses the ARIA accessible-name computation, which skips hidden elements. The judging screen has `x-show` sync-status badges inside the entry header button — any text-based locator will match those hidden spans and click the wrong element.
 
+- Never select by Tailwind utility classes (`span.text-emerald-600`, `div.border-t`, `button.w-full`). Class names are renamed as colours or spacing change. For non-interactive elements, add `data-testid="..."` to the Blade and use `page.getByTestId(...)`.
+
+- `<x-app-nav />` renders a logout `<form method="POST">` with `<button type="submit">` **before** any page-level form. Two consequences:
+  1. `page.click('button[type="submit"]')` hits the logout button, not the page form. Fix: `page.getByRole('button', { name: /specific label/ })`.
+  2. `document.querySelector('form')` selects the logout form. Fix: `document.querySelectorAll('form').forEach(f => f.noValidate = true)`.
+  Pages using `<x-auth-card>` (login, register) have no nav and are safe to use generic selectors.
+
 ## Git
 
 - Commit automatically after completing each task — do not wait to be asked.
@@ -148,7 +155,7 @@ Judges score any entry except their own (`entry.member_id != judge_id`). Final s
 The app is installable as a Progressive Web App, targeting the judging screen as the primary use case.
 
 **Files:**
-- `public/manifest.json` — web app manifest (name: "Foebar BeerJudge", theme: amber `#b45309`, start_url: `/judge`)
+- `public/manifest.json` — web app manifest (name: "Foebar BeerJudge", theme: amber `#b45309`, start_url: `/`)
 - `public/icons/icon-192.png` and `public/icons/icon-512.png` — rasterised app icons
 - `public/favicon.svg` — SVG favicon
 - `resources/images/icon.svg` — editable source SVG for the icon (amber pint glass + Amsterdam coat of arms XXX)
