@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <x-app-head :title="$appTitle . ' — ' . __('entry.title')" :vite="['resources/css/app.css', 'resources/js/app.js']" />
-</head>
-<body class="min-h-screen bg-amber-50 dark:bg-gray-950">
+<x-page :title="$appTitle . ' — ' . __('entry.title')" :vite="['resources/css/app.css', 'resources/js/app.js']">
+<body class="min-h-screen bg-amber-50 dark:bg-gray-950 text-gray-900 dark:text-white">
+    <x-app-nav />
+
     <div class="max-w-lg mx-auto py-12 px-4">
-        <div class="flex items-start justify-between mb-1">
-            <h1 class="text-2xl font-bold text-amber-900 dark:text-amber-300">{{ $competition->name }}</h1>
-            <x-theme-toggle />
-        </div>
+        <h1 class="text-2xl font-bold text-amber-900 dark:text-amber-300 mb-1">{{ $competition->name }}</h1>
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">{{ __('entry.subtitle') }}</p>
 
         @if (session('success'))
@@ -66,4 +61,4 @@
         @endif
     </div>
 </body>
-</html>
+</x-page>

@@ -3,10 +3,8 @@
     $memberName = $member->name;
     $memberId = $member->id;
 @endphp
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <x-app-head :title="'Results — ' . $competition->name . ' — ' . $memberName">
+<x-page :title="'Results — ' . $competition->name . ' — ' . $memberName">
+    <x-slot:head>
         <style>
             @media print {
                 .no-print { display: none !important; }
@@ -14,8 +12,7 @@
                 .page-break { page-break-after: always; }
             }
         </style>
-    </x-app-head>
-</head>
+    </x-slot:head>
 <body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white font-sans p-6 max-w-4xl mx-auto">
 
     {{-- Print button --}}
@@ -149,4 +146,4 @@
     </section>
 
 </body>
-</html>
+</x-page>

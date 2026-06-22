@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <x-app-head :title="$appTitle . ' — ' . __('auth.password_reset_title')" />
-</head>
+<x-page :title="$appTitle . ' — ' . __('auth.password_reset_title')">
 <x-auth-card>
     <h1 class="text-2xl font-bold text-amber-900 dark:text-amber-300 mb-6">{{ __('auth.password_reset_title') }}</h1>
     <form method="POST" action="{{ route('password.update') }}">
@@ -35,4 +31,4 @@
         </p>
     </form>
 </x-auth-card>
-</html>
+</x-page>

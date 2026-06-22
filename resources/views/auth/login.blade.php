@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <x-app-head :title="$appTitle . ' — Log in'" />
-</head>
+<x-page :title="$appTitle . ' — Log in'">
 <x-auth-card>
     <h1 class="text-2xl font-bold text-amber-900 dark:text-amber-300 mb-6">{{ $appTitle }}</h1>
     <form method="POST" action="/login">
@@ -38,4 +34,4 @@
         </p>
     </form>
 </x-auth-card>
-</html>
+</x-page>

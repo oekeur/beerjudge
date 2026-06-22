@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <x-app-head :title="'Results — ' . $competition->name" />
-</head>
+<x-page :title="'Results — ' . $competition->name">
 <body class="bg-gray-50 dark:bg-gray-950 font-sans p-6 max-w-2xl mx-auto">
     <div class="mb-6 flex items-start justify-between gap-4">
         <div>
@@ -31,4 +27,4 @@
         <button onclick="window.open('?print=all')" class="text-sm text-amber-700 dark:text-amber-400 underline">Print all</button>
     </div>
 </body>
-</html>
+</x-page>

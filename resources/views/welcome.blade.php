@@ -1,35 +1,10 @@
 @php
     /** @var \Illuminate\Support\Collection<string, \Illuminate\Database\Eloquent\Collection<int, \App\Models\Competition>> $competitions */
 @endphp
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <x-app-head :title="$appTitle" />
-</head>
+<x-page :title="$appTitle">
 <body class="min-h-screen bg-amber-50 dark:bg-gray-950 text-gray-900 dark:text-white">
 
-    <nav class="bg-white dark:bg-gray-900 border-b border-amber-200 dark:border-gray-800 px-6 py-4">
-        <div class="max-w-3xl mx-auto flex items-center justify-between">
-            <span class="text-lg font-semibold text-amber-900 dark:text-amber-300 tracking-tight">{{ $appTitle }}</span>
-            <div class="flex items-center gap-4">
-                @if(auth()->user()?->is_admin)
-                    <a href="/admin" class="text-sm text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 hover:underline">
-                        {{ __('nav.admin') }}
-                    </a>
-                @endif
-                <a href="{{ route('profile.edit') }}" class="text-sm text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 hover:underline">
-                    {{ __('nav.profile') }}
-                </a>
-                <x-theme-toggle />
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:underline">
-                        {{ __('nav.logout') }}
-                    </button>
-                </form>
-            </div>
-        </div>
-    </nav>
+    <x-app-nav />
 
     <main class="max-w-3xl mx-auto px-6 py-10">
         <h1 class="text-2xl font-semibold text-amber-900 dark:text-amber-300 mb-6">Competitions</h1>
@@ -107,4 +82,4 @@
     </main>
 
 </body>
-</html>
+</x-page>

@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <x-app-head :title="'Judging · ' . $competition->name" :vite="['resources/css/app.css', 'resources/js/judging.js']">
+<x-page :title="'Judging · ' . $competition->name" :vite="['resources/css/app.css', 'resources/js/judging.js']">
+    <x-slot:head>
         <meta name="csrf-token" content="{{ csrf_token() }}">
-    </x-app-head>
-</head>
+    </x-slot:head>
 <body class="bg-stone-100 dark:bg-gray-950 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server))" x-init="init()" data-server='@json($serverData)'>
 
     {{-- Header --}}
@@ -463,4 +460,4 @@
     </div>
 
 </body>
-</html>
+</x-page>

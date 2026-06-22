@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <x-app-head :title="$appTitle . ' — ' . __('auth.register')" />
-</head>
+<x-page :title="$appTitle . ' — ' . __('auth.register')">
 <x-auth-card>
     <h1 class="text-2xl font-bold text-amber-900 dark:text-amber-300 mb-2">{{ $appTitle }}</h1>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('auth.register_intro') }}</p>
@@ -47,4 +43,4 @@
         </button>
     </form>
 </x-auth-card>
-</html>
+</x-page>
