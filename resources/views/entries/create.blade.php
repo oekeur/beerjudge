@@ -7,7 +7,7 @@
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">{{ __('entry.subtitle') }}</p>
 
         @if (session('success'))
-            <p class="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg px-3 py-2 text-sm mb-6">
+            <p class="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg px-3 py-2 text-sm mb-6" data-testid="flash-success">
                 {{ is_string(session('success')) ? session('success') : '' }}
             </p>
         @endif
@@ -17,7 +17,7 @@
             <form method="POST" action="{{ route('competitions.entries.store', $competition) }}">
                 @csrf
                 @if ($errors->any())
-                    <p class="text-red-600 dark:text-red-400 text-sm mb-4">{{ $errors->first() }}</p>
+                    <p class="text-red-600 dark:text-red-400 text-sm mb-4" data-testid="form-error">{{ $errors->first() }}</p>
                 @endif
                 <div class="mb-4">
                     <label for="style_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('entry.style') }}</label>
