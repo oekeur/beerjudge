@@ -4,7 +4,7 @@
 <x-page :title="__('profile.title') . ' · ' . $appTitle">
 <body class="min-h-screen bg-amber-50 dark:bg-gray-950 text-gray-900 dark:text-white">
 
-    <x-app-nav :showProfile="false" />
+    <x-app-nav />
 
     <main class="max-w-xl mx-auto px-6 py-10 space-y-8">
         <h1 class="text-2xl font-semibold text-amber-900 dark:text-amber-300">{{ __('profile.title') }}</h1>

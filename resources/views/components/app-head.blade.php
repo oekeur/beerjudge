@@ -1,4 +1,4 @@
-@props(['title', 'vite' => ['resources/css/app.css'], 'themeInit' => true])
+@props(['title', 'vite' => ['resources/css/app.css']])
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
@@ -9,9 +9,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <title>{{ $title }}</title>
 @vite($vite)
-@if($themeInit)
-    <x-theme-init />
-@endif
+<x-theme-init />
 <meta name="sentry-dsn" content="{{ is_string(config('sentry.dsn')) ? config('sentry.dsn') : '' }}">
 <meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
 {{ $slot }}

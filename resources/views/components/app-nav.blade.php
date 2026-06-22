@@ -1,4 +1,3 @@
-@props(['showProfile' => true])
 <nav class="bg-white dark:bg-gray-900 border-b border-amber-200 dark:border-gray-800 px-6 py-4">
     <div class="max-w-3xl mx-auto flex items-center justify-between">
         <a href="{{ route('home') }}" class="text-lg font-semibold text-amber-900 dark:text-amber-300 tracking-tight hover:text-amber-700 dark:hover:text-amber-200">
@@ -10,7 +9,7 @@
                     {{ __('nav.admin') }}
                 </a>
             @endif
-            @if($showProfile)
+            @if(! request()->routeIs('profile.edit'))
                 <a href="{{ route('profile.edit') }}" class="text-sm text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 hover:underline">
                     {{ __('nav.profile') }}
                 </a>
