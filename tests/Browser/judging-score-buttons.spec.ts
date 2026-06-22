@@ -10,11 +10,11 @@ test.describe('judging score buttons', () => {
         await page.goto(`/judging/${judgingCompetitionId}`)
 
         // Wait for Alpine to render entry cards via x-for
-        await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
+        await page.waitForSelector('[data-testid="entry-expand-button"]', { state: 'visible' })
         await page.waitForLoadState('networkidle')
 
         // Expand the first entry's scoresheet
-        await page.locator('main button.w-full.text-left').first().click()
+        await page.locator('[data-testid="entry-expand-button"]').first().click()
         await page.waitForLoadState('networkidle')
 
         const aromaGroup = page.locator('[role="group"][aria-label="Aroma score, 0 to 12"]').first()
@@ -40,9 +40,9 @@ test.describe('judging score buttons', () => {
         await login(page)
         await clearIndexedDB(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
-        await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
+        await page.waitForSelector('[data-testid="entry-expand-button"]', { state: 'visible' })
         await page.waitForLoadState('networkidle')
-        await page.locator('main button.w-full.text-left').first().click()
+        await page.locator('[data-testid="entry-expand-button"]').first().click()
         await page.waitForLoadState('networkidle')
 
         const aromaGroup = page.locator('[role="group"][aria-label="Aroma score, 0 to 12"]').first()
@@ -60,7 +60,7 @@ test.describe('judging score buttons', () => {
             .locator('button').filter({ hasText: /^9$/ }).click()
 
         // Total display in the footer of the editable scoresheet
-        const scoresheetFooter = page.locator('div.border-t.border-gray-100.pt-3').first()
+        const scoresheetFooter = page.getByTestId('scoresheet-footer').first()
         await expect(scoresheetFooter.locator('span').filter({ hasText: /^38$/ })).toBeVisible()
     })
 
@@ -74,8 +74,8 @@ test.describe('judging score buttons', () => {
         await login(page)
         await clearIndexedDB(page)
         await page.goto(`/judging/${judgingCompetitionId}`)
-        await page.waitForSelector('main button.w-full.text-left', { state: 'visible' })
-        await page.locator('main button.w-full.text-left').first().click()
+        await page.waitForSelector('[data-testid="entry-expand-button"]', { state: 'visible' })
+        await page.locator('[data-testid="entry-expand-button"]').first().click()
 
         await page.waitForLoadState('networkidle')
 
@@ -99,7 +99,7 @@ test.describe('judging score buttons', () => {
         await page.getByRole('button', { name: /Submit/ }).first().click()
 
         // Wait for the user-visible submitted state instead of racing on response timing.
-        const submittedBadge = page.locator('span.text-green-600').filter({ hasText: /Submitted/ }).first()
+        const submittedBadge = page.getByTestId('scoresheet-submitted').first()
         await expect(submittedBadge).toBeVisible({ timeout: 15_000 })
 
         // Allow Alpine state transitions to settle before asserting read-only controls.
