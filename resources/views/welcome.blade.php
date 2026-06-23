@@ -64,6 +64,13 @@
                                                 Judge entries &rarr;
                                             </a>
                                         </div>
+                                    @elseif($status === 'open')
+                                        <div class="mt-3 pt-3 border-t border-amber-100 dark:border-amber-800/50">
+                                            <a href="{{ route('competitions.entries.create', $competition) }}"
+                                               class="text-sm text-amber-700 dark:text-amber-400 font-medium hover:underline">
+                                                Register entry &rarr;
+                                            </a>
+                                        </div>
                                     @elseif($competition->isClosed())
                                         <div class="mt-3 pt-3 border-t border-stone-100 dark:border-gray-800">
                                             <a href="{{ route('results.show', [$competition, auth()->user()]) }}"
