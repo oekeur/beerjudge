@@ -139,6 +139,7 @@
     "entry.submit": "Inzending indienen",
     "entry.submitted": "Inzending ingediend.",
     "entry.your_entries": "Jouw inzendingen",
+    "entry.brewer_notes_hint": "Verborgen voor juryleden tot na de keuring. Je kunt hier een receptlink of notities kwijt.",
 
     "validation.style_not_in_competition": "Deze stijl is niet beschikbaar in deze competitie.",
     "validation.entry_duplicate_style": "Je hebt al een inzending voor deze stijl.",

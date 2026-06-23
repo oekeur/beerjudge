@@ -139,6 +139,7 @@
     "entry.submit": "Submit entry",
     "entry.submitted": "Entry submitted.",
     "entry.your_entries": "Your entries",
+    "entry.brewer_notes_hint": "Hidden from judges until after judging. You can paste a recipe link or notes here.",
 
     "validation.style_not_in_competition": "This style is not available in this competition.",
     "validation.entry_duplicate_style": "You already have an entry for this style.",

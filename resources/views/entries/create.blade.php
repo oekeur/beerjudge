@@ -79,7 +79,7 @@
                     </label>
                     <textarea id="brewer_notes" name="brewer_notes" rows="3"
                         class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">{{ is_string(old('brewer_notes')) ? old('brewer_notes') : '' }}</textarea>
-                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Hidden from judges until after judging. You can paste a recipe link or notes here.</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ __('entry.brewer_notes_hint') }}</p>
                 </div>
                 <button type="submit"
                     class="w-full bg-amber-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-amber-700">
