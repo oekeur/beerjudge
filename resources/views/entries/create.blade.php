@@ -19,18 +19,58 @@
                 @if ($errors->any())
                     <p class="text-red-600 dark:text-red-400 text-sm mb-4" data-testid="form-error">{{ $errors->first() }}</p>
                 @endif
-                <div class="mb-4">
-                    <label for="style_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('entry.style') }}</label>
-                    <select id="style_id" name="style_id"
-                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                        required>
-                        <option value="">{{ __('entry.style_placeholder') }}</option>
-                        @foreach ($styles as $style)
-                            <option value="{{ $style->id }}" {{ (is_string(old('style_id')) ? old('style_id') : '') === (string) $style->id ? 'selected' : '' }}>
-                                {{ $style->code }} — {{ $style->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                @php
+                    $stylesForJs = $styles->map(fn ($s) => ['id' => $s->id, 'label' => $s->code . ' — ' . $s->name])->values();
+                    $oldStyleId  = is_string(old('style_id')) ? old('style_id') : '';
+                @endphp
+                <div class="mb-4"
+                    x-data="{
+                        open: false,
+                        query: '',
+                        styleId: '{{ $oldStyleId }}',
+                        styles: {{ Js::from($stylesForJs) }},
+                        get filtered() {
+                            if (!this.query) return this.styles;
+                            const q = this.query.toLowerCase();
+                            return this.styles.filter(s => s.label.toLowerCase().includes(q));
+                        },
+                        select(style) {
+                            this.styleId = style.id;
+                            this.query   = style.label;
+                            this.open    = false;
+                        },
+                        init() {
+                            if (this.styleId) {
+                                const found = this.styles.find(s => String(s.id) === String(this.styleId));
+                                if (found) { this.query = found.label; }
+                            }
+                        }
+                    }"
+                    @click.outside="open = false"
+                >
+                    <label for="style_search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('entry.style') }}</label>
+                    <input type="hidden" name="style_id" :value="styleId" />
+                    <div class="relative">
+                        <input id="style_search" type="text"
+                            x-model="query"
+                            @focus="open = true"
+                            @input="open = true; styleId = ''"
+                            placeholder="{{ __('entry.style_placeholder') }}"
+                            autocomplete="off"
+                            required
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                        <div x-show="open && filtered.length > 0"
+                            class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            <template x-for="style in filtered" :key="style.id">
+                                <button type="button"
+                                    @click="select(style)"
+                                    class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/30">
+                                    <span x-text="style.label"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
                 </div>
                 <div class="mb-6">
                     <label for="brewer_notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -39,6 +79,7 @@
                     </label>
                     <textarea id="brewer_notes" name="brewer_notes" rows="3"
                         class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">{{ is_string(old('brewer_notes')) ? old('brewer_notes') : '' }}</textarea>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Hidden from judges until after judging. You can paste a recipe link or notes here.</p>
                 </div>
                 <button type="submit"
                     class="w-full bg-amber-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-amber-700">
