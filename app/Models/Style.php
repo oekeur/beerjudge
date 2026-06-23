@@ -23,6 +23,15 @@ class Style extends Model
         'custom' => 'Custom',
     ];
 
+    /** @var array<string, string> */
+    protected $casts = [
+        'og_min' => 'float', 'og_max' => 'float',
+        'fg_min' => 'float', 'fg_max' => 'float',
+        'abv_min' => 'float', 'abv_max' => 'float',
+        'ibu_min' => 'float', 'ibu_max' => 'float',
+        'srm_min' => 'float', 'srm_max' => 'float',
+    ];
+
     protected $fillable = [
         'source', 'code', 'category_name', 'category_description', 'name', 'version',
         'overall_impression', 'aroma', 'appearance', 'flavor', 'mouthfeel',
