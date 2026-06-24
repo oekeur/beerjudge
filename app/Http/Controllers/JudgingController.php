@@ -20,8 +20,9 @@ class JudgingController extends Controller
         $entries = $competition->entries()
             ->with(['style', 'member'])
             ->where('member_id', '!=', $judge->id)
-            ->orderBy('bottle_number')
-            ->get();
+            ->orderBy('sort_order')
+            ->get()
+            ->values();
 
         $existingSheets = Scoresheet::where('judge_id', $judge->id)
             ->whereIn('entry_id', $entries->pluck('id'))
@@ -29,9 +30,9 @@ class JudgingController extends Controller
             ->keyBy('entry_id');
 
         $serverData = [
-            'entries' => $entries->map(fn ($e) => [
+            'entries' => $entries->map(fn ($e, $i) => [
                 'id' => $e->id,
-                'bottle_number' => $e->bottle_number,
+                'tasting_number' => $i + 1,
                 'style_code' => $e->style?->code,
                 'style_name' => $e->style?->name,
                 'brewer_name' => $e->member?->name,

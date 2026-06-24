@@ -80,9 +80,6 @@ class CompetitionForm
                                                     ->toArray();
                                             })
                                             ->live(),
-                                        TextInput::make('bottle_number')
-                                            ->numeric()
-                                            ->nullable(),
                                         TextInput::make('abv')
                                             ->numeric()
                                             ->step(0.1)

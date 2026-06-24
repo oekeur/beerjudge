@@ -95,7 +95,7 @@
                     @click="toggleExpanded(entry.id)"
                 >
                     <div class="w-6 text-right flex-shrink-0">
-                        <span x-show="sortMode === 'judging'" class="text-xs text-gray-300 tabular-nums" x-text="'#' + entry.bottle_number"></span>
+                        <span x-show="sortMode === 'judging'" class="text-xs text-gray-300 tabular-nums" x-text="'#' + entry.tasting_number"></span>
                         <span x-show="sortMode === 'ranked'" class="text-xs text-gray-400 tabular-nums font-medium" x-text="(index + 1) + '.'"></span>
                     </div>
                     <div class="flex-1 min-w-0">
