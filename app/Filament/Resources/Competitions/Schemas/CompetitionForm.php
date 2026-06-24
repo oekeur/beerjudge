@@ -4,9 +4,12 @@ namespace App\Filament\Resources\Competitions\Schemas;
 
 use App\Enums\CompetitionStatus;
 use App\Filament\Forms\Components\StyleMultiSelect;
+use App\Filament\Resources\CompetitionResource;
 use App\Models\Competition;
+use App\Models\Entry;
 use App\Models\Member;
 use App\Models\Style;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -97,6 +100,26 @@ class CompetitionForm
                                     ->columns(5)
                                     ->defaultItems(0)
                                     ->orderColumn('sort_order')
+                                    ->headerActions([
+                                        Action::make('sortByAbv')
+                                            ->label('Sort by ABV ↑')
+                                            ->color('gray')
+                                            ->action(function ($livewire): void {
+                                                $competition = $livewire->getRecord();
+                                                $ids = $competition->entries()
+                                                    ->orderByRaw('abv IS NULL')
+                                                    ->orderBy('abv')
+                                                    ->pluck('id');
+
+                                                foreach ($ids as $i => $id) {
+                                                    Entry::whereKey($id)->update(['sort_order' => $i + 1]);
+                                                }
+
+                                                $livewire->redirect(
+                                                    CompetitionResource::getUrl('edit', ['record' => $competition])
+                                                );
+                                            }),
+                                    ])
                                     ->columnSpanFull(),
                             ]),
 
