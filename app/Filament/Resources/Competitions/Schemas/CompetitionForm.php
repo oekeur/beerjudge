@@ -64,7 +64,8 @@ class CompetitionForm
                                         Select::make('member_id')
                                             ->relationship('member', 'name')
                                             ->searchable()
-                                            ->required(),
+                                            ->required()
+                                            ->columnSpan(2),
                                         Select::make('style_id')
                                             ->searchable()
                                             ->required()
@@ -79,19 +80,21 @@ class CompetitionForm
                                                     ->mapWithKeys(fn (Style $s) => [$s->id => "{$s->code} — {$s->name}"])
                                                     ->toArray();
                                             })
-                                            ->live(),
+                                            ->live()
+                                            ->columnSpan(2),
                                         TextInput::make('abv')
                                             ->numeric()
                                             ->step(0.1)
                                             ->minValue(0)
                                             ->maxValue(100)
                                             ->nullable()
-                                            ->suffix('%'),
+                                            ->suffix('%')
+                                            ->columnSpan(1),
                                         Textarea::make('brewer_notes')
                                             ->nullable()
                                             ->columnSpanFull(),
                                     ])
-                                    ->columns(2)
+                                    ->columns(5)
                                     ->defaultItems(0)
                                     ->orderColumn('sort_order')
                                     ->columnSpanFull(),
