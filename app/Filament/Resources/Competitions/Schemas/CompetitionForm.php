@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Competitions\Schemas;
 
 use App\Enums\CompetitionStatus;
 use App\Filament\Forms\Components\StyleMultiSelect;
-use App\Filament\Resources\CompetitionResource;
+use App\Filament\Resources\Competitions\CompetitionResource;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Member;
@@ -15,6 +15,8 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Html;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -100,27 +102,29 @@ class CompetitionForm
                                     ->columns(5)
                                     ->defaultItems(0)
                                     ->orderColumn('sort_order')
-                                    ->headerActions([
-                                        Action::make('sortByAbv')
-                                            ->label('Sort by ABV ↑')
-                                            ->color('gray')
-                                            ->action(function ($livewire): void {
-                                                $competition = $livewire->getRecord();
-                                                $ids = $competition->entries()
-                                                    ->orderByRaw('abv IS NULL')
-                                                    ->orderBy('abv')
-                                                    ->pluck('id');
-
-                                                foreach ($ids as $i => $id) {
-                                                    Entry::whereKey($id)->update(['sort_order' => $i + 1]);
-                                                }
-
-                                                $livewire->redirect(
-                                                    CompetitionResource::getUrl('edit', ['record' => $competition])
-                                                );
-                                            }),
-                                    ])
                                     ->columnSpanFull(),
+
+                                Actions::make([
+                                    Action::make('sortByAbv')
+                                        ->label('Sort by ABV ↑')
+                                        ->color('gray')
+                                        ->action(function (EditRecord $livewire): void {
+                                            /** @var Competition $competition */
+                                            $competition = $livewire->getRecord();
+                                            $ids = $competition->entries()
+                                                ->orderByRaw('abv IS NULL')
+                                                ->orderBy('abv')
+                                                ->pluck('id');
+
+                                            foreach ($ids as $i => $id) {
+                                                Entry::whereKey($id)->update(['sort_order' => (int) $i + 1]);
+                                            }
+
+                                            $livewire->redirect(
+                                                CompetitionResource::getUrl('edit', ['record' => $competition])
+                                            );
+                                        }),
+                                ])->columnSpanFull(),
                             ]),
 
                         Tab::make(__('competition.tab.judging'))
