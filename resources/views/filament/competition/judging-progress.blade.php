@@ -1,6 +1,6 @@
 @php
     $judges = $competition->judges->sortBy('name');
-    $entries = $competition->entries->sortBy('bottle_number');
+    $entries = $competition->entries->sortBy('sort_order');
 
     /** @var \Illuminate\Support\Collection<int, \App\Models\Scoresheet> $allScoresheets */
     $allScoresheets = $entries->flatMap->scoresheets;

@@ -9,7 +9,7 @@
             'style',
             'scoresheets' => fn (Relation $query) => $query->where('status', \App\Enums\ScoresheetStatus::Submitted),
         ])
-        ->orderBy('bottle_number')
+        ->orderBy('sort_order')
         ->get();
 
     $allJudges   = $competition->judges;
