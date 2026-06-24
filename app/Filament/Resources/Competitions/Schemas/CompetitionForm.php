@@ -83,6 +83,13 @@ class CompetitionForm
                                         TextInput::make('bottle_number')
                                             ->numeric()
                                             ->nullable(),
+                                        TextInput::make('abv')
+                                            ->numeric()
+                                            ->step(0.1)
+                                            ->minValue(0)
+                                            ->maxValue(100)
+                                            ->nullable()
+                                            ->suffix('%'),
                                         Textarea::make('brewer_notes')
                                             ->nullable()
                                             ->columnSpanFull(),
