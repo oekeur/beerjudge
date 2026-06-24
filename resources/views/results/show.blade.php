@@ -47,6 +47,7 @@
             <div class="flex justify-between items-baseline mb-2">
                 <h3 class="text-base font-semibold">
                     {{ $row['entry']->style?->code }} · {{ $row['entry']->style?->name }}
+                    @if($row['entry']->abv)<span class="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">{{ $row['entry']->abv }}% ABV</span>@endif
                 </h3>
                 <span class="text-sm text-gray-500 dark:text-gray-400">#{{ $row['entry']->bottle_number }}</span>
             </div>
@@ -132,7 +133,7 @@
                 <tr class="border-t border-gray-200 dark:border-gray-700 {{ $row['entry']->member_id === $memberId ? 'bg-amber-50 dark:bg-amber-900/20' : '' }}">
                     <td class="py-1 px-2 font-bold text-gray-900 dark:text-white">{{ $row['placement'] }}</td>
                     <td class="py-1 px-2 text-gray-700 dark:text-gray-300">{{ $row['entry']->member?->name }}</td>
-                    <td class="py-1 px-2 text-gray-600 dark:text-gray-400">{{ $row['entry']->style?->code }}</td>
+                    <td class="py-1 px-2 text-gray-600 dark:text-gray-400">{{ $row['entry']->style?->code }}@if($row['entry']->abv)<span class="text-xs text-gray-400 dark:text-gray-500 ml-1">{{ $row['entry']->abv }}% ABV</span>@endif</td>
                     <td class="text-center py-1 px-2 font-semibold">{{ number_format($row['avg_total'], 1) }}</td>
                     <td class="text-center py-1 px-2 text-xs font-medium
                         {{ $row['avg_total'] >= 38 ? 'text-green-700 dark:text-green-400' : ($row['avg_total'] >= 30 ? 'text-teal-700 dark:text-teal-400' : ($row['avg_total'] >= 21 ? 'text-yellow-700 dark:text-yellow-400' : 'text-red-700 dark:text-red-400')) }}">

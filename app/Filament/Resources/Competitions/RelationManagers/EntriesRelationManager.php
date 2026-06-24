@@ -44,6 +44,13 @@ class EntriesRelationManager extends RelationManager
                     ->nullable(),
                 Textarea::make('brewer_notes')
                     ->nullable(),
+                TextInput::make('abv')
+                    ->numeric()
+                    ->step(0.1)
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->nullable()
+                    ->suffix('%'),
             ]);
     }
 
@@ -58,6 +65,11 @@ class EntriesRelationManager extends RelationManager
                     ->label('Style'),
                 TextColumn::make('bottle_number')
                     ->label('#'),
+                TextColumn::make('abv')
+                    ->label('ABV')
+                    ->suffix('%')
+                    ->sortable()
+                    ->placeholder('—'),
             ])
             ->reorderable('bottle_number')
             ->defaultSort('bottle_number')

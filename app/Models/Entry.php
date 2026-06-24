@@ -22,7 +22,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Entry extends Model
 {
     protected $fillable = [
-        'competition_id', 'member_id', 'style_id', 'bottle_number', 'sort_order', 'brewer_notes',
+        'competition_id', 'member_id', 'style_id', 'bottle_number', 'sort_order', 'brewer_notes', 'abv',
+    ];
+
+    protected $casts = [
+        'abv' => 'float',
     ];
 
     protected static function booted(): void
