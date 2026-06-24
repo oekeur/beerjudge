@@ -32,6 +32,7 @@ class StoreEntryRequest extends FormRequest
                 },
             ],
             'brewer_notes' => ['nullable', 'string', 'max:2000'],
+            'abv' => ['nullable', 'numeric', 'min:0', 'max:100', 'decimal:0,1'],
         ];
     }
 

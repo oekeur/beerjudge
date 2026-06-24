@@ -53,6 +53,40 @@ class EntryFormTest extends TestCase
         ]);
     }
 
+    public function test_abv_is_stored_when_provided(): void
+    {
+        $member = Member::factory()->create();
+        $comp = $this->makeOpenCompetition();
+        $style = $comp->styles->first();
+
+        $this->actingAs($member)
+            ->post(route('competitions.entries.store', $comp), [
+                'style_id' => $style->id,
+                'abv' => 5.2,
+            ]);
+
+        $this->assertDatabaseHas('entries', [
+            'competition_id' => $comp->id,
+            'member_id' => $member->id,
+            'abv' => 5.2,
+        ]);
+    }
+
+    public function test_abv_is_null_when_omitted(): void
+    {
+        $member = Member::factory()->create();
+        $comp = $this->makeOpenCompetition();
+        $style = $comp->styles->first();
+
+        $this->actingAs($member)
+            ->post(route('competitions.entries.store', $comp), [
+                'style_id' => $style->id,
+            ]);
+
+        $entry = Entry::where('competition_id', $comp->id)->where('member_id', $member->id)->first();
+        $this->assertNull($entry->abv);
+    }
+
     public function test_entry_is_attributed_to_authenticated_member(): void
     {
         $member = Member::factory()->create();

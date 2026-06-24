@@ -136,6 +136,8 @@
     "entry.style_placeholder": "Kies een stijl…",
     "entry.brewer_notes": "Brouwernotities",
     "entry.optional": "optioneel",
+    "entry.abv": "ABV",
+    "entry.abv_hint": "Gebruikt voor de proefvolgorde — niet zichtbaar voor juryleden.",
     "entry.submit": "Inzending indienen",
     "entry.submitted": "Inzending ingediend.",
     "entry.your_entries": "Jouw inzendingen",

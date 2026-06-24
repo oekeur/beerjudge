@@ -35,6 +35,7 @@ class EntryController extends Controller
             'member_id' => $this->member($request)->id,
             'style_id' => $request->validated('style_id'),
             'brewer_notes' => $request->validated('brewer_notes'),
+            'abv' => $request->validated('abv'),
         ]);
 
         return redirect()

@@ -136,6 +136,8 @@
     "entry.style_placeholder": "Choose a style…",
     "entry.brewer_notes": "Brewer notes",
     "entry.optional": "optional",
+    "entry.abv": "ABV",
+    "entry.abv_hint": "Used to order tastings — not shown to judges.",
     "entry.submit": "Submit entry",
     "entry.submitted": "Entry submitted.",
     "entry.your_entries": "Your entries",

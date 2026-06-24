@@ -72,6 +72,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="mb-4">
+                    <label for="abv" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {{ __('entry.abv') }}
+                        <span class="text-gray-400 dark:text-gray-500 font-normal">({{ __('entry.optional') }})</span>
+                    </label>
+                    <input id="abv" type="number" name="abv" step="0.1" min="0" max="100" placeholder="5.2"
+                        value="{{ is_numeric(old('abv')) ? old('abv') : '' }}"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ __('entry.abv_hint') }}</p>
+                </div>
                 <div class="mb-6">
                     <label for="brewer_notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         {{ __('entry.brewer_notes') }}
