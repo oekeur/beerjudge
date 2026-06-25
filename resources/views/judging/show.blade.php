@@ -49,6 +49,30 @@
         </div>
     </header>
 
+    {{-- Admin progress panel --}}
+    @if($judge->is_admin)
+        <div class="bg-amber-800 text-white border-b border-amber-700">
+            <button
+                type="button"
+                class="w-full px-4 py-2 flex items-center justify-between gap-2 text-sm text-amber-200 hover:text-white"
+                @click="progressOpen = !progressOpen"
+            >
+                <span>{{ __('judging.progress') }}</span>
+                <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': progressOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div x-show="progressOpen" x-transition class="px-4 pb-3 flex flex-wrap gap-x-4 gap-y-1">
+                <template x-for="entry in entries" :key="entry.id">
+                    <span class="text-xs text-amber-100 tabular-nums">
+                        <span class="text-amber-300" x-text="'#' + entry.tasting_number + ':'"></span>
+                        <span x-text="(progress[entry.id]?.submitted ?? '…') + '/' + (progress[entry.id]?.total ?? '…')"></span>
+                    </span>
+                </template>
+            </div>
+        </div>
+    @endif
+
     {{-- Judge registration banner --}}
     @if(! $isJudge)
         <div class="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-800/50 px-4 py-3 flex items-center justify-between gap-4">

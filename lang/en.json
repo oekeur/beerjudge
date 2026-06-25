@@ -84,6 +84,7 @@
     "judging.register_as_judge": "Register as judge",
     "judging.leave_as_judge": "Leave as judge",
     "judging.logout": "Log out",
+    "judging.progress": "Progress",
     "judging.no_entries": "No entries to judge. Either all entries are yours, or none have been registered.",
     "judging.saving": "Saving…",
     "judging.submitted": "Submitted ✓",

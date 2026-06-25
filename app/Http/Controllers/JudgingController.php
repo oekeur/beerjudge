@@ -6,6 +6,7 @@ use App\Models\Competition;
 use App\Models\Scoresheet;
 use App\Services\CompetitionRankingService;
 use App\Services\DescriptorService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -30,6 +31,8 @@ class JudgingController extends Controller
             ->keyBy('entry_id');
 
         $serverData = [
+            'isAdmin' => $judge->is_admin,
+            'progressUrl' => route('judging.progress', $competition),
             'entries' => $entries->map(fn ($e, $i) => [
                 'id' => $e->id,
                 'tasting_number' => $i + 1,
@@ -90,5 +93,32 @@ class JudgingController extends Controller
             'descriptors' => $descriptors,
             'isJudge' => $isJudge,
         ]);
+    }
+
+    public function progress(Competition $competition, Request $request): JsonResponse
+    {
+        abort_unless($competition->isJudging(), 403);
+
+        $member = $this->member($request);
+        abort_unless($member->is_admin, 403);
+
+        $judgeIds = $competition->judges()->pluck('member_id');
+        $entries = $competition->entries()->orderBy('sort_order')->get(['id', 'member_id']);
+
+        $submittedCounts = Scoresheet::whereIn('entry_id', $entries->pluck('id'))
+            ->where('status', 'submitted')
+            ->selectRaw('entry_id, count(*) as cnt')
+            ->groupBy('entry_id')
+            ->pluck('cnt', 'entry_id');
+
+        $progress = [];
+        foreach ($entries as $entry) {
+            $progress[$entry->id] = [
+                'submitted' => (int) ($submittedCounts[$entry->id] ?? 0),
+                'total' => $judgeIds->reject(fn ($id) => $id === $entry->member_id)->count(),
+            ];
+        }
+
+        return response()->json($progress);
     }
 }

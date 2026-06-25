@@ -62,6 +62,8 @@ window.judgingApp = function (serverData) {
         _retryTimer: null,
         styleGuide: { open: false, section: '', text: '', srm: null },
         styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '' },
+        progress: {},
+        progressOpen: false,
 
         get sortedEntries() {
             if (this.sortMode === 'judging') return this.entries;
@@ -89,6 +91,22 @@ window.judgingApp = function (serverData) {
             }
             // Merge from IndexedDB — prefer IDB for pending/error items
             await this.mergeFromIndexedDB();
+
+            if (serverData.isAdmin) {
+                this.fetchProgress();
+                setInterval(() => this.fetchProgress(), 30000);
+            }
+        },
+
+        async fetchProgress() {
+            try {
+                const res = await fetch(serverData.progressUrl, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (res.ok) this.progress = await res.json();
+            } catch (e) {
+                // silent — non-critical
+            }
         },
 
         async mergeFromIndexedDB() {

@@ -47,6 +47,7 @@ Route::middleware(['auth', 'active-member'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/scoresheets', [ScoresheetController::class, 'upsert'])->name('scoresheets.upsert');
     Route::get('/judging/{competition}', [JudgingController::class, 'show'])->name('judging.show')->whereNumber('competition');
+    Route::get('/judging/{competition}/progress', [JudgingController::class, 'progress'])->name('judging.progress')->whereNumber('competition');
     Route::post('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'store'])->name('competitions.judges.store')->whereNumber('competition');
     Route::delete('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'destroy'])->name('competitions.judges.destroy')->whereNumber('competition');
     Route::get('/competitions/{competition}/results/{member}', [ResultsController::class, 'show'])->name('results.show')->whereNumber(['competition', 'member']);
