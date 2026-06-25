@@ -22,12 +22,6 @@
                     <a href="/admin" class="text-amber-200 text-sm hover:text-white">
                         {{ __('nav.admin') }}
                     </a>
-                    <a href="/admin/competitions/{{ $competition->id }}/edit" class="text-amber-200 text-sm hover:text-white">
-                        {{ __('nav.manage_competition') }}
-                    </a>
-                    <a href="/admin/competitions/{{ $competition->id }}/edit?tab=dashboard" class="text-amber-200 text-sm hover:text-white">
-                        {{ __('nav.competition_dashboard') }}
-                    </a>
                 @endif
                 <x-theme-toggle />
                 <form method="POST" action="{{ route('logout') }}">
@@ -37,9 +31,21 @@
             </div>
         </div>
         {{-- Context row --}}
-        <div class="px-4 py-2">
-            <div class="font-bold text-base leading-tight">{{ $competition->name }}</div>
-            <div class="text-amber-200 text-xs">{{ $judge->name }}</div>
+        <div class="px-4 py-2 flex items-center justify-between gap-3">
+            <div>
+                <div class="font-bold text-base leading-tight">{{ $competition->name }}</div>
+                <div class="text-amber-200 text-xs">{{ $judge->name }}</div>
+            </div>
+            @if($judge->is_admin)
+                <div class="flex items-center gap-3 shrink-0">
+                    <a href="/admin/competitions/{{ $competition->id }}/edit" class="text-amber-200 text-xs hover:text-white">
+                        {{ __('nav.manage_competition') }}
+                    </a>
+                    <a href="/admin/competitions/{{ $competition->id }}/edit?tab=dashboard" class="text-amber-200 text-xs hover:text-white">
+                        {{ __('nav.competition_dashboard') }}
+                    </a>
+                </div>
+            @endif
         </div>
     </header>
 
