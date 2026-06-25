@@ -62,7 +62,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </button>
-            <div x-show="progressOpen" x-transition class="px-4 pb-3">
+            <div x-show="progressOpen" x-transition class="px-4 pb-3 flex justify-center">
                 <div class="inline-flex flex-col gap-0.5">
                     <template x-for="entry in entries" :key="entry.id">
                         <div class="flex items-center gap-2">
