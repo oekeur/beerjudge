@@ -79,7 +79,7 @@ class SentryMetaTagTest extends TestCase
 
         $admin = Member::factory()->create(['is_admin' => true]);
 
-        $response = $this->actingAs($admin)->get('/admin');
+        $response = $this->actingAs($admin)->get('/admin/competitions');
 
         $response->assertOk();
         $response->assertSee('name="sentry-dsn"', false);
