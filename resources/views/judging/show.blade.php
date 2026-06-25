@@ -25,6 +25,9 @@
                     <a href="/admin/competitions/{{ $competition->id }}/edit" class="text-amber-200 text-sm hover:text-white">
                         {{ __('nav.manage_competition') }}
                     </a>
+                    <a href="/admin/competitions/{{ $competition->id }}/edit?tab=dashboard" class="text-amber-200 text-sm hover:text-white">
+                        {{ __('nav.competition_dashboard') }}
+                    </a>
                 @endif
                 <x-theme-toggle />
                 <form method="POST" action="{{ route('logout') }}">

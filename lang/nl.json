@@ -176,6 +176,7 @@
     "nav.profile": "Profiel",
     "nav.admin": "Beheerpaneel",
     "nav.manage_competition": "Wedstrijd beheren",
+    "nav.competition_dashboard": "Dashboard",
     "nav.logout": "Uitloggen",
 
     "profile.title": "Jouw profiel",

@@ -36,6 +36,7 @@ class CompetitionForm
             ->components([
                 Tabs::make()
                     ->columnSpanFull()
+                    ->persistTabInQueryString()
                     ->tabs([
                         Tab::make(__('competition.tab.overview'))
                             ->schema([

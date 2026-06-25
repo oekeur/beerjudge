@@ -176,6 +176,7 @@
     "nav.profile": "Profile",
     "nav.admin": "Admin panel",
     "nav.manage_competition": "Manage competition",
+    "nav.competition_dashboard": "Dashboard",
     "nav.logout": "Log out",
 
     "profile.title": "Your profile",
