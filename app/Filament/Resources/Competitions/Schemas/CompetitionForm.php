@@ -135,6 +135,7 @@ class CompetitionForm
                             ]),
 
                         Tab::make(__('competition.tab.dashboard'))
+                            ->id('dashboard')
                             ->schema([
                                 Select::make('judges')
                                     ->multiple()
