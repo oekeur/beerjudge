@@ -11,6 +11,7 @@
         ->keyBy(fn (\App\Models\Scoresheet $s) => $s->entry_id . '_' . $s->judge_id);
 @endphp
 
+<div>
 <h3 class="text-sm font-semibold text-gray-950 dark:text-white mb-3">{{ __('competition.judging_progress.heading') }}</h3>
 
 @if($judges->isEmpty())
@@ -63,3 +64,4 @@
         </table>
     </div>
 @endif
+</div>
