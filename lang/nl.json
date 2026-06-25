@@ -14,6 +14,7 @@
     "competition.action.move_to_open": "Naar Open",
     "competition.action.move_to_judging": "Naar Keuren",
     "competition.action.move_to_closed": "Naar Gesloten",
+    "competition.action.open_judging_screen": "Open Keurscherm",
     "competition.action.view_results": "Bekijk Resultaten",
     "competition.action.lock_registration.heading": "Registratie sluiten",
     "competition.action.lock_registration.description": "Dit sluit de registratie en wijst flessennummers toe. Doorgaan?",

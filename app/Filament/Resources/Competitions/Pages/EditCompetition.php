@@ -47,6 +47,12 @@ class EditCompetition extends EditRecord
                 ->action(fn () => $record->update(['status' => CompetitionStatus::Closed]))
                 ->after(fn () => $this->refreshFormData(['status'])) : null,
 
+            $record->isJudging() ? Action::make('openJudgingScreen')
+                ->label(__('competition.action.open_judging_screen'))
+                ->color('gray')
+                ->url(fn () => route('judging.show', $record))
+                ->openUrlInNewTab() : null,
+
             $record->isClosed() ? Action::make('viewResults')
                 ->label(__('competition.action.view_results'))
                 ->color('gray')

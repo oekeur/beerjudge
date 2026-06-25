@@ -11,11 +11,11 @@
 **Outcome:** The "Judging" tab's progress matrix auto-refreshes every 10 seconds via a Livewire widget instead of a static `Html::make()` render.
 
 Tasks:
-- [ ] Run `php artisan make:livewire Filament/Resources/Competitions/Widgets/JudgingProgressWidget --no-interaction` (or equivalent Filament command) to scaffold the class
-- [ ] Move the data query logic from `judging-progress.blade.php` into the widget's `render()` method (or a `getViewData()` helper)
-- [ ] Set `protected int $pollingInterval = 10` on the widget class
-- [ ] Create / repurpose `resources/views/filament/competition/judging-progress-widget.blade.php` as the widget view — keep the existing table markup unchanged
-- [ ] Add `public int $competitionId` property; populate it from the `$competition->id` passed via `->properties()`
+- [x] Run `php artisan make:livewire Filament/Resources/Competitions/Widgets/JudgingProgressWidget --no-interaction` (or equivalent Filament command) to scaffold the class
+- [x] Move the data query logic from `judging-progress.blade.php` into the widget's `render()` method (or a `getViewData()` helper)
+- [x] Set `protected ?string $pollingInterval = '5s'` on the widget class
+- [x] Create / repurpose `resources/views/filament/competition/judging-progress-widget.blade.php` as the widget view — keep the existing table markup unchanged
+- [x] Add `public int $competitionId` property; populate it from the `$competition->id` passed via `->properties()`
 
 Unknowns:
 - [RISK] Does `\Filament\Schemas\Components\Livewire::make()` exist in Filament v4, and what is the exact API for passing properties? Verify with `search-docs` before coding.
@@ -25,14 +25,14 @@ Unknowns:
 
 ## Phase 2: Create `ResultsSummaryWidget`
 
-**Outcome:** The "Dashboard" tab's stats grid and per-entry progress table auto-refreshes every 10 seconds.
+**Outcome:** The "Dashboard" tab's stats grid and per-entry progress table auto-refreshes every 5 seconds.
 
 Tasks:
-- [ ] Scaffold `ResultsSummaryWidget` (same pattern as Phase 1)
-- [ ] Move query from `results-summary.blade.php` into the widget
-- [ ] Set polling interval
-- [ ] Add `public int $competitionId` property
-- [ ] Create widget blade view from existing `results-summary.blade.php` markup
+- [x] Scaffold `ResultsSummaryWidget` (same pattern as Phase 1)
+- [x] Move query from `results-summary.blade.php` into the widget
+- [x] Set `protected ?string $pollingInterval = '5s'`
+- [x] Add `public int $competitionId` property
+- [x] Create widget blade view from existing `results-summary.blade.php` markup
 
 Unknowns:
 - None beyond the Phase 1 Livewire embedding risk (resolved by then).
@@ -44,9 +44,9 @@ Unknowns:
 **Outcome:** The "Results" tab variance table also auto-refreshes. The duplicate `variance-tab.blade.php` static render is replaced by the existing widget class.
 
 Tasks:
-- [ ] Add `protected int $pollingInterval = 10` to `JudgeVarianceWidget`
-- [ ] Replace the `Html::make()` call in the Results tab with `Livewire::make(JudgeVarianceWidget::class)->properties([...])`
-- [ ] Delete (or archive) `resources/views/filament/forms/components/variance-tab.blade.php` once confirmed unused
+- [x] Add `protected ?string $pollingInterval = '5s'` to `JudgeVarianceWidget`
+- [x] Replace the `Html::make()` call in the Results tab with `Livewire::make(JudgeVarianceWidget::class)->properties([...])`
+- [x] Delete (or archive) `resources/views/filament/forms/components/variance-tab.blade.php` once confirmed unused
 
 Unknowns:
 - `JudgeVarianceWidget` extends `TableWidget` — verify `$pollingInterval` works on `TableWidget` subclasses the same way as view widgets.
@@ -58,11 +58,11 @@ Unknowns:
 **Outcome:** All three tabs use `Livewire::make()` components; `Html::make()` is removed from these tabs entirely.
 
 Tasks:
-- [ ] Import `\Filament\Schemas\Components\Livewire` in `CompetitionForm`
-- [ ] Replace the `Html::make(fn (?Competition $record) => ...)` closures in the Judging, Dashboard, and Results tabs with `Livewire::make(WidgetClass::class)->key('unique-key-{$record->id}')->properties(['competitionId' => $record->id])`
-- [ ] Guard the `->visibleOn('edit')` equivalent — only show when `$record->exists`
-- [ ] Run `php artisan test --compact` to confirm no regressions
-- [ ] Run `vendor/bin/pint --dirty` to clean up formatting
+- [x] Import `\Filament\Schemas\Components\Livewire` in `CompetitionForm`
+- [x] Replace the `Html::make(fn (?Competition $record) => ...)` closures in the Judging, Dashboard, and Results tabs with `Livewire::make(WidgetClass::class)->key('unique-key-{$record->id}')->properties(['competitionId' => $record->id])`
+- [x] Guard the `->visibleOn('edit')` equivalent — only show when `$record->exists`
+- [x] Run `php artisan test --compact` to confirm no regressions
+- [x] Run `vendor/bin/pint --dirty` to clean up formatting
 
 Unknowns:
 - [RISK] `Livewire::make()` inside a Filament `Tab` may need a stable `->key()` to avoid Livewire re-mounting on tab switch. Verify behaviour in browser.
@@ -71,5 +71,5 @@ Unknowns:
 
 ## Open decisions
 
-- [ ] Polling interval: 10 seconds proposed — confirm with user or make it configurable per widget.
+- [x] Polling interval: 5 seconds.
 - [ ] Whether to keep the old blade templates around as fallback views or delete them after extraction.

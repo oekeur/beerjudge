@@ -11,11 +11,11 @@
 **Outcome:** The Dashboard tab contains the judge select, the invite link, and the results summary widget. The Judging tab is gone.
 
 Tasks:
-- [ ] Move `Select::make('judges')` from the Judging tab schema to the top of the Dashboard tab schema
-- [ ] Move the judge invite `Html::make()` (the copyable link) from the Judging tab to the Dashboard tab, below the select
-- [ ] Remove `Livewire::make(JudgingProgressWidget::class)` from the form entirely
-- [ ] Delete the entire `Tab::make(__('competition.tab.judging'))` block
-- [ ] Run `vendor/bin/pint --dirty` and `php artisan test --compact`
+- [x] Move `Select::make('judges')` from the Judging tab schema to the top of the Dashboard tab schema
+- [x] Move the judge invite `Html::make()` (the copyable link) from the Judging tab to the Dashboard tab, below the select
+- [x] Remove `Livewire::make(JudgingProgressWidget::class)` from the form entirely
+- [x] Delete the entire `Tab::make(__('competition.tab.judging'))` block
+- [x] Run `vendor/bin/pint --dirty` and `php artisan test --compact`
 
 Unknowns:
 - [RISK] Filament form fields (`Select`) and Livewire schema components (`Livewire::make`) in the same tab — the select must stay outside the widget because it's bound to form state. Verify the ordering renders correctly (select → invite link → widget).
@@ -28,12 +28,12 @@ Unknowns:
 **Outcome:** `JudgingProgressWidget`, its blade view, and the orphaned translation keys are removed.
 
 Tasks:
-- [ ] Delete `app/Filament/Resources/Competitions/Widgets/JudgingProgressWidget.php`
-- [ ] Delete `resources/views/filament/competition/judging-progress.blade.php`
-- [ ] Remove unused `competition.tab.judging` translation key from all lang files
-- [ ] Remove unused `competition.judging_progress.*` translation keys from all lang files
-- [ ] Remove the `JudgingProgressWidget` import from `CompetitionForm.php`
-- [ ] Run `php artisan test --compact` to confirm no regressions
+- [x] Delete `app/Filament/Resources/Competitions/Widgets/JudgingProgressWidget.php`
+- [x] Delete `resources/views/filament/competition/judging-progress.blade.php`
+- [x] Remove unused `competition.tab.judging` translation key from all lang files
+- [x] Remove unused `competition.judging_progress.*` translation keys from all lang files
+- [x] Remove the `JudgingProgressWidget` import from `CompetitionForm.php`
+- [x] Run `php artisan test --compact` to confirm no regressions
 
 Unknowns:
 - Are the `judging_progress.*` translation keys used anywhere else (e.g. other views, emails)? Grep before deleting.

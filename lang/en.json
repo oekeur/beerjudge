@@ -14,6 +14,7 @@
     "competition.action.move_to_open": "Move to Open",
     "competition.action.move_to_judging": "Move to Judging",
     "competition.action.move_to_closed": "Move to Closed",
+    "competition.action.open_judging_screen": "Open Judging Screen",
     "competition.action.view_results": "View Results",
     "competition.action.lock_registration.heading": "Lock Registration",
     "competition.action.lock_registration.description": "This will lock registration and assign bottle numbers. Continue?",
