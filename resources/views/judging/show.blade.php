@@ -38,8 +38,8 @@
             </div>
             @if($judge->is_admin)
                 <div class="flex items-center gap-3 shrink-0">
-                    <a href="/admin/competitions/{{ $competition->id }}/edit" class="text-amber-200 text-xs hover:text-white">
-                        {{ __('nav.manage_competition') }}
+                    <a href="/admin/competitions/{{ $competition->id }}/edit?tab=entries" class="text-amber-200 text-xs hover:text-white">
+                        {{ __('nav.entries') }}
                     </a>
                     <a href="/admin/competitions/{{ $competition->id }}/edit?tab=dashboard" class="text-amber-200 text-xs hover:text-white">
                         {{ __('nav.competition_dashboard') }}

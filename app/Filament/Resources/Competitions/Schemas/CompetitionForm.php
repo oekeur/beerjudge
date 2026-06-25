@@ -60,6 +60,7 @@ class CompetitionForm
                             ]),
 
                         Tab::make(__('competition.tab.entries'))
+                            ->id('entries')
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
