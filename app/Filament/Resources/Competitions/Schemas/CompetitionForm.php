@@ -5,6 +5,9 @@ namespace App\Filament\Resources\Competitions\Schemas;
 use App\Enums\CompetitionStatus;
 use App\Filament\Forms\Components\StyleMultiSelect;
 use App\Filament\Resources\Competitions\CompetitionResource;
+use App\Filament\Resources\Competitions\Widgets\JudgeVarianceWidget;
+use App\Filament\Resources\Competitions\Widgets\JudgingProgressWidget;
+use App\Filament\Resources\Competitions\Widgets\ResultsSummaryWidget;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Member;
@@ -19,6 +22,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Html;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -147,40 +151,25 @@ class CompetitionForm
                                     ->columnSpanFull()
                                     ->visibleOn('edit'),
 
-                                Html::make(function (?Competition $record): HtmlString {
-                                    if (! $record?->exists) {
-                                        return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
-                                    }
-
-                                    return new HtmlString(view('filament.competition.judging-progress', [
-                                        'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
-                                    ])->render());
-                                })
+                                Livewire::make(JudgingProgressWidget::class, fn (?Competition $record): array => ['competitionId' => $record?->id])
+                                    ->key(fn (?Competition $record): string => 'judging-progress-'.($record?->id ?? 'new'))
+                                    ->hidden(fn (?Competition $record): bool => ! $record?->exists)
                                     ->columnSpanFull(),
                             ]),
 
                         Tab::make(__('competition.tab.dashboard'))
                             ->schema([
-                                Html::make(function (?Competition $record): HtmlString {
-                                    if (! $record?->exists) {
-                                        return new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>');
-                                    }
-
-                                    return new HtmlString(view('filament.competition.results-summary', [
-                                        'competition' => $record->load(['judges', 'entries.member', 'entries.style', 'entries.scoresheets']),
-                                    ])->render());
-                                })
+                                Livewire::make(ResultsSummaryWidget::class, fn (?Competition $record): array => ['competitionId' => $record?->id])
+                                    ->key(fn (?Competition $record): string => 'results-summary-'.($record?->id ?? 'new'))
+                                    ->hidden(fn (?Competition $record): bool => ! $record?->exists)
                                     ->columnSpanFull(),
                             ]),
 
                         Tab::make(__('competition.tab.results'))
                             ->schema([
-                                Html::make(fn (?Competition $record) => $record
-                                    ? new HtmlString(view('filament.forms.components.variance-tab', [
-                                        'record' => $record,
-                                    ])->render())
-                                    : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
-                                )
+                                Livewire::make(JudgeVarianceWidget::class, fn (?Competition $record): array => ['competitionId' => $record?->id])
+                                    ->key(fn (?Competition $record): string => 'judge-variance-'.($record?->id ?? 'new'))
+                                    ->hidden(fn (?Competition $record): bool => ! $record?->exists)
                                     ->columnSpanFull(),
                             ]),
                     ]),

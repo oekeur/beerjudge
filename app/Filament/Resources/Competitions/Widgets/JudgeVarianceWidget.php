@@ -16,6 +16,8 @@ class JudgeVarianceWidget extends BaseWidget
 
     protected static ?string $heading = null;
 
+    protected ?string $pollingInterval = '5s';
+
     public function getHeading(): string
     {
         return __('widget.variance.heading');
