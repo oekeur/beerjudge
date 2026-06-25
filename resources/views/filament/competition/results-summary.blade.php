@@ -46,6 +46,11 @@
             View all results
         </a>
         @if(! $competition->isClosed())
+            <a href="{{ route('judging.show', $competition) }}"
+               target="_blank"
+               class="fi-btn fi-btn-size-md fi-btn-color-gray fi-color-gray fi-ac-btn-action inline-flex items-center justify-center gap-1.5 font-semibold rounded-lg px-3 py-2 text-sm shadow-sm ring-1 ring-gray-950/10 bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/20 dark:hover:bg-white/10">
+                Open judging screen
+            </a>
             <span class="text-xs text-warning-600 dark:text-warning-400">Judging in progress.</span>
         @endif
     </div>
