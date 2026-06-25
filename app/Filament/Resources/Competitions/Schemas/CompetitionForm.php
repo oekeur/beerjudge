@@ -151,7 +151,7 @@ class CompetitionForm
                                     ->columnSpanFull(),
 
                                 Livewire::make(ResultsSummaryWidget::class, fn (?Competition $record): array => ['competitionId' => $record?->id])
-                                    ->key(fn (?Competition $record): string => 'results-summary-'.($record?->id ?? 'new'))
+                                    ->key(fn (?Competition $record): string => 'results-summary-'.($record->id ?? 'new'))
                                     ->hidden(fn (?Competition $record): bool => ! $record?->exists)
                                     ->columnSpanFull(),
                             ]),
@@ -159,7 +159,7 @@ class CompetitionForm
                         Tab::make(__('competition.tab.results'))
                             ->schema([
                                 Livewire::make(JudgeVarianceWidget::class, fn (?Competition $record): array => ['competitionId' => $record?->id])
-                                    ->key(fn (?Competition $record): string => 'judge-variance-'.($record?->id ?? 'new'))
+                                    ->key(fn (?Competition $record): string => 'judge-variance-'.($record->id ?? 'new'))
                                     ->hidden(fn (?Competition $record): bool => ! $record?->exists)
                                     ->columnSpanFull(),
                             ]),

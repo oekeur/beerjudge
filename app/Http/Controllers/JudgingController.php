@@ -113,8 +113,9 @@ class JudgingController extends Controller
 
         $progress = [];
         foreach ($entries as $entry) {
+            $submitted = $submittedCounts[$entry->id] ?? 0;
             $progress[$entry->id] = [
-                'submitted' => (int) ($submittedCounts[$entry->id] ?? 0),
+                'submitted' => is_numeric($submitted) ? (int) $submitted : 0,
                 'total' => $judgeIds->reject(fn ($id) => $id === $entry->member_id)->count(),
             ];
         }
