@@ -62,12 +62,15 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </button>
-            <div x-show="progressOpen" x-transition class="px-4 pb-3 flex flex-wrap gap-x-4 gap-y-1">
+            <div x-show="progressOpen" x-transition class="px-4 pb-3 space-y-1">
                 <template x-for="entry in entries" :key="entry.id">
-                    <span class="text-xs text-amber-100 tabular-nums">
-                        <span class="text-amber-300" x-text="'#' + entry.tasting_number + ':'"></span>
-                        <span x-text="(progress[entry.id]?.submitted ?? '…') + '/' + (progress[entry.id]?.total ?? '…')"></span>
-                    </span>
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="text-xs text-amber-400 tabular-nums shrink-0" x-text="'#' + entry.tasting_number"></span>
+                            <span class="text-xs text-amber-100 truncate" x-text="entry.brewer_name"></span>
+                        </div>
+                        <span class="text-xs text-amber-200 tabular-nums shrink-0" x-text="(progress[entry.id]?.submitted ?? '…') + '/' + (progress[entry.id]?.total ?? '…')"></span>
+                    </div>
                 </template>
             </div>
         </div>
