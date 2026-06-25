@@ -143,14 +143,11 @@ class CompetitionForm
                                     ->options(fn () => Member::where('is_active', true)->orderBy('name')->pluck('name', 'id'))
                                     ->searchable()
                                     ->preload()
+                                    ->hint(fn (?Competition $record) => $record?->exists
+                                        ? new HtmlString(self::judgeJoinLinkHint(route('judging.show', ['competition' => $record->id, 'register' => 1])))
+                                        : null
+                                    )
                                     ->columnSpanFull(),
-
-                                Html::make(fn (?Competition $record) => $record?->exists
-                                    ? new HtmlString(self::copyableLinkHtml(route('judging.show', ['competition' => $record->id, 'register' => 1])))
-                                    : new HtmlString('<p class="text-sm text-gray-500">'.__('competition.save_first').'</p>')
-                                )
-                                    ->columnSpanFull()
-                                    ->visibleOn('edit'),
 
                                 Livewire::make(ResultsSummaryWidget::class, fn (?Competition $record): array => ['competitionId' => $record?->id])
                                     ->key(fn (?Competition $record): string => 'results-summary-'.($record?->id ?? 'new'))
@@ -190,6 +187,26 @@ class CompetitionForm
                 <span x-text="copied ? {$labelCopied} : {$labelCopy}"></span>
             </button>
         </div>
+        HTML;
+    }
+
+    private static function judgeJoinLinkHint(string $url): string
+    {
+        $json = e((string) json_encode($url));
+        $labelCopy = e((string) json_encode(__('competition.invite_copy')));
+        $labelCopied = e((string) json_encode(__('competition.invite_copied')));
+
+        return <<<HTML
+        <button
+            x-data="{ copied: false }"
+            x-on:click="navigator.clipboard.writeText({$json}); copied = true; setTimeout(() => copied = false, 2000)"
+            type="button"
+            class="inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 transition-colors"
+        >
+            <svg x-show="!copied" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+            <svg x-show="copied" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            <span x-text="copied ? {$labelCopied} : {$labelCopy}"></span>
+        </button>
         HTML;
     }
 }
