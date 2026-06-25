@@ -119,7 +119,7 @@
                     <div class="flex items-center gap-2 flex-shrink-0">
                         {{-- Score preview --}}
                         <span class="text-sm font-semibold tabular-nums"
-                            :style="'color:' + scoreColor(sheetTotal(entry.id))"
+                            :style="{ color: scoreColor(sheetTotal(entry.id)) }"
                             x-show="sheets[entry.id]?.status === 'submitted'"
                             x-text="sheetTotal(entry.id) + ' / 50'">
                         </span>
