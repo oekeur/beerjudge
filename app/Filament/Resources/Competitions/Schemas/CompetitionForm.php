@@ -6,7 +6,6 @@ use App\Enums\CompetitionStatus;
 use App\Filament\Forms\Components\StyleMultiSelect;
 use App\Filament\Resources\Competitions\CompetitionResource;
 use App\Filament\Resources\Competitions\Widgets\JudgeVarianceWidget;
-use App\Filament\Resources\Competitions\Widgets\JudgingProgressWidget;
 use App\Filament\Resources\Competitions\Widgets\ResultsSummaryWidget;
 use App\Models\Competition;
 use App\Models\Entry;
@@ -134,7 +133,7 @@ class CompetitionForm
                                     ->columnSpanFull(),
                             ]),
 
-                        Tab::make(__('competition.tab.judging'))
+                        Tab::make(__('competition.tab.dashboard'))
                             ->schema([
                                 Select::make('judges')
                                     ->multiple()
@@ -151,14 +150,6 @@ class CompetitionForm
                                     ->columnSpanFull()
                                     ->visibleOn('edit'),
 
-                                Livewire::make(JudgingProgressWidget::class, fn (?Competition $record): array => ['competitionId' => $record?->id])
-                                    ->key(fn (?Competition $record): string => 'judging-progress-'.($record?->id ?? 'new'))
-                                    ->hidden(fn (?Competition $record): bool => ! $record?->exists)
-                                    ->columnSpanFull(),
-                            ]),
-
-                        Tab::make(__('competition.tab.dashboard'))
-                            ->schema([
                                 Livewire::make(ResultsSummaryWidget::class, fn (?Competition $record): array => ['competitionId' => $record?->id])
                                     ->key(fn (?Competition $record): string => 'results-summary-'.($record?->id ?? 'new'))
                                     ->hidden(fn (?Competition $record): bool => ! $record?->exists)
