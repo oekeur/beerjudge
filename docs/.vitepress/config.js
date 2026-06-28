@@ -89,7 +89,7 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern: 'https://github.com/oscar/beerjudge/edit/main/docs/:path',
+      pattern: 'https://github.com/oekeur/beerjudge/edit/main/docs/:path',
       text: 'Edit this page',
     },
   },
