@@ -8,18 +8,16 @@ test.describe('entry submission', () => {
         await login(page, BREWER_EMAIL)
         await page.goto(`/competitions/${openCompetitionId}/entries/create`)
 
-        // Style dropdown must have at least one option to select
-        const styleSelect = page.locator('#style_id')
-        await expect(styleSelect).toBeVisible()
-        const optionCount = await styleSelect.locator('option[value]:not([value=""])').count()
-        expect(optionCount).toBeGreaterThan(0)
+        // Style combobox must be visible and show options on focus
+        const styleSearch = page.locator('#style_search')
+        await expect(styleSearch).toBeVisible()
+        await styleSearch.click()
 
-        // Select the first real style option and add optional notes
-        const firstStyleValue = await styleSelect
-            .locator('option[value]:not([value=""])')
-            .first()
-            .getAttribute('value')
-        await styleSelect.selectOption(firstStyleValue!)
+        // Wait for dropdown options to appear, then select the first one
+        const firstOption = page.getByTestId('style-option').first()
+        await expect(firstOption).toBeVisible()
+        await firstOption.click()
+
         await page.fill('#brewer_notes', 'Brewed with love for browser testing.')
 
         // Submit the entry form specifically — the page also has a logout button[type="submit"] in the nav
@@ -30,8 +28,6 @@ test.describe('entry submission', () => {
         await expect(page.getByTestId('flash-success')).toBeVisible()
 
         // The submitted entry must appear in "Your entries" list
-        // Use getByRole('listitem') to avoid strict-mode violation: the style
-        // dropdown <option> also contains "Test Lager" and would match text=Test Lager
         await expect(page.getByRole('listitem').filter({ hasText: 'Test Lager' }).first()).toBeVisible()
     })
 
@@ -41,9 +37,10 @@ test.describe('entry submission', () => {
         await login(page, BREWER_EMAIL)
         await page.goto(`/competitions/${openCompetitionId}/entries/create`)
 
-        // Disable HTML5 native validation on all forms so the empty select value reaches
-        // the server. document.querySelector('form') would hit the logout form in x-app-nav
-        // first, leaving the entry form's native validation active.
+        // Disable HTML5 native validation on all forms so the form can submit with an empty style_id.
+        // The combobox's visible input (#style_search) is `required` but has no `name`, so it isn't submitted.
+        // document.querySelector('form') would hit the logout form in x-app-nav first,
+        // leaving the entry form's native validation active.
         await page.evaluate(() => {
             document.querySelectorAll('form').forEach(f => { (f as HTMLFormElement).noValidate = true })
         })

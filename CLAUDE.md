@@ -32,19 +32,26 @@ Use lean sub-agents where they add value:
 
 ## Worktrees
 
-Every session works in its own git worktree by default unless the user explicitly says not to. This enables parallel agents without conflicts.
+Use a worktree when:
+- Multiple agents will work in parallel (to avoid write conflicts)
+- A task spans many files (rough threshold: 5+ files changed)
 
-**On session start (unless told otherwise):**
+Skip the worktree when:
+- The change is small (single line, typo fix, simple config edit)
+- You're confident the task touches one logical area with no parallel work
+- Writing or editing plans, CLAUDE.md, or memory files
+
+**Worktree setup (when needed):**
 1. Create a worktree: `git worktree add ../beerjudge-<branch-slug> -b <branch-name>`
 2. Copy the env file: `cp /home/oscar/projects/beerjudge/.env ../beerjudge-<branch-slug>/.env` — worktrees don't inherit `.env` and tests will fail with "No application encryption key" without it.
 3. Copy vendor with hard links: `cp -rl /home/oscar/projects/beerjudge/vendor ../beerjudge-<branch-slug>/vendor && composer -d ../beerjudge-<branch-slug> dump-autoload --quiet` — **do not use a symlink**. PHP resolves symlinks when computing `__FILE__`, so a symlinked vendor always points `$baseDir` at the main repo's `app/` directory; any new class added in the worktree is invisible to the autoloader. Hard links (`cp -rl`) are instant and share disk blocks; `dump-autoload` rebuilds the classmap against the worktree's own `app/`.
 4. Do all work there.
 
-**On session end:**
-1. Commit all changes in the worktree.
-2. Switch back to the main worktree: `cd /home/oscar/projects/beerjudge`
-3. Merge with `git merge --no-ff <branch-name>` — resolve conflicts carefully; never discard the other branch's changes.
-4. Remove the worktree: `git worktree remove ../beerjudge-<branch-slug>` and delete the branch: `git branch -d <branch-name>`
+**Session end (worktree or branch):**
+1. Commit all changes on the feature branch.
+2. Push the branch and open a PR with `gh pr create`, writing a meaningful title and body following the commit convention (`[type](scope): description`) — title reflects the overall change, body covers what changed and why.
+3. Squash-merge the PR: `gh pr merge --squash --auto`
+4. If a worktree was used: `git worktree remove ../beerjudge-<branch-slug>` then `git branch -d <branch-name>`
 
 ## Tech stack
 
@@ -77,9 +84,16 @@ A custom Filament theme is configured at `resources/css/filament/admin/theme.css
 
 ## Git
 
-- Commit automatically after completing each task — do not wait to be asked.
+- Never commit directly to `main`. Always work on a named branch (`feat/*`, `fix/*`, `improve/*`, etc.).
+- Commit automatically, but group related changes into one commit rather than one per micro-task. A commit should represent a coherent unit of work.
 - Use the format: `[type](scope): description` (e.g. `feat(judging): add offline sync retry`)
 - Stage only files relevant to the task; do not use `git add -A` blindly.
+
+**When opening PRs:**
+- Use `.github/PULL_REQUEST_TEMPLATE.md` as the body structure.
+- Always write the Why section, even for minor fixes.
+- Never omit testing instructions in How.
+- Do not invent test scenarios or implementation details not present in the diff.
 
 ## Commands
 
