@@ -85,7 +85,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/oscar/beerjudge' },
+      { icon: 'github', link: 'https://github.com/oekeur/beerjudge' },
     ],
 
     editLink: {
