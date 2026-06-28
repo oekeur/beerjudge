@@ -37,8 +37,8 @@ test.describe('entry submission', () => {
         await login(page, BREWER_EMAIL)
         await page.goto(`/competitions/${openCompetitionId}/entries/create`)
 
-        // Disable HTML5 native validation on all forms so the empty style_search value reaches
-        // the server without triggering the `required` constraint on the text input.
+        // Disable HTML5 native validation on all forms so the form can submit with an empty style_id.
+        // The combobox's visible input (#style_search) is `required` but has no `name`, so it isn't submitted.
         // document.querySelector('form') would hit the logout form in x-app-nav first,
         // leaving the entry form's native validation active.
         await page.evaluate(() => {
