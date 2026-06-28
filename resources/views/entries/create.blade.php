@@ -64,6 +64,7 @@
                             class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                             <template x-for="style in filtered" :key="style.id">
                                 <button type="button"
+                                    data-testid="style-option"
                                     @click="select(style)"
                                     class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/30">
                                     <span x-text="style.label"></span>
