@@ -96,14 +96,14 @@
                         <th class="w-8"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($row['sheets'] as $sheet)
-                    @php
-                        $hasNotes = $sheet->aroma_notes || $sheet->appearance_notes || $sheet->flavour_notes || $sheet->mouthfeel_notes || $sheet->overall_notes;
-                    @endphp
+                @foreach($row['sheets'] as $sheet)
+                @php
+                    $hasNotes = $sheet->aroma_notes || $sheet->appearance_notes || $sheet->flavour_notes || $sheet->mouthfeel_notes || $sheet->overall_notes;
+                @endphp
+                <tbody @if($hasNotes) x-data="{ open: false }" @endif>
                     <tr
                         class="border-t border-gray-100 dark:border-gray-800 {{ $hasNotes ? 'hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer' : '' }}"
-                        @if($hasNotes) x-data="{ open: false }" @click="open = !open" @endif
+                        @if($hasNotes) @click="open = !open" @endif
                     >
                         <td class="py-2.5 px-3 font-medium">{{ $sheet->judge?->name }}</td>
                         <td class="text-center py-2.5 px-3 tabular-nums">{{ $sheet->aroma }}</td>
@@ -119,7 +119,7 @@
                         </td>
                     </tr>
                     @if($hasNotes)
-                    <tr x-data="{ open: false }" x-show="open" class="notes-row bg-gray-50/60 dark:bg-gray-900/40" style="display: none;">
+                    <tr x-show="open" class="notes-row bg-gray-50/60 dark:bg-gray-900/40" style="display: none;">
                         <td colspan="8" class="px-5 py-4">
                             <div class="max-w-2xl space-y-2.5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                                 @if($sheet->aroma_notes)<p><span class="inline-block w-20 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide align-top">Aroma</span> {{ $sheet->aroma_notes }}</p>@endif
@@ -131,8 +131,8 @@
                         </td>
                     </tr>
                     @endif
-                    @endforeach
                 </tbody>
+                @endforeach
             </table>
             <p class="no-print text-xs text-gray-400 dark:text-gray-500 px-3 py-2 border-t border-gray-100 dark:border-gray-800">Click a row with notes to read them in full.</p>
             @else
