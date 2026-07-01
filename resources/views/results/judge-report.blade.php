@@ -135,30 +135,31 @@
         <h2 class="text-lg font-bold border-b border-gray-300 dark:border-gray-700 pb-1 mb-4">Full Standings</h2>
         <table class="w-full text-sm border-collapse">
             <thead>
-                <tr class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                    <th class="text-left py-1 px-2 font-medium">#</th>
-                    <th class="text-left py-1 px-2 font-medium">Brewer</th>
-                    <th class="text-left py-1 px-2 font-medium">Style</th>
-                    <th class="text-center py-1 px-2 font-medium">Score</th>
-                    <th class="text-center py-1 px-2 font-medium">Band</th>
-                    <th class="text-center py-1 px-2 font-medium">Sheets</th>
+                <tr class="bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">
+                    <th class="text-left py-2 px-3 font-medium">#</th>
+                    <th class="text-left py-2 px-3 font-medium">Brewer</th>
+                    <th class="text-left py-2 px-3 font-medium">Style</th>
+                    <th class="text-center py-2 px-3 font-medium">Score</th>
+                    <th class="text-center py-2 px-3 font-medium">Band</th>
+                    <th class="text-center py-2 px-3 font-medium">Sheets</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($rankedEntries as $row)
                 @php
-                    /** @var array{entry: \App\Models\Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, \App\Models\Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, placement: int} $row */
+                    /** @var array{entry: \App\Models\Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, \App\Models\Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, band_key: string, placement: int} $row */
                 @endphp
-                <tr class="border-t border-gray-200 dark:border-gray-700">
-                    <td class="py-1 px-2 font-bold text-gray-900 dark:text-white">{{ $row['placement'] }}</td>
-                    <td class="py-1 px-2 text-gray-700 dark:text-gray-300">{{ $row['entry']->member?->name }}</td>
-                    <td class="py-1 px-2 text-gray-600 dark:text-gray-400">{{ $row['entry']->style?->code }}@if($row['entry']->abv)<span class="text-xs text-gray-400 dark:text-gray-500 ml-1">{{ $row['entry']->abv }}% ABV</span>@endif</td>
-                    <td class="text-center py-1 px-2 font-semibold">{{ number_format($row['avg_total'], 1) }}</td>
-                    <td class="text-center py-1 px-2 text-xs font-medium
-                        {{ $row['avg_total'] >= 38 ? 'text-green-700 dark:text-green-400' : ($row['avg_total'] >= 30 ? 'text-teal-700 dark:text-teal-400' : ($row['avg_total'] >= 21 ? 'text-yellow-700 dark:text-yellow-400' : 'text-red-700 dark:text-red-400')) }}">
-                        {{ $row['band'] }}
+                <tr class="border-t border-gray-100 dark:border-gray-800">
+                    <td class="py-2 px-3 font-bold text-gray-900 dark:text-white">{{ $row['placement'] }}</td>
+                    <td class="py-2 px-3 text-gray-700 dark:text-gray-300">{{ $row['entry']->member?->name }}</td>
+                    <td class="py-2 px-3 text-gray-600 dark:text-gray-400">{{ $row['entry']->style?->code }}@if($row['entry']->abv)<span class="text-xs text-gray-400 dark:text-gray-500 ml-1">{{ $row['entry']->abv }}% ABV</span>@endif</td>
+                    <td class="text-center py-2 px-3 font-semibold">{{ number_format($row['avg_total'], 1) }}</td>
+                    <td class="text-center py-2 px-3">
+                        <span class="text-xs font-medium px-2 py-0.5 rounded {{ \App\Services\CompetitionRankingService::bandColor($row['band_key']) }}">
+                            {{ $row['band'] }}
+                        </span>
                     </td>
-                    <td class="text-center py-1 px-2 text-gray-600 dark:text-gray-400">{{ $row['sheet_count'] }}</td>
+                    <td class="text-center py-2 px-3 text-gray-600 dark:text-gray-400">{{ $row['sheet_count'] }}</td>
                 </tr>
                 @endforeach
             </tbody>
