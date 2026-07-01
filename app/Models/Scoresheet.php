@@ -8,6 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Scoresheet extends Model
 {
+    /** @var array<string, int> */
+    public const SECTION_MAX = [
+        'aroma' => 12,
+        'appearance' => 3,
+        'flavour' => 20,
+        'mouthfeel' => 5,
+        'overall' => 10,
+    ];
+
     protected $attributes = ['status' => 'draft'];
 
     protected $fillable = [

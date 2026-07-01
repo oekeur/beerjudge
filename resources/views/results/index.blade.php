@@ -26,5 +26,23 @@
     <div class="mt-6">
         <button onclick="window.open('?print=all')" class="text-sm text-amber-700 dark:text-amber-400 underline">Print all</button>
     </div>
+
+    @if($judges->isNotEmpty())
+    <div class="mt-10">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-300 dark:border-gray-700 pb-1 mb-3">Judge Reports</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">For judges who scored this competition — your own scores compared with the other judges'.</p>
+        <div class="space-y-2">
+            @foreach($judges as $judge)
+            <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
+                <div class="font-medium text-gray-900 dark:text-white">{{ $judge->name }}</div>
+                <a href="{{ route('judge-report.show', [$competition, $judge]) }}"
+                   class="bg-amber-600 text-white px-3 py-1.5 rounded text-sm hover:bg-amber-700">
+                    View judge report
+                </a>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 </body>
 </x-page>

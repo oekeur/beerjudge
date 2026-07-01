@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JudgeRegistrationController;
+use App\Http\Controllers\JudgeReportController;
 use App\Http\Controllers\JudgingController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
@@ -52,6 +53,7 @@ Route::middleware(['auth', 'active-member'])->group(function () {
     Route::delete('/competitions/{competition}/judges', [JudgeRegistrationController::class, 'destroy'])->name('competitions.judges.destroy')->whereNumber('competition');
     Route::get('/competitions/{competition}/results/{member}', [ResultsController::class, 'show'])->name('results.show')->whereNumber(['competition', 'member']);
     Route::get('/competitions/{competition}/results', [ResultsController::class, 'index'])->name('results.index')->whereNumber('competition');
+    Route::get('/competitions/{competition}/judge-report/{judge}', [JudgeReportController::class, 'show'])->name('judge-report.show')->whereNumber(['competition', 'judge']);
     Route::get('/competitions/{competition}/entries/create', [EntryController::class, 'create'])->name('competitions.entries.create')->whereNumber('competition');
     Route::post('/competitions/{competition}/entries', [EntryController::class, 'store'])->name('competitions.entries.store')->whereNumber('competition');
 });
