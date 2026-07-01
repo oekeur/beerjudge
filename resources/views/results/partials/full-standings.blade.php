@@ -20,7 +20,7 @@
                 <td class="py-2 px-3 font-bold text-gray-900 dark:text-white">{{ $row['placement'] }}</td>
                 <td class="py-2 px-3 text-gray-700 dark:text-gray-300">{{ $row['entry']->member?->name }}</td>
                 <td class="py-2 px-3 text-gray-600 dark:text-gray-400">{{ $row['entry']->style?->code }}@if($row['entry']->abv)<span class="text-xs text-gray-400 dark:text-gray-500 ml-1">{{ $row['entry']->abv }}% ABV</span>@endif</td>
-                <td class="text-center py-2 px-3 font-semibold">{{ number_format($row['avg_total'], 1) }}</td>
+                <td class="text-center py-2 px-3 font-semibold text-gray-900 dark:text-white">{{ number_format($row['avg_total'], 1) }}</td>
                 <td class="text-center py-2 px-3">
                     <span class="text-xs font-medium px-2 py-0.5 rounded {{ \App\Services\CompetitionRankingService::bandColor($row['band_key']) }}">
                         {{ $row['band'] }}
