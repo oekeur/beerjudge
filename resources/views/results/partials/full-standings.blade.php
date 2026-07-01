@@ -1,6 +1,3 @@
-@php
-    $currentMemberId = $currentMemberId ?? null;
-@endphp
 <section>
     <h2 class="text-lg font-bold border-b border-gray-300 dark:border-gray-700 pb-1 mb-4">Full Standings</h2>
     <table class="w-full text-sm border-collapse">

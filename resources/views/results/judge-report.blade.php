@@ -129,7 +129,7 @@
     @endif
 
     {{-- Full standings --}}
-    @include('results.partials.full-standings', ['currentMemberId' => null])
+    @include('results.partials.full-standings', ['currentMemberId' => $judge->id])
 
 </body>
 </x-page>
