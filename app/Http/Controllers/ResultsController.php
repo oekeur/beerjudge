@@ -47,8 +47,8 @@ class ResultsController extends Controller
         $isAdmin = $viewer->is_admin;
         $members = new Collection;
         $judges = new Collection;
-        $ownEntry = null;
-        $isJudge = false;
+        $ownEntry = $competition->entries()->where('member_id', $viewer->id)->first();
+        $isJudge = $competition->judges()->whereKey($viewer->id)->exists();
 
         if ($isAdmin) {
             $members = Member::whereHas('entries', fn ($query) => $query->where('competition_id', $competition->id))
@@ -56,9 +56,6 @@ class ResultsController extends Controller
                 ->get();
 
             $judges = $competition->judges()->orderBy('name')->get();
-        } else {
-            $ownEntry = $competition->entries()->where('member_id', $viewer->id)->first();
-            $isJudge = $competition->judges()->whereKey($viewer->id)->exists();
         }
 
         return view('results.index', [

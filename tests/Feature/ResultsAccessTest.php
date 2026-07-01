@@ -154,6 +154,8 @@ class ResultsAccessTest extends TestCase
         $comp->judges()->attach($admin->id);
         $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results");
         $response->assertOk();
+        $response->assertSee('Full results');
+        $response->assertSee('Your judge report');
         $response->assertSee($brewer->name);
         $response->assertSee($admin->name);
         $response->assertSee(route('results.show', [$comp, $brewer]), false);
