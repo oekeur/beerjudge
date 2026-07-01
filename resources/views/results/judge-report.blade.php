@@ -5,13 +5,10 @@
 <x-page :title="'Judge Report — ' . $competition->name . ' — ' . $judge->name" :vite="['resources/css/app.css', 'resources/js/app.js']">
     <x-slot:head>
         <style>
-            @media print {
-                .no-print { display: none !important; }
-                body { background: white; color: black; }
-            }
+            @include('results.partials.print-styles')
         </style>
     </x-slot:head>
-<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white font-sans p-6 max-w-5xl mx-auto">
+<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white font-sans p-6 max-w-4xl mx-auto">
 
     {{-- Print button --}}
     <div class="no-print mb-6 flex gap-4 items-center">
@@ -34,6 +31,7 @@
 
     @if($comparison['entries_judged'] > 0)
     {{-- Judging profile panel --}}
+    {{-- Deliberately dashboard-style with stat tiles rather than a hero number: this view is for a judge auditing their own calibration, a calmer tone than the per-entry results hero score. --}}
     <div class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-5 mb-10">
         <div class="flex items-baseline justify-between mb-3">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Your Judging Profile</h2>
@@ -75,32 +73,32 @@
         </div>
         <table class="w-full text-sm border-collapse">
             <thead>
-                <tr class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                    <th class="text-left py-1.5 px-2 font-medium">Entry</th>
-                    <th class="text-center py-1.5 px-2 font-medium">Your Total</th>
-                    <th class="text-center py-1.5 px-2 font-medium">Others' Avg</th>
-                    <th class="text-center py-1.5 px-2 font-medium">Δ</th>
-                    <th class="text-center py-1.5 px-2 font-medium w-10"></th>
+                <tr class="bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">
+                    <th class="text-left py-2 px-3 font-medium">Entry</th>
+                    <th class="text-center py-2 px-3 font-medium">Your Total</th>
+                    <th class="text-center py-2 px-3 font-medium">Others' Avg</th>
+                    <th class="text-center py-2 px-3 font-medium">Δ</th>
+                    <th class="text-center py-2 px-3 font-medium w-10"></th>
                 </tr>
             </thead>
             @foreach($comparison['rows'] as $row)
             <tbody x-data="{ open: false }">
-                <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer" @click="open = !open">
-                    <td class="py-1.5 px-2">
+                <tr class="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer" @click="open = !open">
+                    <td class="py-2.5 px-3">
                         <div class="font-medium">
                             #{{ $row['entry']->bottle_number }} · {{ $row['entry']->style?->name }}
                             @if($row['is_outlier'])
-                                <span class="text-xs font-medium {{ $row['delta'] > 0 ? 'text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-900/40' : 'text-blue-700 bg-blue-100 dark:text-blue-300 dark:bg-blue-900/40' }} px-1.5 py-0.5 rounded ml-1">outlier</span>
+                                <span class="text-xs font-medium {{ $row['delta'] > 0 ? 'text-red-800 bg-red-100 dark:text-red-300 dark:bg-red-900/40' : 'text-blue-800 bg-blue-100 dark:text-blue-300 dark:bg-blue-900/40' }} px-2 py-0.5 rounded ml-1">outlier</span>
                             @endif
                         </div>
                         <div class="text-xs text-gray-500 dark:text-gray-400">{{ $row['entry']->style?->code }}</div>
                     </td>
-                    <td class="text-center py-1.5 px-2 font-semibold">{{ number_format($row['own_total'], 1) }}</td>
-                    <td class="text-center py-1.5 px-2 text-gray-500 dark:text-gray-400">{{ $row['other_count'] > 0 ? number_format($row['other_avg_total'], 1) : '—' }}</td>
-                    <td class="text-center py-1.5 px-2 font-medium text-gray-500 dark:text-gray-400">{{ $row['other_count'] > 0 ? ($row['delta'] > 0 ? '+' : '') . number_format($row['delta'], 1) : '—' }}</td>
-                    <td class="text-center py-1.5 px-2 text-gray-400" x-text="open ? '▴' : '▾'">▾</td>
+                    <td class="text-center py-2.5 px-3 font-semibold tabular-nums">{{ number_format($row['own_total'], 1) }}</td>
+                    <td class="text-center py-2.5 px-3 text-gray-500 dark:text-gray-400 tabular-nums">{{ $row['other_count'] > 0 ? number_format($row['other_avg_total'], 1) : '—' }}</td>
+                    <td class="text-center py-2.5 px-3 font-medium text-gray-500 dark:text-gray-400 tabular-nums">{{ $row['other_count'] > 0 ? ($row['delta'] > 0 ? '+' : '') . number_format($row['delta'], 1) : '—' }}</td>
+                    <td class="text-center py-2.5 px-3 text-gray-400 chevron" x-text="open ? '▴' : '▾'">▾</td>
                 </tr>
-                <tr x-show="open" x-cloak class="bg-gray-50/70 dark:bg-gray-900/50">
+                <tr x-show="open" x-cloak class="notes-row bg-gray-50/60 dark:bg-gray-900/50">
                     <td colspan="5" class="px-4 py-3">
                         @if($row['other_count'] === 0)
                         <p class="text-xs text-gray-500 dark:text-gray-400">No other judges have submitted a scoresheet for this entry yet.</p>
@@ -124,47 +122,14 @@
             </tbody>
             @endforeach
         </table>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Click a row to expand the per-section comparison. Outlier rows (more than 7 points from the other judges' average) are labelled.</p>
+        <p class="no-print text-xs text-gray-400 dark:text-gray-500 mt-2">Click a row to expand the per-section comparison. Outlier rows (more than 7 points from the other judges' average) are labelled.</p>
     </section>
     @else
     <p class="text-sm text-gray-500 dark:text-gray-400 italic mb-10">No submitted scoresheets yet.</p>
     @endif
 
     {{-- Full standings --}}
-    <section>
-        <h2 class="text-lg font-bold border-b border-gray-300 dark:border-gray-700 pb-1 mb-4">Full Standings</h2>
-        <table class="w-full text-sm border-collapse">
-            <thead>
-                <tr class="bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">
-                    <th class="text-left py-2 px-3 font-medium">#</th>
-                    <th class="text-left py-2 px-3 font-medium">Brewer</th>
-                    <th class="text-left py-2 px-3 font-medium">Style</th>
-                    <th class="text-center py-2 px-3 font-medium">Score</th>
-                    <th class="text-center py-2 px-3 font-medium">Band</th>
-                    <th class="text-center py-2 px-3 font-medium">Sheets</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($rankedEntries as $row)
-                @php
-                    /** @var array{entry: \App\Models\Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, \App\Models\Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, band_key: string, placement: int} $row */
-                @endphp
-                <tr class="border-t border-gray-100 dark:border-gray-800">
-                    <td class="py-2 px-3 font-bold text-gray-900 dark:text-white">{{ $row['placement'] }}</td>
-                    <td class="py-2 px-3 text-gray-700 dark:text-gray-300">{{ $row['entry']->member?->name }}</td>
-                    <td class="py-2 px-3 text-gray-600 dark:text-gray-400">{{ $row['entry']->style?->code }}@if($row['entry']->abv)<span class="text-xs text-gray-400 dark:text-gray-500 ml-1">{{ $row['entry']->abv }}% ABV</span>@endif</td>
-                    <td class="text-center py-2 px-3 font-semibold">{{ number_format($row['avg_total'], 1) }}</td>
-                    <td class="text-center py-2 px-3">
-                        <span class="text-xs font-medium px-2 py-0.5 rounded {{ \App\Services\CompetitionRankingService::bandColor($row['band_key']) }}">
-                            {{ $row['band'] }}
-                        </span>
-                    </td>
-                    <td class="text-center py-2 px-3 text-gray-600 dark:text-gray-400">{{ $row['sheet_count'] }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </section>
+    @include('results.partials.full-standings', ['currentMemberId' => $judge->id])
 
 </body>
 </x-page>
