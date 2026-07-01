@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 class CompetitionRankingService
 {
     /**
-     * @return Collection<int, array{entry: Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, placement: int}>
+     * @return Collection<int, array{entry: Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, band_key: string, placement: int}>
      */
     public function rank(Competition $competition): Collection
     {
@@ -34,6 +34,7 @@ class CompetitionRankingService
                     'avg_overall' => $averageOverall,
                     'sheet_count' => $sheets->count(),
                     'band' => $this->band($averageTotal),
+                    'band_key' => $this->bandKey($averageTotal),
                 ];
             })
             ->sort(fn (array $a, array $b): int => $b['avg_total'] <=> $a['avg_total']
@@ -88,5 +89,39 @@ class CompetitionRankingService
         }
 
         return 'Problematic';
+    }
+
+    public function bandKey(float $total): string
+    {
+        foreach (self::bands() as $band) {
+            if ($total >= $band['min']) {
+                return $band['key'];
+            }
+        }
+
+        return 'problematic';
+    }
+
+    /**
+     * Tailwind pill classes for each band key, keyed by `bands()['key']` so
+     * colors stay correct even if the point thresholds change.
+     *
+     * @return array<string, string>
+     */
+    public static function bandColors(): array
+    {
+        return [
+            'outstanding' => 'bg-purple-100 text-purple-800',
+            'excellent' => 'bg-green-100 text-green-800',
+            'very_good' => 'bg-teal-100 text-teal-800',
+            'good' => 'bg-blue-100 text-blue-800',
+            'fair' => 'bg-yellow-100 text-yellow-800',
+            'problematic' => 'bg-red-100 text-red-800',
+        ];
+    }
+
+    public static function bandColor(string $bandKey): string
+    {
+        return self::bandColors()[$bandKey] ?? self::bandColors()['problematic'];
     }
 }
