@@ -48,9 +48,8 @@ The CompetitionResource has a multi-tab edit interface:
 - **Overview** — name, year, judging date, status
 - **Styles** — categorised style selector (custom `StyleMultiSelect` component)
 - **Entries** — repeater for managing entries: member, style, bottle number, brewer notes, sort order (drag-to-reorder)
-- **Judging** — select judges, display judge participation link, judging progress visualisation
-- **Dashboard** — results summary with entry statistics
-- **Results** — variance table showing judge score spread per entry
+- **Dashboard** — live-polling summary: select judges, judge participation link, judging progress visualisation, entry statistics. Judge selection (formerly its own "Judging" tab) was merged in here.
+- **Results** — `JudgeVarianceWidget`, a variance table showing judge score spread per entry (see `judging.md` and `results.md`)
 
 ## Out of scope
 

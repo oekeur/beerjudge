@@ -8,6 +8,8 @@ Session-based auth for a closed group of known members. Three ways in: password,
 
 **`invitations`** — token (64-char random, unique), type (`single_use` | `time_bound`), expires_at (nullable), used_at (nullable), created_by (FK → members), timestamps.
 
+**`password_reset_tokens`** — Laravel's standard table (email primary key, token, created_at). Used by the password-reset flow below, separate from `magic_links`.
+
 ## Password login
 
 `GET /login` — login form.
@@ -20,6 +22,15 @@ Session-based auth for a closed group of known members. Three ways in: password,
 `GET /magic-link/{token}` — validates the token (not expired, not used), destroys any existing session, logs in the member, marks `used_at`. Expired or used tokens redirect back to the request form with an error.
 
 Tokens are single-use. The member must request a new one if they miss the 15-minute window.
+
+## Password reset (forgotten password)
+
+`GET /password/reset` — request form (`PasswordResetController::showRequestForm`).
+`POST /password/reset` — sends a reset link email (`sendResetLink`).
+`GET /password/reset/{token}` — reset form for a valid token (`showResetForm`).
+`POST /password/reset/confirm` — sets the new password (`resetPassword`), rate-limited to 5 attempts per minute.
+
+This is separate from the magic-link flow and from self-service profile password changes (`ProfileController`, see `members.md`) — it's for a member who is logged out and has forgotten their password entirely.
 
 ## Invitation-based registration
 

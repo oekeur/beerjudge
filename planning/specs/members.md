@@ -38,8 +38,10 @@ The MemberResource in Filament supports:
 - Edit member (same fields; password change optional on edit)
 - List members (searchable, sortable; inactive member count shown as a badge)
 
-Members cannot self-edit their profile; all changes go through Filament.
+## Self-service profile
+
+`GET /profile` / `PATCH /profile` (`ProfileController`) — members can edit their own name, email, and locale, and change their password (current password required). A separate forgotten-password reset flow also exists — see `authentication.md`.
 
 ## Out of scope
 
-Member self-service profile editing. Password reset flow (magic link covers forgotten passwords). BJCP rank tracking. Photo uploads. Per-member competition history and stats (planned — see roadmap).
+BJCP rank tracking. Photo uploads. Per-member competition history and stats (planned — see roadmap).

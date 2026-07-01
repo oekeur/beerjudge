@@ -7,8 +7,9 @@ The BJCP 2021 style guide is seeded once as the master catalogue. Each competiti
 | Column | Type | Notes |
 |---|---|---|
 | id | bigint | PK |
-| code | string | Unique BJCP code, e.g. `23A` |
-| version | string | `2021` |
+| code | string | BJCP code, e.g. `23A`; unique together with `source` |
+| source | string | `bjcp_beer`, `bjcp_mead`, `bjcp_cider`, or `custom` |
+| version | string | nullable; `2021` for seeded BJCP styles, `null` for `custom` |
 | category_name | string | e.g. `Pale American Ale` |
 | category_description | text | nullable |
 | name | string | Style name, e.g. `American Pale Ale` |
@@ -32,7 +33,7 @@ The BJCP 2021 style guide is seeded once as the master catalogue. Each competiti
 
 ## Seeding
 
-`BjcpStyleSeeder` reads `bjcp_styleguide-2021.json` and upserts all styles by `code`. Running the seeder again is safe — it updates existing rows, not duplicates. The full BJCP 2021 style set is seeded by `php artisan migrate --seed` and by the demo seeder.
+`BjcpStyleSeeder` reads `bjcp_styleguide-2021.json` and upserts all styles by `(code, source)`. Running the seeder again is safe — it updates existing rows, not duplicates. The full BJCP 2021 style set is seeded by `php artisan migrate --seed` and by the demo seeder.
 
 ## Style guidelines on the judging screen
 
@@ -40,8 +41,12 @@ Each entry's judging card includes a collapsible panel with the style guide cont
 
 ## Admin management (Filament)
 
-StyleResource in Filament is read-mostly. Admins can view and edit style content (useful for corrections to the seeded data) but cannot create new styles or delete existing ones through the UI. The list is searchable and sortable.
+Admins can view and edit any style's content (useful for corrections to the seeded data), create new styles, and delete styles — but delete is restricted to styles with `source === 'custom'` (`StyleResource::canDelete()`); seeded BJCP styles can be edited but not deleted. The list is searchable and sortable.
+
+## Multi-source styles
+
+Styles carry a `source` column identifying where they came from: `bjcp_beer` (seeded by `BjcpStyleSeeder`), `bjcp_mead` / `bjcp_cider` (reserved, no seeders yet), or `custom` (created by admins through Filament). The upsert key for seeded styles is `(code, source)`. Admin-created custom styles are the only ones deletable through the UI (see above).
 
 ## Out of scope
 
-Style versions other than BJCP 2021. User-created custom styles. Sub-styles or speciality-ingredient variants. Style-level rankings or statistics (planned — see roadmap).
+Style versions other than BJCP 2021 for the seeded catalogue. Sub-styles or speciality-ingredient variants. Style-level rankings or statistics (planned — see roadmap).

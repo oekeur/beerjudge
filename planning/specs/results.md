@@ -33,9 +33,14 @@ Print-styled Blade view. The print button triggers the browser print dialog.
 
 ## Results index
 
-`GET /competitions/{competition}/results` — lists all members who have entries in the competition, each linking to their individual result sheet. Serves as the navigation layer for batch printing (admin prints each participant's sheet from this list).
+`GET /competitions/{competition}/results` — access rules match the individual sheet: admins at any status, members only when closed. What's shown differs by role:
 
-Access rules match the individual sheet: admins at any status, members only when closed.
+- **Admin:** the full roster — every member with an entry, each linking to their individual result sheet, plus every judge, each linking to their judge report. Serves as the navigation layer for batch printing (admin prints each participant's sheet from this list).
+- **Regular member:** only their own links — a link to their own result sheet if they have an entry, a link to their own judge report if they judged the competition — plus the full standings (see Part 2 above). A member with neither an entry nor a judging role sees the full standings only. Other members' and judges' names and report links are never shown to a non-admin.
+
+## Judge report (per judge)
+
+`GET /competitions/{competition}/judge-report/{judge}` — an individual judge's own scores compared against the other judges' averages for each entry they scored, plus the full standings. Access rules match the results sheet: admins at any status (any judge), a judge only their own report once the competition is `closed`. Flags entries where the judge's total diverges from the other judges' average total by more than the outlier threshold used for judge variance flagging, below (`CompetitionRankingService`).
 
 ## Score bands (display)
 
