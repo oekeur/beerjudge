@@ -93,7 +93,7 @@
                         </div>
                         <div class="text-xs text-gray-500 dark:text-gray-400">{{ $row['entry']->style?->code }}</div>
                     </td>
-                    <td class="text-center py-2.5 px-3 font-semibold tabular-nums">{{ number_format($row['own_total'], 1) }}</td>
+                    <td class="text-center py-2.5 px-3 font-semibold tabular-nums text-gray-900 dark:text-white">{{ number_format($row['own_total'], 1) }}</td>
                     <td class="text-center py-2.5 px-3 text-gray-500 dark:text-gray-400 tabular-nums">{{ $row['other_count'] > 0 ? number_format($row['other_avg_total'], 1) : '—' }}</td>
                     <td class="text-center py-2.5 px-3 font-medium text-gray-500 dark:text-gray-400 tabular-nums">{{ $row['other_count'] > 0 ? ($row['delta'] > 0 ? '+' : '') . number_format($row['delta'], 1) : '—' }}</td>
                     <td class="text-center py-2.5 px-3 text-gray-400 chevron" x-text="open ? '▴' : '▾'">▾</td>
