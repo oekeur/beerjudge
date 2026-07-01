@@ -97,6 +97,17 @@ class ResultsAccessTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_uninvolved_member_can_view_index_and_sees_only_full_standings(): void
+    {
+        [$comp, , , $other] = $this->seedData();
+        $response = $this->actingAs($other)->get("/competitions/{$comp->id}/results");
+        $response->assertOk();
+        $response->assertSee('Full Standings');
+        $response->assertDontSee(route('results.show', [$comp, $other]), false);
+        $response->assertDontSee('View sheet');
+        $response->assertDontSee('View judge report');
+    }
+
     public function test_member_index_shows_own_entry_link_but_not_other_members(): void
     {
         [$comp, $brewer, , $other] = $this->seedData();
