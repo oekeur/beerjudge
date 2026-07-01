@@ -44,6 +44,8 @@ class ResultsController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('results.index', compact('competition', 'members'));
+        $judges = $competition->judges()->orderBy('name')->get();
+
+        return view('results.index', compact('competition', 'members', 'judges'));
     }
 }
