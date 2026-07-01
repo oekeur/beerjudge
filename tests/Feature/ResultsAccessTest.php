@@ -97,6 +97,68 @@ class ResultsAccessTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_uninvolved_member_can_view_index_and_sees_only_full_standings(): void
+    {
+        [$comp, $brewer, $admin, $other] = $this->seedData();
+        $response = $this->actingAs($other)->get("/competitions/{$comp->id}/results");
+        $response->assertOk();
+        $response->assertSee('Full Standings');
+        $response->assertDontSee(route('results.show', [$comp, $brewer]), false);
+        $response->assertDontSee('View sheet');
+        $response->assertDontSee('View judge report');
+    }
+
+    public function test_member_index_shows_own_entry_link_but_not_other_members(): void
+    {
+        [$comp, $brewer, $admin, $other] = $this->seedData();
+        $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results");
+        $response->assertOk();
+        $response->assertSee(route('results.show', [$comp, $brewer]), false);
+        $response->assertDontSee($other->name);
+    }
+
+    public function test_member_index_shows_own_judge_report_link_when_viewer_judged(): void
+    {
+        [$comp, $brewer, $admin, $other] = $this->seedData();
+        $response = $this->actingAs($other)->get("/competitions/{$comp->id}/results");
+        $response->assertDontSee('View judge report');
+
+        $comp->judges()->attach($other->id);
+        $response = $this->actingAs($other)->get("/competitions/{$comp->id}/results");
+        $response->assertSee(route('judge-report.show', [$comp, $other]), false);
+    }
+
+    public function test_member_index_does_not_show_other_members_report_links(): void
+    {
+        [$comp, $brewer, $admin, $other] = $this->seedData();
+        $comp->judges()->attach($other->id);
+        $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results");
+        $response->assertDontSee(route('judge-report.show', [$comp, $other]), false);
+        $response->assertDontSee(route('results.show', [$comp, $other]), false);
+    }
+
+    public function test_member_index_shows_full_standings(): void
+    {
+        [$comp, $brewer] = $this->seedData();
+        $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results");
+        $response->assertOk();
+        $response->assertSee('Full Standings');
+    }
+
+    public function test_admin_index_still_shows_all_members_and_judges(): void
+    {
+        [$comp, $brewer, $admin] = $this->seedData();
+        $comp->judges()->attach($admin->id);
+        $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results");
+        $response->assertOk();
+        $response->assertSee('Full results');
+        $response->assertSee('Your judge report');
+        $response->assertSee($brewer->name);
+        $response->assertSee($admin->name);
+        $response->assertSee(route('results.show', [$comp, $brewer]), false);
+        $response->assertSee(route('judge-report.show', [$comp, $admin]), false);
+    }
+
     public function test_ranking_orders_by_average_total_descending(): void
     {
         $style = Style::create(['code' => '3A', 'category_name' => 'CZ', 'name' => 'Czech Pale Lager']);
