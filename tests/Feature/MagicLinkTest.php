@@ -49,6 +49,7 @@ class MagicLinkTest extends TestCase
             ->assertRedirect('/');
 
         $this->assertAuthenticatedAs($member);
+        $this->assertNotNull($member->fresh()->remember_token);
     }
 
     public function test_expired_magic_link_redirects_with_error(): void

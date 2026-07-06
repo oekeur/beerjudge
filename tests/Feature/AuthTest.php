@@ -23,6 +23,7 @@ class AuthTest extends TestCase
             ->assertRedirect('/');
 
         $this->assertAuthenticatedAs($member);
+        $this->assertNotNull($member->fresh()->remember_token);
     }
 
     public function test_admin_login_redirects_to_admin(): void

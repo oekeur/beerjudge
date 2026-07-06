@@ -22,7 +22,7 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::attempt($credentials, remember: true)) {
             $request->session()->regenerate();
 
             return $this->member($request)->is_admin
@@ -76,7 +76,7 @@ class AuthController extends Controller
 
         abort_if($member === null, 401);
 
-        Auth::login($member);
+        Auth::login($member, remember: true);
         $request->session()->regenerate();
 
         return $member->is_admin
