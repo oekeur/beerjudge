@@ -53,6 +53,28 @@ class HasTokenExpiryTest extends TestCase
         $this->assertFalse($invitation->isValid());
     }
 
+    public function test_invalid_reason_is_null_while_usable(): void
+    {
+        $this->assertNull($this->makeInvitation()->invalidReason());
+    }
+
+    public function test_invalid_reason_reports_expiry(): void
+    {
+        $invitation = $this->makeInvitation(['expires_at' => now()->subMinute()]);
+
+        $this->assertSame(Invitation::REASON_EXPIRED, $invitation->invalidReason());
+    }
+
+    public function test_invalid_reason_prefers_used_over_expired(): void
+    {
+        $invitation = $this->makeInvitation([
+            'used_at' => now(),
+            'expires_at' => now()->subMinute(),
+        ]);
+
+        $this->assertSame(Invitation::REASON_USED, $invitation->invalidReason());
+    }
+
     public function test_mark_used_sets_used_at(): void
     {
         $invitation = $this->makeInvitation();
