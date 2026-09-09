@@ -52,6 +52,55 @@ class InvitationTest extends TestCase
         $this->get('/join/'.$invitation->token)->assertStatus(410);
     }
 
+    public function test_expired_token_explains_the_expiry(): void
+    {
+        $invitation = $this->createInvitation([
+            'type' => Invitation::TYPE_TIME_BOUND,
+            'expires_at' => Carbon::parse('2026-01-02 20:30'),
+        ]);
+
+        $response = $this->get('/join/'.$invitation->token);
+
+        $response->assertStatus(410);
+        $response->assertViewIs('auth.invite-invalid');
+        $response->assertSee(__('auth.invite_expired_heading'));
+        $response->assertSee(__('auth.invite_expired_at', ['date' => '2 January 2026, 20:30']));
+        $response->assertSee(__('auth.invite_next_step'));
+        $response->assertSee(route('login'));
+        $response->assertDontSee(__('auth.invite_used_heading'));
+    }
+
+    public function test_used_token_explains_it_was_already_used(): void
+    {
+        $invitation = $this->createInvitation(['used_at' => now()]);
+
+        $response = $this->get('/join/'.$invitation->token);
+
+        $response->assertStatus(410);
+        $response->assertViewIs('auth.invite-invalid');
+        $response->assertSee(__('auth.invite_used_heading'));
+        $response->assertDontSee(__('auth.invite_expired_heading'));
+    }
+
+    public function test_posting_to_an_expired_token_explains_the_expiry_and_creates_nothing(): void
+    {
+        $invitation = $this->createInvitation([
+            'type' => Invitation::TYPE_TIME_BOUND,
+            'expires_at' => Carbon::yesterday(),
+        ]);
+
+        $response = $this->post('/join/'.$invitation->token, [
+            'name' => 'Too Late',
+            'email' => 'toolate@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertStatus(410);
+        $response->assertSee(__('auth.invite_expired_heading'));
+        $this->assertDatabaseMissing('members', ['email' => 'toolate@example.com']);
+    }
+
     public function test_unknown_token_returns_404(): void
     {
         $this->get('/join/doesnotexist')->assertNotFound();
