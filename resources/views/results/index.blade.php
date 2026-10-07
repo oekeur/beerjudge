@@ -55,10 +55,6 @@
             @endforeach
         </div>
 
-        <div class="mt-6">
-            <button onclick="window.open('?print=all')" class="text-sm text-amber-700 dark:text-amber-400 underline">Print all</button>
-        </div>
-
         @if($judges->isNotEmpty())
         <div class="mt-10">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-300 dark:border-gray-700 pb-1 mb-3">Judge Reports</h3>
