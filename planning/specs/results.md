@@ -12,7 +12,7 @@ Because the average is computed from current scoresheet values, editing a scores
 
 ## Access control
 
-**Deviation from original PRD:** the PRD specified a `published_at` field that admins would set to release results to members after a sanity check. This was dropped. Access is now purely status-based:
+**Deviation from original PRD:** the PRD described a publish step that releases results to members. It was dropped. Access is purely status-based:
 
 | Viewer | `draft` | `open` | `judging` | `closed` |
 |---|---|---|---|---|
@@ -33,7 +33,7 @@ Print-styled Blade view. The print button triggers the browser print dialog.
 
 ## Results index
 
-`GET /competitions/{competition}/results` — lists all members who have entries in the competition, each linking to their individual result sheet. Serves as the navigation layer for batch printing (admin prints each participant's sheet from this list).
+`GET /competitions/{competition}/results` — lists all members who have entries in the competition, each linking to their individual result sheet. Serves as the navigation layer for printing: each participant's sheet is printed from its own page.
 
 Access rules match the individual sheet: admins at any status, members only when closed.
 

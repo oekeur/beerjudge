@@ -93,7 +93,7 @@ Final score is the average of submitted totals. Tiebreak is the averaged overall
 
 ## Results
 
-Admin sees results as soon as the competition closes. Members see their own scoresheet once the admin publishes (`published_at` set). One URL per participant: their scores and judge notes, then the full standings with brewer names revealed. Admins can render all participants at once for batch printing.
+Admins see results at any status; members see them once the competition is `closed`. There is no separate publish step. Closing queues an email to every active member with an entry, linking to their sheet. One URL per participant: their scores and judge notes, then the full standings with brewer names revealed. Each sheet is printed from its own page, reached through the results index.
 
 ## Documentation
 

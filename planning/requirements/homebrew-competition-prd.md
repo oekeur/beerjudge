@@ -6,7 +6,7 @@ A small tool for a ~10-person homebrew club to run four competitions a year. Mem
 
 ## Users and roles
 
-Everyone is a `member`. A member both brews (enters beers) and judges (scores other people's beers). One or more members also hold an `admin` flag, which lets them set up competitions, register entries, assign bottle numbers, and publish results.
+Everyone is a `member`. A member both brews (enters beers) and judges (scores other people's beers). One or more members also hold an `admin` flag, which lets them set up competitions, register entries, assign bottle numbers, and close competitions to release results.
 
 No public sign-up. The admin adds members by hand; ten people, added once.
 
@@ -22,7 +22,7 @@ Payments and entry fees. Public or anonymous registration. Bottle shipping and l
 
 `members`: id, name, email, bjcp_rank (nullable), is_admin, is_active.
 
-`competitions`: id, name, year, judging_date, status (draft / open / judging / closed), published_at (nullable; set when the admin releases results).
+`competitions`: id, name, year, judging_date, status (draft / open / judging / closed).
 
 `styles`: id, code (e.g. 23A), category_name, name, version (2021), optional vital-stat ranges (OG, FG, ABV, IBU, SRM). Seeded once with the full BJCP 2021 set; each competition picks the styles it accepts from these.
 
@@ -54,7 +54,7 @@ Their own entries in detail: for each beer, the style, every judge's section sco
 
 Then the full standings: every entry ranked by average, with brewer names revealed, since blind judging is over.
 
-It's a print-styled Blade view, one URL per participant. Admins see sheets as soon as a competition closes; members see their own only after the admin publishes (sets `published_at`), which leaves room to sanity-check first. An admin can render every participant at once for batch printing. Generating PDFs (dompdf) instead of relying on browser print is optional.
+It's a print-styled Blade view, one URL per participant. Admins see sheets at any status; members see their own once the competition is closed. There is no separate publish step. Each sheet is printed from its own page, reached through the results index. Generating PDFs (dompdf) instead of relying on browser print is optional.
 
 ## Judging screen (online, with local backup)
 
@@ -77,7 +77,7 @@ One Laravel app, two frontends. Filament handles the management side: members, c
 ## Decisions
 
 1. Tiebreak: averaged overall-impression score (BJCP convention).
-2. Results: admin-only at close, released to members when the admin publishes.
+2. Results: visible to members once the competition is closed, to admins at any status. No separate publish step.
 3. Styles: seed the full BJCP 2021 set; pick accepted styles per competition.
 4. History: keep all past competitions and scores queryable across years.
 5. Sessions: judges stay signed in about a week before re-auth.
