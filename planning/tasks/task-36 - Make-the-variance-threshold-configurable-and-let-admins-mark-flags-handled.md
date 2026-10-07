@@ -4,6 +4,7 @@ title: Make the variance threshold configurable and let admins mark flags handle
 status: Backlog
 assignee: []
 created_date: '2026-10-07 14:39'
+updated_date: '2026-10-07 18:09'
 labels:
   - judge-variance
 dependencies: []
@@ -19,3 +20,13 @@ ordinal: 36000
 <!-- SECTION:DESCRIPTION:BEGIN -->
 The 7-point threshold is hardcoded in JudgeVarianceWidget.php:59,63. The PRD's optional reviewed_at column does not exist.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-07 18:09
+---
+[audit] Unclear whether the threshold is global config or per competition. — Decide where it lives.
+---
+<!-- COMMENTS:END -->

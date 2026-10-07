@@ -4,6 +4,7 @@ title: Verify production env against the launch checklist
 status: To Do
 assignee: []
 created_date: '2026-10-07 14:39'
+updated_date: '2026-10-07 18:09'
 labels:
   - launch-ops
 dependencies: []
@@ -29,3 +30,13 @@ The repo-root .env.production is a local copy that drifted from the server's fil
 - [ ] #4 Redis binds to localhost or the internal network only, or REDIS_PASSWORD is set
 - [ ] #5 Local .env.production copy matches the server or is deleted
 <!-- AC:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-07 18:09
+---
+[audit] [RISK] Only Oscar has server access, so an agent cannot do or verify this, and TASK-29 is blocked on it. — Oscar does it, or pastes redacted server values so the ACs can be checked.
+---
+<!-- COMMENTS:END -->
