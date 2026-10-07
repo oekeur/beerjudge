@@ -13,6 +13,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading(! app()->isProduction());
+        Model::preventSilentlyDiscardingAttributes(! app()->isProduction());
 
         $clubName = is_string($v = config('app.club_name')) ? $v : '';
         View::share('appTitle', $clubName !== '' ? $clubName.' BeerJudge' : 'BeerJudge');
