@@ -1,10 +1,10 @@
 ---
 id: TASK-27
 title: Verify production env against the launch checklist
-status: Review
+status: Done
 assignee: []
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-07 19:31'
+updated_date: '2026-10-07 20:16'
 labels:
   - launch-ops
 dependencies: []
@@ -28,7 +28,7 @@ The repo-root .env.production is a local copy that drifted from the server's fil
 - [x] #2 DB_PASSWORD rotated away from the dev value
 - [x] #3 MAIL_FROM_ADDRESS is a real club sender, not hello@example.com
 - [x] #4 Redis binds to localhost or the internal network only, or REDIS_PASSWORD is set
-- [ ] #5 Local .env.production copy matches the server or is deleted
+- [x] #5 Local .env.production copy matches the server or is deleted
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -44,3 +44,9 @@ Probes 2026-10-07 over ssh (read-only), server /home/oscar/git/beerjudge:
 - Queue worker: 1 queue:work process in beerjudge-app-1.
 - AC5: repo-root .env.production differs from server (local MAIL_MAILER=log, MAIL_FROM hello@example.com). Waiting on Oscar: delete it or sync it.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Production env verified over ssh 2026-10-07 (read-only probes, evidence in notes): APP_ENV=production, APP_DEBUG=false; DB password rotated (app connects, not 'secret'); MAIL_FROM_ADDRESS=beerjudge@foebar.com over smtp; Redis unpublished and only on the beerjudge_default network; queue worker running. Oscar deleted the drifted repo-root .env.production copy; the server file is the only source. Gotcha kept in notes: the server DB_PASSWORD contains a $ that Compose interpolates.
+<!-- SECTION:FINAL_SUMMARY:END -->
