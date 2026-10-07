@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\CompetitionStatus;
+use App\Notifications\CompetitionResultsNotification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property int $year
  * @property CompetitionStatus $status
  * @property Carbon|null $judging_date
+ * @property Carbon|null $results_mailed_at
  * @property Collection<int, Member> $judges
  * @property Collection<int, Entry> $entries
  */
@@ -30,8 +33,64 @@ class Competition extends Model
     {
         return [
             'judging_date' => 'date',
+            'results_mailed_at' => 'datetime',
             'status' => CompetitionStatus::class,
         ];
+    }
+
+    /**
+     * Mails every participant their results link the first time the competition is closed.
+     * The conditional update claims the send atomically, so a status bounce or a concurrent
+     * save cannot trigger a second bulk send.
+     */
+    protected static function booted(): void
+    {
+        static::updated(function (Competition $competition): void {
+            if (! $competition->wasChanged('status') || ! $competition->isClosed()) {
+                return;
+            }
+
+            $claimed = static::query()
+                ->whereKey($competition->getKey())
+                ->whereNull('results_mailed_at')
+                ->update(['results_mailed_at' => now()]);
+
+            if ($claimed === 1) {
+                $competition->sendResultsEmails();
+            }
+        });
+    }
+
+    /**
+     * Sends the results email to each active member with at least one entry, or to the given members only.
+     *
+     * @param  Collection<int, Member>|null  $members
+     */
+    public function sendResultsEmails(?Collection $members = null): void
+    {
+        $members ??= $this->activeParticipants()->get();
+
+        foreach ($members as $member) {
+            $member->notify((new CompetitionResultsNotification($this))->locale($member->locale));
+        }
+    }
+
+    /**
+     * @return Builder<Member>
+     */
+    public function participants(): Builder
+    {
+        return Member::query()->whereHas('entries', fn (Builder $query) => $query->where('competition_id', $this->id));
+    }
+
+    /**
+     * Participants who can open the login-gated results link (RequireActiveMember bounces the rest).
+     *
+     * @return Builder<Member>
+     */
+    public function activeParticipants(): Builder
+    {
+        return $this->participants()->where('is_active', true);
     }
 
     public function isDraft(): bool

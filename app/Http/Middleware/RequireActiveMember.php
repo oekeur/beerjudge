@@ -25,7 +25,7 @@ class RequireActiveMember
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->withErrors(['email' => __('Your account is not active.')]);
+            return redirect()->route('login')->withErrors(['email' => __('auth.inactive_account')]);
         }
 
         return $next($request);

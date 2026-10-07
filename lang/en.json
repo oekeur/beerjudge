@@ -204,5 +204,15 @@
     "profile.save": "Save",
     "profile.saved": "Profile saved.",
     "profile.wrong_current_password": "The current password you entered is incorrect.",
-    "profile.password_hint": "Leave blank to keep your current password."
+    "profile.password_hint": "Leave blank to keep your current password.",
+    "competition.results_mail_subject": "Results for :competition",
+    "competition.results_mail_intro": "The results for :competition are in. Your scores and the full standings are on your results sheet.",
+    "competition.results_mail_action": "View your results",
+    "competition.action.resend_results": "Resend results email",
+    "competition.action.resend_results_member": "Member",
+    "competition.action.resend_results_sent": "Results email sent",
+    "members.last_admin_demote": "Cannot demote the last active admin.",
+    "members.last_admin_deactivate": "Cannot deactivate the last active admin.",
+    "members.last_admin_delete": "Cannot delete the last active admin.",
+    "auth.inactive_account": "Your account is not active."
 }

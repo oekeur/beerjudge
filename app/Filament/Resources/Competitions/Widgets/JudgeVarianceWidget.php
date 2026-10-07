@@ -31,6 +31,7 @@ class JudgeVarianceWidget extends BaseWidget
         return $table
             ->query(
                 Entry::query()
+                    ->with('style')
                     ->where('competition_id', $this->competitionId)
                     ->withCount(['scoresheets as sheet_count' => fn (Builder $q) => $q->where('status', ScoresheetStatus::Submitted)])
                     ->withAvg(['scoresheets as avg_total' => fn (Builder $q) => $q->where('status', ScoresheetStatus::Submitted)], 'total')
@@ -48,7 +49,9 @@ class JudgeVarianceWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('bottle_number')->label(__('widget.variance.column.number'))->sortable(),
-                Tables\Columns\TextColumn::make('name')->label(__('widget.variance.column.beer')),
+                Tables\Columns\TextColumn::make('style.code')
+                    ->label(__('widget.variance.column.beer'))
+                    ->state(fn (Entry $record): string => trim("{$record->style?->code} {$record->style?->name}")),
                 Tables\Columns\TextColumn::make('sheet_count')->label(__('widget.variance.column.sheets')),
                 Tables\Columns\TextColumn::make('avg_total')
                     ->label(__('widget.variance.column.avg_score'))

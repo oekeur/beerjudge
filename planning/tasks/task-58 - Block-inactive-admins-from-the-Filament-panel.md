@@ -1,0 +1,26 @@
+---
+id: TASK-58
+title: Block inactive admins from the Filament panel
+status: To Do
+assignee: []
+created_date: '2026-10-07 20:15'
+labels:
+  - security-hardening
+  - admin-guard
+dependencies: []
+priority: high
+type: bug
+ordinal: 58000
+---
+
+## Description
+
+<!-- SECTION:DESCRIPTION:BEGIN -->
+Member::canAccessPanel() returns is_admin only, and the admin panel's authMiddleware (Authenticate, SetLocale) does not include RequireActiveMember. A deactivated admin keeps full /admin access: password login sends admins to /admin, and GET /admin as an inactive admin renders the panel. Confirmed by the TASK-52 adversarial gate (probe test_inactive_admin_panel, 2026-10-07). Deactivating an admin is the way to revoke access, so this defeats it.
+<!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [ ] #1 An inactive admin requesting /admin is denied (403 or redirect to /login), covered by a feature test
+- [ ] #2 An active admin still reaches /admin
+<!-- AC:END -->

@@ -8,6 +8,8 @@ use App\Models\Competition;
 use App\Services\BottleNumberAssignmentService;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 /**
@@ -58,6 +60,25 @@ class EditCompetition extends EditRecord
                 ->color('gray')
                 ->url(fn () => route('results.index', $record))
                 ->openUrlInNewTab() : null,
+
+            $record->isClosed() ? Action::make('resendResults')
+                ->label(__('competition.action.resend_results'))
+                ->color('gray')
+                ->schema([
+                    Select::make('member_id')
+                        ->label(__('competition.action.resend_results_member'))
+                        ->options(fn (): array => $record->activeParticipants()->orderBy('name')->pluck('name', 'id')->all())
+                        ->searchable()
+                        ->required(),
+                ])
+                ->action(function (array $data) use ($record): void {
+                    $record->sendResultsEmails($record->activeParticipants()->whereKey($data['member_id'])->get());
+
+                    Notification::make()
+                        ->title(__('competition.action.resend_results_sent'))
+                        ->success()
+                        ->send();
+                }) : null,
         ]));
 
         return array_merge([DeleteAction::make()], $lifecycle);

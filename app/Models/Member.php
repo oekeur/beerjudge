@@ -59,6 +59,16 @@ class Member extends Authenticatable implements CanResetPasswordContract, Filame
     }
 
     /**
+     * True when this member is an active admin and no other active admin exists.
+     */
+    public function isLastActiveAdmin(): bool
+    {
+        return $this->is_admin
+            && $this->is_active
+            && ! static::query()->where('is_admin', true)->where('is_active', true)->whereKeyNot($this->getKey())->exists();
+    }
+
+    /**
      * @return HasMany<Entry, $this>
      */
     public function entries(): HasMany

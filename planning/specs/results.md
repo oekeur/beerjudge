@@ -37,6 +37,15 @@ Print-styled Blade view. The print button triggers the browser print dialog.
 
 Access rules match the individual sheet: admins at any status, members only when closed.
 
+## Results email
+
+When a competition moves to `closed`, every participant gets an email with the competition name and a link to their results sheet (`results.show`). Participants are the distinct active members with at least one entry in the competition; inactive members cannot log in, so they are skipped.
+
+- **Trigger:** an `updated` hook in `Competition::booted()` fires when `status` changed to `closed`. Every path that closes a competition (the `moveToClosed` action, the status select) goes through `update()`, so none sends mail itself.
+- **Guard:** nullable `competitions.results_mailed_at`. The hook claims the send with a conditional update (`WHERE results_mailed_at IS NULL`) and only sends when that update changed a row, so `closed -> judging -> closed` does not mail twice. The migration backfills `results_mailed_at = updated_at` for competitions already `closed`, so deploying does not mail old results.
+- **Delivery:** `CompetitionResultsNotification` is queued and sent in the member's `locale`.
+- **Resend:** the "Resend results email" header action on the competition edit page (visible only when closed) sends to one chosen participant and ignores the guard.
+
 ## Score bands (display)
 
 Shown alongside averaged totals on the results sheet for context:
@@ -62,4 +71,4 @@ Both results views use `<x-app-head>` for their page head. `results/show` passes
 
 ## Out of scope
 
-PDF generation (dompdf). Per-style rankings or category placements. Automated email of results links (planned — see roadmap). Per-member score history across competitions (planned — see roadmap). Awards, medals, or best-in-show designations.
+PDF generation (dompdf). Per-style rankings or category placements. Per-member score history across competitions (planned — see roadmap). Awards, medals, or best-in-show designations.

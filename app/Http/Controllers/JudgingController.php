@@ -22,6 +22,7 @@ class JudgingController extends Controller
             ->with(['style', 'member'])
             ->where('member_id', '!=', $judge->id)
             ->orderBy('sort_order')
+            ->orderBy('id')
             ->get()
             ->values();
 
@@ -103,7 +104,7 @@ class JudgingController extends Controller
         abort_unless($member->is_admin, 403);
 
         $judgeIds = $competition->judges()->pluck('member_id');
-        $entries = $competition->entries()->orderBy('sort_order')->get(['id', 'member_id']);
+        $entries = $competition->entries()->orderBy('sort_order')->orderBy('id')->get(['id', 'member_id']);
 
         $submittedCounts = Scoresheet::whereIn('entry_id', $entries->pluck('id'))
             ->where('status', 'submitted')
