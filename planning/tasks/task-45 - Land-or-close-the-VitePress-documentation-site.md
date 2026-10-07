@@ -1,10 +1,10 @@
 ---
 id: TASK-45
 title: Land or close the VitePress documentation site
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-07 14:55'
+updated_date: '2026-10-07 15:50'
 labels:
   - docs-site
 dependencies: []
@@ -31,3 +31,9 @@ ordinal: 45000
 2. fix false claims on the branch
 3. merge PR #6 once CI passes
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Docs verified against main and about 70 drifted claims corrected (e3fcc7b), VitePress build with dead-link check passes, merged as d766af3 (PR #6). GitHub Pages is not enabled yet, so the deploy workflow publishes nothing until Oscar sets Settings > Pages > source to GitHub Actions.
+<!-- SECTION:FINAL_SUMMARY:END -->
