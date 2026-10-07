@@ -119,16 +119,15 @@ Two frontends, one app:
 
 ```
 members             id, name, email, is_admin, is_active
-competitions        id, name, year, judging_date, status (draft/open/judging/closed), published_at
+competitions        id, name, year, judging_date, status (draft/open/judging/closed), results_mailed_at
 styles              id, code (e.g. 23A), category_name, name, version (2021), OG/FG/ABV/IBU/SRM ranges
                     + description, commercial_examples (Enhancement 1)
 entries             id, competition_id, member_id, style_id, bottle_number, brewer_notes
 scoresheets         id, entry_id, judge_id, aroma (0-12), appearance (0-3), flavour (0-20),
                     mouthfeel (0-5), overall (0-10), total (computed), per-section notes,
+                    descriptors (json array of off-flavour keys, nullable) [Enhancement 2],
                     client_uuid, status (draft/submitted), timestamps
 competition_style   pivot: competition_id, style_id
-descriptors         id, name, slug, kind (fault/style-trait)  [Enhancement 2]
-scoresheet_descriptor  scoresheet_id, descriptor_id, intensity (low/med/high, optional)  [Enhancement 2]
 ```
 
 Unique constraint on `(entry_id, judge_id)` — one scoresheet per judge per entry.
@@ -157,7 +156,7 @@ Judges score any entry except their own (`entry.member_id != judge_id`). Final s
 
 - All members see the full standings once a competition closes; admins see them at any status
 - One URL per participant: their own scores + judge notes, then the full standings with brewer names revealed
-- Admins can render all participants at once for batch printing
+- Each sheet is printed from its own page, reached through the results index
 - Print-styled Blade view; dompdf is optional
 
 ## Scoresheet sync (judging screen)
@@ -217,7 +216,7 @@ Tasks live in Backlog.md, rooted at `planning/` (config: `backlog.config.yml`). 
 1. **Style guidelines** — collapsible BJCP description + vital stats panel per entry on the judging screen. Seed from BJCP 2021 data. Check redistribution terms first.
 2. **Off-flavor descriptors** — structured tick boxes on the scoresheet (acetaldehyde, diacetyl, DMS, etc.). Ride along in the same POST payload, covered by existing idempotency.
 3. **Judge variance flagging** — computed over `scoresheets`, no new tables. Flag entries whose score spread exceeds ~7 points; surface as a badge in Filament.
-4. **Email on publish** — queued job dispatched when `published_at` is set; one email per participant with a link to their results sheet. Requires mail transport and queue worker.
+4. **Email on close** — a queued notification sent when a competition moves to `closed` (`Competition::booted` updated hook), guarded by `results_mailed_at` so reopening and closing again does not mail twice. One email per active member with an entry, linking to their login-gated results sheet. Admins can resend to one member from the competition edit page. Requires mail transport and queue worker.
 5. **History and stats** — per-member trend, club-wide stats, per-style distributions. All reads from existing tables; surface as Filament pages and chart widgets.
 
 ===

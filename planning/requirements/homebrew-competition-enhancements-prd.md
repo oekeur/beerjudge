@@ -30,7 +30,7 @@ Effort: low to medium.
 
 With several sheets averaged per entry, one strict or lenient judge can move a result. Surface the disagreement so you can act on it before locking, without auto-correcting anyone's scores.
 
-Per entry, compute the spread of submitted totals (range, or standard deviation). Flag entries whose spread crosses a tunable threshold (a range over roughly 7 points is a sensible default). Show the flag in Filament as a badge on the entry, so an admin can prompt a re-taste or a quick discussion before publishing.
+Per entry, compute the spread of submitted totals (range, or standard deviation). Flag entries whose spread crosses a tunable threshold (a range over roughly 7 points is a sensible default). Show the flag in Filament as a badge on the entry, so an admin can prompt a re-taste or a quick discussion before closing the competition.
 
 No new tables; it's a computed view over `scoresheets`. Optionally add a `reviewed_at` on the entry so an admin can mark a flag as handled. Define the small-n cases: one sheet means no variance, two sheets means the flag is just their difference.
 
@@ -38,11 +38,11 @@ Normalization stays out of scope. This only surfaces outliers; it doesn't adjust
 
 Effort: low, a query plus a Filament column.
 
-## 4. Email on publish
+## 4. Email on close
 
-Sharing results by hand is the kind of step that gets skipped. When an admin publishes a competition (sets `published_at`), email each participant a link to their results sheet.
+Sharing results by hand is the kind of step that gets skipped. When an admin closes a competition (status moves to `closed`), email each participant a link to their results sheet.
 
-Publishing dispatches a queued job that emails every member with an entry in that competition, one message each, linking to their per-participant sheet. The link is login-gated (or a signed, expiring URL) so results stay private until published. Guard against double-sends on a re-publish, with a manual resend action for stragglers.
+Moving the competition to `closed` queues a notification to every active member with an entry in that competition, one message each, linking to their per-participant sheet. There is no separate publish step: members see results once the competition is closed (admins at any status), and the link is login-gated. A `results_mailed_at` guard prevents double-sends when a competition is reopened and closed again, and a manual resend action on the competition edit page covers stragglers.
 
 This needs a mail transport (Mailgun, Postmark, or a self-hosted SMTP) and a running queue worker, neither of which v1 requires. A registration-deadline reminder is a close sibling and can reuse the same plumbing.
 
