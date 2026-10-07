@@ -2,13 +2,14 @@
 
 Reconstructed from the git history on 2026-10-07. Each version covers one ISO week of commits; weeks without commits have no version. The date is the last commit of that week. Styling iterations, static-analysis passes, CI and test plumbing, and tracker housekeeping are summarised rather than listed.
 
-## [Unreleased]
-
-Open as PR #27.
+## [0.8.0] - 2026-10-07
 
 ### Added
 - Members with an entry get an email with a link to their results sheet when a competition closes. A `results_mailed_at` guard prevents a second send if the status moves back and forth, and admins can resend to one member from the competition edit page.
 - The member form refuses to demote or deactivate the last active admin, and deleting that admin is blocked with a notification.
+- Members get an email when an admin activates their account.
+- VitePress documentation site with a GitHub Pages workflow.
+- Backlog.md task tracker under `planning/`.
 
 ### Fixed
 - Entries registered by members get the next tasting position instead of none; existing entries without one are numbered by a migration.
@@ -16,24 +17,13 @@ Open as PR #27.
 - The "Print all" button on the results index, which reopened the same page, is removed.
 - The inactive-account login error is translated into Dutch.
 - `composer run dev:lite` uses `database/database.sqlite` instead of reading the Postgres database name from `.env`.
-
-### Docs
-- CLAUDE.md, the enhancements PRD and the authentication spec describe the code as it is: email on close, descriptors as a scoresheet column, the magic-link flow.
-
-## [0.8.0] - 2026-10-07
-
-### Added
-- Members get an email when an admin activates their account.
-- VitePress documentation site with a GitHub Pages workflow.
-- Backlog.md task tracker under `planning/`.
-
-### Fixed
 - Off-flavour descriptors ticked on the scoresheet are now saved.
 - Models throw instead of silently discarding attributes that are not fillable (outside production).
 - The error page's "Send error report" button uses a self-hosted Sentry bundle, so ad-blockers no longer break it.
 - The Docker build copies the error-report Vite config into the assets stage.
 
 ### Docs
+- CLAUDE.md, the enhancements PRD and the authentication spec describe the code as it is: email on close, descriptors as a scoresheet column, the magic-link flow.
 - Deployment docs describe the actual flow: build and push the image to ghcr from the laptop, pull on the server.
 - Recorded `SESSION_SAME_SITE=strict` as the cause of failed magic-link logins.
 
