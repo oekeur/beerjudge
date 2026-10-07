@@ -22,6 +22,15 @@ class MiddlewareTest extends TestCase
             ->assertRedirect('/login');
     }
 
+    public function test_inactive_member_sees_translated_error_on_login_page(): void
+    {
+        $member = Member::factory()->create(['is_active' => false, 'locale' => 'nl']);
+        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
+
+        $this->actingAs($member)->followingRedirects()->get("/judging/{$comp->id}")
+            ->assertSee('Je account is niet actief.');
+    }
+
     public function test_active_member_is_not_redirected_to_login(): void
     {
         $member = Member::factory()->create(['is_active' => true]);

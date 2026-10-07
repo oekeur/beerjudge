@@ -213,5 +213,6 @@
     "competition.action.resend_results_sent": "Results email sent",
     "members.last_admin_demote": "Cannot demote the last active admin.",
     "members.last_admin_deactivate": "Cannot deactivate the last active admin.",
-    "members.last_admin_delete": "Cannot delete the last active admin."
+    "members.last_admin_delete": "Cannot delete the last active admin.",
+    "auth.inactive_account": "Your account is not active."
 }

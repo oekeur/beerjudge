@@ -66,7 +66,7 @@ Logging out and invalidating the session before redirecting to `/login` breaks t
 
 ## Error message
 
-The `email` session error shown on `/login` after an inactive-member redirect uses the translation key `'Your account is not active.'` (no translation key abstraction; the string is passed directly). The error appears on the `email` field of the login form.
+The `email` session error shown on `/login` after an inactive-member redirect is the `auth.inactive_account` key from `lang/en.json` and `lang/nl.json`. It is translated at redirect time in the member's locale (`SetLocale` runs first in the `web` group) and flashed under `email`, so it appears on the `email` field of the login form.
 
 ---
 
