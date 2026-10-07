@@ -31,6 +31,13 @@ class Entry extends Model
 
     protected static function booted(): void
     {
+        static::creating(function (Entry $entry): void {
+            if ($entry->sort_order === null) {
+                $max = static::where('competition_id', $entry->competition_id)->max('sort_order');
+                $entry->sort_order = (is_int($max) ? $max : 0) + 1;
+            }
+        });
+
         static::saving(function (Entry $entry): void {
             $inCompetition = \DB::table('competition_style')
                 ->where('competition_id', $entry->competition_id)
