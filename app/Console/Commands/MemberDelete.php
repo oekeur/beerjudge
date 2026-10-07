@@ -27,6 +27,12 @@ class MemberDelete extends Command
 
         $this->line("Found: {$member->name} ({$member->email})".($member->is_admin ? ' [admin]' : ''));
 
+        if ($member->isLastActiveAdmin()) {
+            $this->error('Cannot deactivate or delete the last active admin.');
+
+            return self::FAILURE;
+        }
+
         if ($this->option('deactivate')) {
             $member->update(['is_active' => false]);
             $this->info('Member deactivated.');

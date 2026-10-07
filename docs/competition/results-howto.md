@@ -23,25 +23,23 @@ The full standings appear below your entries, with brewer names revealed.
 
 Admins bypass the status check and the member-identity check. This works at any status.
 
-## How to view all participants at once (admin batch print)
+## How to open every participant's sheet (admin)
 
 1. Navigate to `/competitions/{id}/results`.
 2. As an admin, the index page lists every member with entries below the standings, ordered by name. Non-admins do not see this list.
-3. Open each member's sheet individually, or use the browser's print function on the index page.
+3. Open each member's sheet and print it from its own page.
 
-There is no one-click "print all sheets" action. Open each member's URL and print it separately, or implement batch rendering via the index page.
+There is no print-all action.
 
 ## How to share results with members
 
-Results are not emailed automatically. Share the URL manually:
+Closing a competition queues an email to every active member with an entry, linking to their sheet. An admin can resend it to one member from the competition edit page. To share a link by hand, the URL is:
 
 ```
 https://{domain}/competitions/{competition_id}/results/{member_id}
 ```
 
 Each member's URL resolves only for that member (or for admins). A member who opens another member's URL receives a 403 page.
-
-To notify all members at once, collect their member IDs from the admin panel and send personalised links. (Email-on-publish is a planned enhancement; see the roadmap.)
 
 ## How to check that all scores are in
 

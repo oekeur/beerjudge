@@ -214,5 +214,8 @@
     "members.last_admin_demote": "Cannot demote the last active admin.",
     "members.last_admin_deactivate": "Cannot deactivate the last active admin.",
     "members.last_admin_delete": "Cannot delete the last active admin.",
-    "auth.inactive_account": "Your account is not active."
+    "auth.inactive_account": "Your account is not active.",
+    "competition.action.reopen_judging": "Reopen judging",
+    "competition.action.reopen_judging_description": "This moves the competition back to Judging so scoresheets can be edited again. Bottle numbers stay as they are and no new results email is sent when you close it again. Continue?",
+    "auth.magic_link_confirm_description": "Press the button to log in. The link works once and expires after 15 minutes."
 }

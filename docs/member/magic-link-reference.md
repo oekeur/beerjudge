@@ -12,7 +12,7 @@
 | `member_id` | int | Foreign key to `members.id`. |
 | `token` | string | SHA-256 hash of the plaintext token. Never stored in plain form. |
 | `expires_at` | datetime | Always set; 15 minutes from creation. |
-| `used_at` | datetime\|null | Null until consumed. Set by `markUsed()`. |
+| `used_at` | datetime\|null | Null until consumed. Set by `consume()`. |
 
 ---
 
@@ -33,7 +33,7 @@ The plaintext token is never persisted. Only the SHA-256 hash is stored.
 
 Hashes `$plain` with SHA-256 and queries `magic_links.token`. Returns the matching record or null.
 
-Used in `AuthController@verifyMagicLink` to look up the record from the URL token.
+Used in `AuthController@showMagicLinkConfirm` and `AuthController@consumeMagicLink` to look up the record from the URL token.
 
 ---
 
@@ -48,9 +48,9 @@ Returns `true` when both conditions hold:
 
 For `MagicLink`, `expires_at` is always set, so only the "not in the past" condition applies.
 
-### `markUsed(): void`
+### `consume(): bool`
 
-Sets `used_at` to `now()` and persists the change. Called immediately before `Auth::login()` in the verification flow, so a token cannot be reused even if the member logs out and visits the link again.
+Marks the link used with one conditional `UPDATE` (`used_at IS NULL` and `expires_at` in the future) and returns true only if this call changed the row. Called by `AuthController@consumeMagicLink` before `Auth::login()`, so a token cannot be reused and two concurrent POSTs cannot both log in.
 
 ---
 
@@ -69,7 +69,7 @@ Returns the `Member` this link belongs to.
 | Plaintext length | 64 characters (`Str::random`) |
 | Storage format | SHA-256 hash |
 | Expiry | 15 minutes from creation |
-| One-time use | Yes; `markUsed()` stamps `used_at` before `Auth::login()` |
+| One-time use | Yes; `consume()` stamps `used_at` on POST, before `Auth::login()`; the GET never does |
 
 Storing only the hash means a database read alone cannot produce a working link. The plaintext exists only in transit (the emailed URL).
 
@@ -81,7 +81,7 @@ Storing only the hash means a database read alone cannot produce a working link.
 /magic-link/{plaintext-token}
 ```
 
-The route name is `auth.magic-link.verify`. `AuthController@verifyMagicLink` receives the plaintext token as the `$token` path parameter, hashes it, and queries the database.
+The route name is `auth.magic-link.verify`. `GET` hits `AuthController@showMagicLinkConfirm`, which renders a Log in button. The button POSTs to the same path (route name `auth.magic-link.consume`), handled by `AuthController@consumeMagicLink`. Both receive the plaintext token as the `$token` path parameter, hash it, and query the database.
 
 ---
 

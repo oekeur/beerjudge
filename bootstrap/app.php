@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Middleware\RequireActiveMember;
-use App\Http\Middleware\RequireAdmin;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -20,7 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(SetLocale::class);
         $middleware->alias([
             'active-member' => RequireActiveMember::class,
-            'admin' => RequireAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

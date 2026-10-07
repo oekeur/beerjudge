@@ -1,9 +1,11 @@
 ---
 id: TASK-61
 title: Remove stale publish and batch-printing text from docs
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - '@claude'
 created_date: '2026-10-07 20:15'
+updated_date: '2026-10-07 21:13'
 labels:
   - docs
 dependencies: []
@@ -20,5 +22,11 @@ Found by the TASK-40 gate (2026-10-07). These still describe published_at, a pub
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 grep -rn -i 'published_at\|email-on-publish\|batch print' README.md planning/requirements planning/specs docs returns nothing that contradicts the code
+- [x] #1 grep -rn -i 'published_at\|email-on-publish\|batch print' README.md planning/requirements planning/specs docs returns nothing that contradicts the code
 <!-- AC:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Removed stale publish-step, published_at and batch-print text from README.md, the competition PRD, planning/specs/results.md and docs/competition/results-howto.md; verified against ResultsController, Competition::booted and EditCompetition resendResults. Gate: Pass A CLEAN; Pass B skipped (docs only).
+<!-- SECTION:FINAL_SUMMARY:END -->

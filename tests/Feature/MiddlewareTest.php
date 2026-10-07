@@ -41,7 +41,7 @@ class MiddlewareTest extends TestCase
         $this->assertNotEquals(route('login'), $response->headers->get('Location'));
     }
 
-    // RequireAdmin
+    // Results access (controller-level gate in ResultsController)
 
     public function test_non_admin_member_gets_403_on_results_when_competition_not_closed(): void
     {
