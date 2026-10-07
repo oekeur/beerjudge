@@ -4,7 +4,7 @@
 
 A security review was completed ahead of the app going public. Most critical findings are straightforward fixes. One is already handled correctly (`ResultsController` has a proper auth check at line 21-23). Items are split into two phases: blocking launch, and deferred low-priority.
 
-`.env.production` already has `APP_DEBUG=false`, `LOG_LEVEL=warning`, `SESSION_ENCRYPT=true`, `SESSION_SECURE_COOKIE=true`, and `SESSION_SAME_SITE=strict`.
+`.env.production` already has `APP_DEBUG=false`, `LOG_LEVEL=warning`, `SESSION_ENCRYPT=true`, and `SESSION_SECURE_COOKIE=true`. It also had `SESSION_SAME_SITE=strict`, which broke magic-link login; it must be `lax` (see `planning/specs/authentication.md`, Sessions).
 
 ---
 

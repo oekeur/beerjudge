@@ -31,11 +31,17 @@ Admins generate invitation links in Filament. Two types:
 `GET /join/{token}` — validates via `Invitation::isValid()` (not expired, not used on single_use), renders the registration form (name, email, password + confirmation).
 `POST /join/{token}` — re-validates the token, creates the member, starts a session. Single-use invitations are marked `used_at` on success.
 
+An invitation that fails validation on either verb renders `auth.invite-invalid` with status 410 instead of the stock error page. `HasTokenExpiry::invalidReason()` splits the two cases so the screen can say which one applies: an expired time-bound link shows its expiry date, a claimed single-use link says it was a one-time link. Both point the visitor at a club admin for a fresh link and link through to `/login` for people who already registered. Unknown tokens still 404 (`firstOrFail`).
+
 Registration produces a regular member account. New members are active by default; the admin can deactivate them in Filament.
 
 ## Sessions
 
 Session-based auth throughout — the session cookie covers both the Filament admin panel and all member-facing routes. No separate API tokens. Sessions last approximately one week before re-authentication is required.
+
+`SESSION_SAME_SITE` must be `lax`. A magic link is opened from an email client, which makes the click a cross-site navigation. Under `strict` the browser stores the session cookie set by `/magic-link/{token}` but withholds it on the redirect that follows, so the member lands on `/login` with no error and the single-use token is already spent. Pasting the same URL into the address bar is a same-site navigation and logs in fine, so only a click from the email tests this. `lax` still withholds the cookie on cross-site POST, and the CSRF middleware covers the rest.
+
+Production ran with `strict` until 2026-10-07: the fix reached a local copy of `.env.production` but not the file on the server. The container reads `.env.production` only when it is created (`env_file` in `docker-compose.prod.yaml`) and caches config on start, so a change there needs `up -d --force-recreate app`, not `restart`.
 
 ## Middleware
 
