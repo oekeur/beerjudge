@@ -1,11 +1,11 @@
 ---
 id: TASK-29
 title: Email each participant their results link when a competition closes
-status: Review
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-07 19:43'
+updated_date: '2026-10-07 20:15'
 labels:
   - email-on-publish
 dependencies: []
@@ -38,3 +38,9 @@ Plan: planning/2026-10-07-launch-email-bugfix-batch.md (Phase 2: Results email o
 
 Landed on feat/launch-email-bugfix-batch (03460ab). Gates: Pass A + Pass B; retry fixed two CONFIRMED findings (resend offered/mailed inactive members; backfill left closed rows with NULL updated_at unguarded). Evidence: tests/Feature/CompetitionResultsEmailTest.php (7 tests), Pass B probes (form-save close path sends once, sync queue mail in member locale, COALESCE on Postgres 16). Review for Oscar: resend modal and the email body have not been seen in a browser. Worktree: /home/oscar/projects/beerjudge/.claude/worktrees/feat+task-29-results-email
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Results email on close: queued CompetitionResultsNotification sent from Competition::booted() when status changes to closed (header action and status Select both covered), once per active member with an entry, guarded by competitions.results_mailed_at (migration backfills already-closed rows with COALESCE(updated_at, now)). Resend-to-one-member header action on EditCompetition, active participants only, ignores the guard. Specs/roadmap updated. Verified: CompetitionResultsEmailTest (7 tests), Pass A + Pass B (retry fixed inactive resend and NULL updated_at backfill), full suite green; Oscar confirmed the resend action and the close email in the browser (dev:lite, 2026-10-07).
+<!-- SECTION:FINAL_SUMMARY:END -->
