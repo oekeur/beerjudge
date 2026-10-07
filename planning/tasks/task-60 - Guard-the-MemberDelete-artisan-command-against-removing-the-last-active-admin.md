@@ -1,9 +1,11 @@
 ---
 id: TASK-60
 title: Guard the MemberDelete artisan command against removing the last active admin
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-07 20:15'
+updated_date: '2026-10-07 21:06'
 labels:
   - admin-guard
 dependencies: []

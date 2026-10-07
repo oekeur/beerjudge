@@ -1,9 +1,11 @@
 ---
 id: TASK-61
 title: Remove stale publish and batch-printing text from docs
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-07 20:15'
+updated_date: '2026-10-07 21:06'
 labels:
   - docs
 dependencies: []

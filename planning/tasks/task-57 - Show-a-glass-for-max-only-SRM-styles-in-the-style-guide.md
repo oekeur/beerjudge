@@ -1,9 +1,11 @@
 ---
 id: TASK-57
 title: Show a glass for max-only SRM styles in the style guide
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-07 19:38'
+updated_date: '2026-10-07 21:06'
 labels:
   - srm-visualization
 dependencies: []

@@ -1,10 +1,11 @@
 ---
 id: TASK-54
 title: Guard competition status changes from the Overview tab
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-07 15:10'
-updated_date: '2026-10-07 20:56'
+updated_date: '2026-10-07 21:06'
 labels:
   - dashboard-widgets
 dependencies: []

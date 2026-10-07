@@ -1,10 +1,11 @@
 ---
 id: TASK-55
 title: Remove or apply the unused RequireAdmin middleware
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-07 15:10'
-updated_date: '2026-10-07 20:54'
+updated_date: '2026-10-07 21:06'
 labels:
   - auth
 dependencies: []

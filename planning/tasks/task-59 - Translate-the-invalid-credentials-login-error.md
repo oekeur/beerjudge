@@ -1,8 +1,9 @@
 ---
 id: TASK-59
 title: Pick a guest's locale from Accept-Language
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-07 20:15'
 updated_date: '2026-10-07 21:06'
 labels:

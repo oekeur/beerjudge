@@ -1,9 +1,11 @@
 ---
 id: TASK-58
 title: Block inactive admins from the Filament panel
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-07 20:15'
+updated_date: '2026-10-07 21:06'
 labels:
   - security-hardening
   - admin-guard
