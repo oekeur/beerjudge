@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Members\Schemas;
 
+use App\Models\Member;
+use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -28,9 +30,23 @@ class MemberForm
                     ->options(['en' => 'English', 'nl' => 'Nederlands'])
                     ->default('en')
                     ->required(),
-                Toggle::make('is_admin'),
+                Toggle::make('is_admin')
+                    ->rules([fn (?Member $record): Closure => self::keepLastActiveAdmin($record, 'members.last_admin_demote')]),
                 Toggle::make('is_active')
-                    ->default(true),
+                    ->default(true)
+                    ->rules([fn (?Member $record): Closure => self::keepLastActiveAdmin($record, 'members.last_admin_deactivate')]),
             ]);
+    }
+
+    /**
+     * Fails validation when the toggle is switched off on the only active admin.
+     */
+    private static function keepLastActiveAdmin(?Member $record, string $messageKey): Closure
+    {
+        return function (string $attribute, mixed $value, Closure $fail) use ($record, $messageKey): void {
+            if (! $value && $record?->isLastActiveAdmin()) {
+                $fail(__($messageKey));
+            }
+        };
     }
 }

@@ -210,5 +210,8 @@
     "competition.results_mail_action": "Bekijk je resultaten",
     "competition.action.resend_results": "Resultatenmail opnieuw versturen",
     "competition.action.resend_results_member": "Lid",
-    "competition.action.resend_results_sent": "Resultatenmail verstuurd"
+    "competition.action.resend_results_sent": "Resultatenmail verstuurd",
+    "members.last_admin_demote": "De laatste actieve beheerder kan niet worden gedegradeerd.",
+    "members.last_admin_deactivate": "De laatste actieve beheerder kan niet worden gedeactiveerd.",
+    "members.last_admin_delete": "De laatste actieve beheerder kan niet worden verwijderd."
 }
