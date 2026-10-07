@@ -8,7 +8,8 @@ created_date: '2026-10-07 14:39'
 updated_date: '2026-10-07 20:15'
 labels:
   - email-on-publish
-dependencies: []
+dependencies:
+  - TASK-27
 documentation:
   - planning/roadmap.md
   - planning/requirements/homebrew-competition-enhancements-prd.md
@@ -44,3 +45,13 @@ Landed on feat/launch-email-bugfix-batch (03460ab). Gates: Pass A + Pass B; retr
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
 Results email on close: queued CompetitionResultsNotification sent from Competition::booted() when status changes to closed (header action and status Select both covered), once per active member with an entry, guarded by competitions.results_mailed_at (migration backfills already-closed rows with COALESCE(updated_at, now)). Resend-to-one-member header action on EditCompetition, active participants only, ignores the guard. Specs/roadmap updated. Verified: CompetitionResultsEmailTest (7 tests), Pass A + Pass B (retry fixed inactive resend and NULL updated_at backfill), full suite green; Oscar confirmed the resend action and the close email in the browser (dev:lite, 2026-10-07).
 <!-- SECTION:FINAL_SUMMARY:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-07 18:09
+---
+[audit] [RISK] Needs a real MAIL_FROM_ADDRESS (TASK-27) but had no dependency; link type (login-gated vs signed URL) undecided; ACs say 'member with an entry', which excludes judges without entries. — Dependency on TASK-27 added; decide link type before planning; add an AC naming the recipients.
+---
+<!-- COMMENTS:END -->

@@ -40,3 +40,13 @@ Plan: planning/2026-10-07-launch-email-bugfix-batch.md (Phase 3: Small fixes)
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
 Filament guard against removing the last active admin (is_admin && is_active): closure validation rules on the is_admin and is_active toggles in MemberForm, DeleteAction before() halt with a danger notification on EditMember, Member::isLastActiveAdmin(), en/nl messages. Verified: tests/Feature/LastActiveAdminGuardTest.php (demote, deactivate, delete blocked and fail at merge base; allowed paths with another active admin), Pass B probes (combined demote+deactivate, unrelated edits save, CreateMember unaffected, stale forms saved one after the other blocked), full suite green. Accepted by Oscar 2026-10-07: a true simultaneous mutual demotion can race (no lock). Not covered by design: artisan MemberDelete command.
 <!-- SECTION:FINAL_SUMMARY:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-07 18:09
+---
+[audit] [RISK] AC says 'zero active admins', but panel access ignores is_active (Member::canAccessPanel() checks is_admin only), and admins can also be removed via Filament delete and member:delete. — Define the invariant (does an inactive admin count?) and add ACs for the delete action and the artisan command.
+---
+<!-- COMMENTS:END -->

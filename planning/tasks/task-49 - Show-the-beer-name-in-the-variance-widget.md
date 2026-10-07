@@ -31,3 +31,13 @@ Plan: planning/2026-10-07-launch-email-bugfix-batch.md (Phase 3: Small fixes)
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
 JudgeVarianceWidget Beer column now shows '<style code> <style name>' via ->state() on the eager-loaded style (entries.name was dropped 2026-06-10). Gate retry: Pass B found a blank cell for an empty style code (Filament skips formatStateUsing on blank state); fixed by computing the cell with ->state(trim(code name)). Verified: tests/Feature/JudgeVarianceWidgetTest.php (style code shown, fails at merge base; empty-code style shows its name), Pass B probes (one styles query for 4 entries, no lazy load, escaping, competition scoping), full suite green.
 <!-- SECTION:FINAL_SUMMARY:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-07 18:09
+---
+[audit] Entries have no name any more, so it is unclear what the Beer column should show (style, bottle number, brewer). — Pick the label, e.g. bottle number plus style.
+---
+<!-- COMMENTS:END -->

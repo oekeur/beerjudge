@@ -10,7 +10,7 @@ RUN composer install \
 
 FROM node:24-alpine AS assets
 WORKDIR /app
-COPY package.json package-lock.json vite.config.js ./
+COPY package.json package-lock.json vite.config.js vite.error-report.config.js ./
 COPY resources/ resources/
 COPY app/ app/
 COPY --from=composer-deps /app/vendor vendor/

@@ -50,3 +50,13 @@ Probes 2026-10-07 over ssh (read-only), server /home/oscar/git/beerjudge:
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
 Production env verified over ssh 2026-10-07 (read-only probes, evidence in notes): APP_ENV=production, APP_DEBUG=false; DB password rotated (app connects, not 'secret'); MAIL_FROM_ADDRESS=beerjudge@foebar.com over smtp; Redis unpublished and only on the beerjudge_default network; queue worker running. Oscar deleted the drifted repo-root .env.production copy; the server file is the only source. Gotcha kept in notes: the server DB_PASSWORD contains a $ that Compose interpolates.
 <!-- SECTION:FINAL_SUMMARY:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+author: @claude
+created: 2026-10-07 18:09
+---
+[audit] [RISK] Only Oscar has server access, so an agent cannot do or verify this, and TASK-29 is blocked on it. — Oscar does it, or pastes redacted server values so the ACs can be checked.
+---
+<!-- COMMENTS:END -->
