@@ -52,15 +52,9 @@ Logging out and invalidating the session before redirecting to `/login` breaks t
 
 ---
 
-## Comparison: RequireAdmin
+## Admin access
 
-`RequireAdmin` is currently unused (see below). `App\Http\Middleware\RequireAdmin` (alias: `admin`) checks `is_admin` on the authenticated user. It aborts with 403 rather than redirecting, because:
-
-- It only runs after `auth` has already verified the session is valid.
-- An active member who is not an admin is a normal application state; a 403 is appropriate.
-- There is no redirect-loop risk because the `auth` middleware would not redirect an authenticated member away from `/login`.
-
-`RequireAdmin` is registered as the `admin` alias but is not applied to any route or to the Filament panel. Panel access is controlled by `Member::canAccessPanel()`.
+No middleware checks `is_admin`. Panel access is controlled by `Member::canAccessPanel()`.
 
 ---
 
