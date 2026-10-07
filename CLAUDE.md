@@ -187,6 +187,16 @@ cp resources/images/icon.svg public/favicon.svg
 
 **PWA meta tags** are present in all Blade views (after `<meta name="viewport">`). Any new view that renders a full HTML document must include them.
 
+## Tasks
+
+Tasks live in Backlog.md, rooted at `planning/` (config: `backlog.config.yml`). `planning/roadmap.md`, `planning/requirements/` and `planning/specs/` stay the product docs; tasks link them with `--doc`. Dated plan files (`planning/YYYY-MM-DD-*.md`) hold execution plans.
+
+- Read tasks with `backlog task list --plain` and `backlog task <id> --plain`; never hand-edit task files.
+- Pass `--type`, `--priority` and a feature label (`-l`, listed in the config's `labels:`) on every `backlog task create`.
+- Statuses: Backlog (not committed to), To Do, Planned, In Progress, Review, Done. Set status with its own `backlog task edit <id> -s <status>`.
+- Status always reflects the current state: In Progress as soon as work starts, Review when it waits on Oscar (browser review, approval).
+- Shipped work has a Done task with the commits in its final summary.
+
 ## Enhancements (planned, in priority order)
 
 1. **Style guidelines** — collapsible BJCP description + vital stats panel per entry on the judging screen. Seed from BJCP 2021 data. Check redistribution terms first.
