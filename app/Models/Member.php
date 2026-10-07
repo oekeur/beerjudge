@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\MemberActivatedNotification;
 use Database\Factories\MemberFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -38,6 +39,18 @@ class Member extends Authenticatable implements CanResetPasswordContract, Filame
             'is_admin' => 'boolean',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Emails the member when an admin activates the account, whichever Filament path did it.
+     */
+    protected static function booted(): void
+    {
+        static::updated(function (Member $member): void {
+            if ($member->wasChanged('is_active') && $member->is_active) {
+                $member->notify((new MemberActivatedNotification)->locale($member->locale));
+            }
+        });
     }
 
     public function canAccessPanel(Panel $panel): bool

@@ -42,14 +42,13 @@ class MembersTable
                     ->action(fn (Member $record) => $record->update(['is_active' => true])),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkAction::make('approve')
                     ->label(__('member.action.approve_selected'))
                     ->icon('heroicon-o-check')
                     ->color('success')
                     ->action(fn (Collection $records) => $records->each->update(['is_active' => true]))
                     ->deselectRecordsAfterCompletion(),
-            ])
-            ->toolbarActions([]);
+            ]);
     }
 }

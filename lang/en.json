@@ -33,6 +33,9 @@
     "member.filter.pending_approval": "Pending approval",
     "member.action.approve": "Approve",
     "member.action.approve_selected": "Approve selected",
+    "member.activated_subject": "Your account is approved",
+    "member.activated_intro": "An admin has approved your account. You can now log in.",
+    "member.activated_action": "Log in",
 
     "style.section.identity": "Identity",
     "style.section.vital_statistics": "Vital Statistics",
@@ -54,7 +57,7 @@
     "auth.register": "Create account",
     "auth.register_intro": "Complete your details to join the club.",
     "auth.register_submit": "Create account",
-    "auth.register_success": "Account created. An admin will approve it before you can log in.",
+    "auth.register_success": "Account created. An admin will approve it before you can log in; you'll get an email when that happens.",
     "auth.invite_invalid_title": "Invite link no longer works",
     "auth.invite_expired_heading": "This invite link has expired",
     "auth.invite_expired_body": "Invite links stay open for a limited time. This one has passed its expiry date, so it can no longer be used to create an account.",

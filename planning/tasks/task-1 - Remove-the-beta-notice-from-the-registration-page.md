@@ -1,9 +1,10 @@
 ---
 id: TASK-1
 title: Remove the beta notice from the registration page
-status: To Do
+status: Review
 assignee: []
 created_date: '2026-10-07 14:36'
+updated_date: '2026-10-07 14:46'
 labels:
   - auth
 dependencies: []
@@ -22,6 +23,12 @@ resources/views/auth/register.blade.php:9 shows: "Beta version — expect rough 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The beta notice is gone from /join/{token}
-- [ ] #2 No other view still claims email is not set up (grep resources/ and lang/)
+- [x] #1 The beta notice is gone from /join/{token}
+- [x] #2 No other view still claims email is not set up (grep resources/ and lang/)
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Removed in register.blade.php; grep of resources/ and lang/ finds no other 'not set up' claim. Approval notice now says an email follows.
+<!-- SECTION:NOTES:END -->
