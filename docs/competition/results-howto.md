@@ -26,7 +26,7 @@ Admins bypass the status check and the member-identity check. This works at any 
 ## How to view all participants at once (admin batch print)
 
 1. Navigate to `/competitions/{id}/results`.
-2. The index page lists every member with entries, ordered by name.
+2. As an admin, the index page lists every member with entries below the standings, ordered by name. Non-admins do not see this list.
 3. Open each member's sheet individually, or use the browser's print function on the index page.
 
 There is no one-click "print all sheets" action. Open each member's URL and print it separately, or implement batch rendering via the index page.
@@ -47,10 +47,10 @@ To notify all members at once, collect their member IDs from the admin panel and
 
 Before closing the competition, verify no scoresheets remain in draft:
 
-1. Open the Filament admin panel.
-2. Go to the **Results & Variance** tab on the competition edit page.
+1. Open the competition in the Filament admin panel.
+2. Go to the **Dashboard** tab.
 
-The variance table shows all entries and their submitted sheet counts. Any entry with `sheet_count = 0` has no submitted scoresheets. Contact the relevant judge and ask them to submit.
+The progress table shows, per entry, how many eligible judges have submitted and which judges are still missing (an entry's own brewer is never counted). Contact the missing judges and ask them to submit. The **Results & Variance** tab only lists entries with at least two submitted sheets, flagging a score spread above 7 points.
 
 Alternatively, query the database directly:
 

@@ -19,7 +19,7 @@ Use `member:create` to add a member from the command line. This is the preferred
 php artisan member:create
 ```
 
-Or pass options to skip prompts:
+Or pass options. In an interactive terminal the name and email prompts still appear and the option values win; add `--no-interaction` to skip them (the password is still asked):
 
 ```bash
 php artisan member:create --name="Jane Brewer" --email="jane@example.com" --admin
@@ -27,7 +27,7 @@ php artisan member:create --name="Jane Brewer" --email="jane@example.com" --admi
 
 **2. Respond to prompts**
 
-If you did not pass `--name` and `--email`, the command asks for them first. Then it always asks for a password (hidden input).
+The command asks for name and email first; if you passed `--name` or `--email`, that value is used and the typed answer is ignored. Then it always asks for a password (hidden input).
 
 Finally, it asks whether to grant admin access — unless you passed `--admin`, in which case it skips that prompt entirely.
 

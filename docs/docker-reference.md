@@ -35,7 +35,7 @@ Not auto-applied. Used with: `docker compose -f docker-compose.yaml -f docker-co
 
 Changes from the base:
 - `app` reads env vars from `.env.production`.
-- `app`, `postgres`, and `redis` are attached to the external `proxy` network (for nginx-proxy TLS termination). The `app` service also stays on `default` so it can reach Postgres and Redis.
+- `app` is attached to both `default` and the external `proxy` network (for nginx-proxy TLS termination). `postgres` and `redis` stay on `default` only, so the reverse proxy cannot reach them.
 - No port bindings (the reverse proxy handles external traffic).
 
 ---
@@ -135,7 +135,7 @@ Config at `docker/nginx.conf`. Listens on port 80. Root at `/var/www/public`. PH
 
 ## Production network
 
-In production, the `app`, `postgres`, and `redis` services join the `proxy` external network so an nginx-proxy container can route HTTPS traffic to the app. The `proxy` network must be created on the host before starting the stack:
+In production, only the `app` service joins the `proxy` external network so an nginx-proxy container can route HTTPS traffic to it. Postgres and Redis stay on the private default network. The `proxy` network must be created on the host before starting the stack:
 
 ```bash
 docker network create proxy

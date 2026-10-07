@@ -29,7 +29,6 @@ Attempts credential-based login.
 |---|---|
 | `email` | required, valid email format |
 | `password` | required, string |
-| `remember` | optional boolean; passes a remember-me cookie when true |
 
 #### Behaviour
 
@@ -196,7 +195,7 @@ Sets the new password, rotates the remember token, fires `PasswordReset`, logs t
 
 ## Session duration
 
-Sessions last approximately one week by default. The `remember` flag on `POST /login` and magic link login do not change this; the application does not configure extended remember-me cookies beyond the default session TTL.
+Password login and magic link login always set a remember-me cookie (`remember: true`; the login form has no checkbox), so members stay signed in after the session expires or the browser closes. The session itself lasts `SESSION_LIFETIME` minutes (10080, one week, in the example env files). Logging in through the password reset flow does not set the remember cookie.
 
 ---
 

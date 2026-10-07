@@ -2,7 +2,7 @@
 
 The judging screen is the primary interface for judges during a competition. It renders all eligible entries as scoresheets, auto-saves input to IndexedDB on every keystroke, and syncs to the server in the background. Judges can work through the screen with or without a network connection; pending sheets retry automatically when connectivity returns.
 
-Only members registered as judges for the competition can access the screen. Judges do not see their own entries.
+Any active member can open the screen while the competition is in Judging. Members not yet registered see a banner with a **Register as judge** button. Judges never see their own entries.
 
 ## Routes
 
@@ -64,7 +64,7 @@ Notes fields accept up to 2000 characters each. `descriptors` is an array of slu
 
 ## Idempotency
 
-Every sheet is identified by its `client_uuid`. Submitting the same UUID twice from the same judge updates the existing record rather than creating a second one. This makes retries safe after browser crashes or network failures.
+The server looks up an existing sheet by `client_uuid` for this judge, and if none matches, by `(entry_id, judge_id)`; it updates that sheet or creates one. A judge therefore has at most one sheet per entry, and retrying a failed POST never creates a duplicate.
 
 A UUID cannot be reused across judges. If judge B sends a `client_uuid` already recorded under judge A, the server returns HTTP 422.
 
@@ -125,7 +125,7 @@ Each sheet cycles through these sync states in the browser:
 
 ## Admin progress panel
 
-When an admin views the judging screen, a collapsible panel shows per-entry submission counts (`submitted / total judges`). This panel polls `GET /judging/{competition}/progress` every 30 seconds.
+When an admin views the judging screen, a collapsible panel shows per-entry submission counts (`submitted / eligible judges`, where eligible judges are registered judges other than the entry's brewer). This panel polls `GET /judging/{competition}/progress` every 30 seconds.
 
 ## Style guide and style info modals
 

@@ -14,7 +14,7 @@ Registered in `Database\Seeders\DatabaseSeeder::run()`.
 
 ## Data source
 
-Reads from `bjcp_styleguide-2021.json` in the project root (`base_path('bjcp_styleguide-2021.json')`). The file must be present before the seeder runs. It is not committed to version control.
+Reads from `bjcp_styleguide-2021.json` in the project root (`base_path('bjcp_styleguide-2021.json')`). The file is committed to the repository and must be present at that path before the seeder runs.
 
 **Expected JSON structure:**
 

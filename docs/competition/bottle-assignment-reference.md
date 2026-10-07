@@ -43,7 +43,7 @@ The `entries` table has a unique constraint on `(competition_id, bottle_number)`
 | `bottle_number` | `unsignedSmallInteger` | yes | Null until assigned; unique per competition |
 | `sort_order` | `int` | yes | Controls judging order in the judging screen; independent of bottle number |
 
-Bottle numbers and sort order are separate fields. Sort order is managed by admins via drag-and-drop in the Filament entry list. Bottle numbers are assigned at judging transition time.
+Bottle numbers and sort order are separate fields. Sort order is the tasting order; admins set it by dragging rows in the competition's Entries tab or with the Sort by ABV button. Bottle numbers are assigned at judging transition time.
 
 ## When `assign()` is called
 

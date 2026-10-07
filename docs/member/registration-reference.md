@@ -51,7 +51,7 @@ Displays the registration form.
 - **Controller:** `RegistrationController@show`
 - **Route name:** `register`
 - **Path parameter:** `token` — the plain invitation token
-- **Response:** 200 with the `auth.register` view, or 404 if the token does not exist, or 410 if the invitation is expired or already used.
+- **Response:** 200 with the `auth.register` view, or 404 if the token does not exist, or 410 with the `auth.invite-invalid` view if the invitation is expired or already used. The view says which of the two applies.
 
 ### `POST /join/{token}`
 
@@ -75,6 +75,7 @@ Creates a new member account.
 2. For `single_use` invitations: calls `markUsed()` on the invitation.
 3. For `time_bound` invitations: does not modify the invitation.
 4. Redirects to `route('login')` with a success flash.
+5. The account stays inactive until an admin approves it (row Approve, bulk Approve selected, or the Active toggle). Approval sends `MemberActivatedNotification` from `Member::booted()`.
 
 #### Responses
 
@@ -82,8 +83,8 @@ Creates a new member account.
 |---|---|
 | Valid token, valid input | 302 redirect to `/login` |
 | Invalid token (not found) | 404 |
-| Expired or used invitation | 410 |
-| Validation failure | 422 (redirect back with errors) |
+| Expired or used invitation | 410 (renders `auth.invite-invalid`) |
+| Validation failure | 302 redirect back with errors (422 for JSON requests) |
 
 ---
 
@@ -95,7 +96,7 @@ Creates a new member account.
 | `locale` | string | `'en'` |
 | `is_admin` | boolean | `false` (implicit, not set by registration) |
 
-A new member cannot log in until an admin sets `is_active = true` in Filament.
+A new member cannot log in until an admin approves the account (row Approve, bulk Approve selected, or the Active toggle). Approval emails the member.
 
 ---
 

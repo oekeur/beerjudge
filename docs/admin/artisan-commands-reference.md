@@ -16,14 +16,14 @@ php artisan member:create [--name=NAME] [--email=EMAIL] [--admin]
 
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
-| `--name` | string | No | Member's display name. Prompted if omitted. |
-| `--email` | string | No | Member's email address. Must be unique in `members.email`. Prompted if omitted. |
+| `--name` | string | No | Member's display name. If given, it overrides whatever is typed at the `Name` prompt. |
+| `--email` | string | No | Member's email address. Must be unique in `members.email`. If given, it overrides whatever is typed at the `Email` prompt. |
 | `--admin` | flag | No | Grants admin access without an interactive prompt. |
 
 **Interactive prompts** (in order):
 
-1. `Name` — skipped if `--name` is provided.
-2. `Email` — skipped if `--email` is provided.
+1. `Name`: always asked in an interactive terminal; the `--name` value is used if provided.
+2. `Email`: always asked in an interactive terminal; the `--email` value is used if provided.
 3. `Password` — always prompted; hidden input (`secret()`). Cannot be empty.
 4. `Grant admin access?` — skipped if `--admin` flag is present. Defaults to `no`.
 
@@ -34,7 +34,7 @@ php artisan member:create [--name=NAME] [--email=EMAIL] [--admin]
 
 **Side effects**
 
-Creates one row in `members` with `is_active = true`. Password is hashed via Laravel's `Member::create()` (the model's mutator handles hashing).
+Creates one row in `members` with `is_active = true`. The password is hashed by the `hashed` cast on `Member`.
 
 **Exit codes**
 
@@ -68,7 +68,7 @@ php artisan member:delete [email]  [--deactivate]
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `--deactivate` | flag | Sets `is_active = false` immediately, skipping the interactive choice prompt. |
+| `--deactivate` | flag | Sets `is_active = false` and skips the deactivate-or-delete choice and its confirmation. The email prompt still runs. |
 
 **Interactive flow** (when `--deactivate` is not provided):
 
@@ -109,7 +109,7 @@ php artisan member:password [email]
 
 **Side effects**
 
-Updates `members.password` for the matched row. The model's `password` setter hashes the value before storage.
+Updates `members.password` for the matched row. The `hashed` cast on `Member` hashes the value before storage.
 
 **Exit codes**
 

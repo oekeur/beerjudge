@@ -2,7 +2,7 @@
 
 Class: `App\Services\CompetitionRankingService`
 
-Registered in the service container as a singleton. Injected into `ResultsController`.
+Resolved by the service container (not registered as a singleton). Injected into `ResultsController` and `JudgeReportController`.
 
 ## Methods
 
@@ -38,6 +38,7 @@ Computes the full ranked list for a competition. Returns one row per entry.
     'sheets'       => Collection,   // submitted Scoresheet models with judge loaded
     'avg_total'    => float,        // average of scoresheet.total, rounded to 2dp
     'avg_overall'  => float,        // average of scoresheet.overall, rounded to 2dp
+    'band_key'     => string,       // snake_case band key (outstanding, excellent, very_good, good, fair, problematic)
     'sheet_count'  => int,          // number of submitted scoresheets
     'band'         => string,       // BJCP quality band name (see bands())
     'placement'    => int,          // 1-based rank position
@@ -91,6 +92,12 @@ Falls back to `'Problematic'` if no band matches (unreachable under normal condi
 
 **Return type:** `string` — one of: `Outstanding`, `Excellent`, `Very Good`, `Good`, `Fair`, `Problematic`.
 
+### Other methods
+
+- `judgeComparison(Competition $competition, Member $judge): array` feeds the per-judge report. It returns `rows`, `entries_judged`, `not_flagged_count` and `largest_gap`, covering only entries where this judge has a submitted sheet. `other_avg_total` falls back to the judge's own total when no other judge has submitted; `is_outlier` is true when the difference exceeds 7 points (`OUTLIER_THRESHOLD`).
+- `bandKey(float $total): string` returns the snake_case key for a total.
+- `bandColors(): array` and `bandColor(string $bandKey): string` (static) map band keys to the colours used for result pills.
+
 ## Score components
 
 Scoresheet totals are computed at save time in `Scoresheet::booting()`:
@@ -101,12 +108,12 @@ $sheet->total = $sheet->aroma + $sheet->appearance + $sheet->flavour + $sheet->m
 
 | Field | Max | Type |
 |-------|-----|------|
-| aroma | 12 | `unsignedTinyInteger` |
-| appearance | 3 | `unsignedTinyInteger` |
-| flavour | 20 | `unsignedTinyInteger` |
-| mouthfeel | 5 | `unsignedTinyInteger` |
-| overall | 10 | `unsignedTinyInteger` |
-| total | 50 | `unsignedTinyInteger` (computed) |
+| aroma | 12 | nullable `unsignedTinyInteger` (null while a draft is incomplete) |
+| appearance | 3 | nullable `unsignedTinyInteger` |
+| flavour | 20 | nullable `unsignedTinyInteger` |
+| mouthfeel | 5 | nullable `unsignedTinyInteger` |
+| overall | 10 | nullable `unsignedTinyInteger` |
+| total | 50 | `unsignedTinyInteger` (computed; 0 when scores are null) |
 
 ## Tiebreak rule
 

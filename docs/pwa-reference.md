@@ -78,15 +78,17 @@ Route::get('/sw.js', function () {
 
 ### Registration
 
-`resources/js/judging.js` registers the SW on page load:
+`resources/js/judging.js` registers the SW after the window `load` event:
 
 ```js
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {})
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {})
+    })
 }
 ```
 
-The `scope: '/'` combined with the `Service-Worker-Allowed: /` header gives the SW control over all routes.
+The `scope: '/'` combined with the `Service-Worker-Allowed: /` header gives the SW control over all routes. `judging.js` is only loaded on the judging page, so the service worker is registered the first time a member opens a judging screen.
 
 ---
 

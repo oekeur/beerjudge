@@ -12,7 +12,7 @@ Navigate to `/login`.
 
 ### Step 2: Enter your credentials
 
-Fill in your email address and password. Check **Remember me** if you want the session to persist across browser restarts.
+Fill in your email address and password. You stay signed in across browser restarts; remember-me is always on.
 
 ### Step 3: Submit
 

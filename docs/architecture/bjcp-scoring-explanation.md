@@ -46,7 +46,7 @@ Rankings are competition-wide, not per style. The club runs small competitions (
 
 **Draft vs submitted.** A judge can save a sheet as a draft at any point during judging. Section scores are nullable for drafts; all five are required on submission. This lets the judging screen auto-save progress to the server without the judge having to complete the sheet in one sitting. A submitted sheet can be reopened and resaved (same `client_uuid` overwrites the row) until the competition closes.
 
-Each scoresheet row carries a globally unique `client_uuid`. The server upserts on that field. Retried POSTs from the judging screen are idempotent.
+Each scoresheet row carries a globally unique `client_uuid`. The server matches an existing sheet by `client_uuid` (scoped to the judge), then by entry and judge, so retried POSTs never create duplicates.
 
 ## Trade-offs
 

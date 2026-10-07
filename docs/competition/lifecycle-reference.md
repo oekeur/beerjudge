@@ -80,13 +80,13 @@ After each status update, the page calls `$this->refreshFormData(['status'])` to
 
 ## Valid transitions
 
-Transitions are enforced by the UI (only the appropriate action button appears). There is no server-side state machine guard.
+The header buttons offer only the forward step. There is no server-side state machine guard, and the **Status** field on the Overview tab accepts any value.
 
 ```
 draft → open → judging → closed
 ```
 
-Reversal is not supported. Moving backwards requires a direct database update.
+The Status field can move a competition backwards, or jump to Judging, without running `BottleNumberAssignmentService::assign()`.
 
 ## Entry constraints during the lifecycle
 

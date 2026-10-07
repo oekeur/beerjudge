@@ -8,10 +8,10 @@ Bottle numbers serve as that identifier. They are assigned at the moment judging
 
 ## Why numbers are assigned at the `open` → `judging` transition
 
-Bottle numbers need to be present before judging starts, stable during judging, and consistent between the physical bottles and the judging screen. The `moveToJudging` action is the natural moment because:
+Bottle numbers need to be present before judging starts and stable during judging. They label the physical bottles and identify entries in the admin tables, the results sheets and the judge report; the judging screen does not show them (judges work from a per-judge tasting number, the position in `sort_order` excluding their own entries). The `moveToJudging` action is the natural moment because:
 
-- All entries are now locked. No new entries can be added after this point, so the set of entries is complete.
-- Judges need a number to match their physical bottle to an entry on the judging screen.
+- Member registration is now locked, so the set of entries is complete (admins can still edit entries in the panel).
+- Admins use the number to match a physical bottle to an entry in the admin tables.
 - Assigning numbers earlier (during `open`) would mean numbers could become stale if entries are added or removed.
 
 The assignment and the status update happen in sequence. If the assignment fails, the status stays `open` and no partial assignments persist (the transaction rolls back).
@@ -30,7 +30,7 @@ If blind-ness against registration-order inference becomes a concern, the servic
 
 An earlier design used a single field for both ordering and identification. This was separated because:
 
-- Sort order controls the sequence in which judges work through entries on the judging screen. Admins can reorder entries (drag-and-drop in Filament) to group similar styles or arrange a logical tasting progression.
+- Sort order controls the sequence in which judges work through entries on the judging screen. Admins set it by dragging rows in the Entries tab of the competition, or with the Sort by ABV button (ascending, entries without ABV last), to group similar styles or arrange a logical tasting progression.
 - Bottle numbers are the physical label on the bottle. They must not change once bottles are prepared for judging.
 
 If the two were the same field, an admin reordering entries on the judging screen would inadvertently relabel the physical bottles. The separation means an admin can adjust the judging sequence without touching the bottle labels.

@@ -20,7 +20,7 @@ The judging screen is intentionally not Filament. Livewire's server round-trips 
 - The `web` auth guard (session-based; no API tokens).
 - A custom Vite theme at `resources/css/filament/admin/theme.css`.
 - The brand name set from `config('app.club_name')` with a ` BeerJudge` suffix, falling back to `BeerJudge` if unset.
-- The brand logo linked to `/` (the judging screen), not `/admin`.
+- The panel home link points to `/` (the judging screen), not `/admin`.
 - Sentry initialised via a `panels::head.end` render hook, injecting the DSN and current user from meta tags.
 
 Resources, pages, and widgets are discovered automatically from their respective directories under `app/Filament/`.
@@ -34,7 +34,7 @@ Resources, pages, and widgets are discovered automatically from their respective
 Manages the full competition lifecycle. The edit form is tabbed across five areas:
 
 - **Overview** — name, year, judging date, status (`draft`, `open`, `judging`, `closed`).
-- **Styles** — multi-select of styles to include in this competition. Styles must be attached before entries are created.
+- **Styles** — multi-select of styles to include in this competition. The entry style dropdown is limited to the selected styles; if none are selected it lists every style.
 - **Entries** — a Repeater that manages entries inline: member, style, ABV, brewer notes, and drag-to-reorder. Includes a "Sort by ABV" action and a copyable registration link.
 - **Dashboard** — judge assignment, a live-polling results summary widget showing scores per entry as they come in.
 - **Results** — a judge variance widget flagging entries where the score spread across judges is high.
@@ -61,7 +61,7 @@ Each resource lives in its own subdirectory under `app/Filament/Resources/`. For
 
 ## Authentication
 
-The panel uses the same session cookie as the rest of the app. There is no separate admin login. Members with `is_admin = true` can access `/admin`; the `Authenticate` middleware enforces this. Inactive members (`is_active = false`) are blocked from logging in by `RequireActiveMember` middleware on the main app and cannot reach the admin panel.
+The panel uses the same session cookie as the rest of the app. There is no separate admin login. Members with `is_admin = true` can access `/admin`; the `Authenticate` middleware enforces this. `RequireActiveMember` guards the main app routes only, so the panel does not check `is_active`: an inactive admin can still reach `/admin`.
 
 ---
 

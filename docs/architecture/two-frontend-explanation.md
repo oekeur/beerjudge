@@ -4,7 +4,7 @@
 
 The app has two fundamentally different interaction patterns, and a single UI framework cannot serve both without painful compromises.
 
-**Admin management** (competitions, entries, members, results) is a classic CRUD workload: a form is submitted, data is saved, a page reloads or redirects. Server-round-trips are expected; state is simple. Filament handles this class of UI well out of the box.
+**Admin management** (competitions, entries, members, styles) is a classic CRUD workload: a form is submitted, data is saved, a page reloads or redirects. Server-round-trips are expected; state is simple. Filament handles this class of UI well out of the box.
 
 **Judging** is different. A judge fills in five scored sections and five freetext notes fields for each beer, sometimes over 20-30 minutes per sheet. The venue may have unreliable Wi-Fi. If a network request fails mid-fill and the UI re-renders from the server, whatever the judge was typing disappears. That is not recoverable.
 
@@ -18,18 +18,19 @@ The app runs two completely separate UIs against one Laravel backend.
 Browser
   │
   ├─── /admin/*  ──────► Filament (PHP/Livewire)
-  │                        Resources: Competitions, Members,
-  │                        Styles, Entries, Scoresheets, Results
+  │                        Resources: Competitions (Entries,
+  │                        Dashboard, Results & Variance tabs),
+  │                        Members, Styles
   │
   └─── /judging/*  ───► Blade + Alpine.js
        /scoresheets       Single-page scoresheet screen
-       /results/*         IndexedDB (Dexie) for local persistence
+                          IndexedDB (Dexie) for local persistence
                           POST /scoresheets for server sync
 ```
 
 Filament is mounted at `/admin` via `AdminPanelProvider` and discovered automatically from `app/Filament/Resources/`. It uses the standard Filament session-cookie auth guard.
 
-The judging screen is a single route: `GET /judging/{competition}`. The controller renders a Blade view with all entry data server-rendered into the page as a JSON payload. Alpine.js takes over from there. Every scoresheet change writes to IndexedDB immediately, then queues a `POST /scoresheets` sync in the background. The server upserts by `client_uuid`, so retries are safe.
+The judging screen is one page route, `GET /judging/{competition}`, plus an admin-only JSON route `GET /judging/{competition}/progress`. Results pages (`/competitions/{id}/results`) are server-rendered Blade without the offline layer. The controller renders a Blade view with all entry data server-rendered into the page as a JSON payload. Alpine.js takes over from there. Every scoresheet change writes to IndexedDB immediately, then queues a `POST /scoresheets` sync in the background. The server upserts by `client_uuid`, so retries are safe.
 
 The judging screen JS entry point is `resources/js/judging.js`. It initialises Alpine, Dexie (IndexedDB wrapper), and registers the service worker for PWA support. The `window.judgingApp()` function carries the entire client-side state machine.
 

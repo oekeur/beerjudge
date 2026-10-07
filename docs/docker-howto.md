@@ -39,7 +39,7 @@ APP_KEY=           # generate with: php artisan key:generate --show
 APP_URL=https://yourdomain.com
 CLUB_NAME=Your Club Name
 
-DB_PASSWORD=changeme   # change before first start; only effective on a fresh volume
+DB_PASSWORD=changeme   # change before first start; only effective on a fresh volume. Compose passes ${DB_PASSWORD} to postgres from the shell or .env, not from .env.production, so set the same value there too
 
 MAIL_MAILER=smtp
 MAIL_HOST=your-smtp-host
@@ -142,10 +142,10 @@ There is a brief period (typically a few seconds) while the new container starts
 php artisan key:generate --show
 ```
 
-Copy the output into `.env.production`, then restart:
+Copy the output into `.env.production`, then recreate the container. `env_file` is read only when the container is created, so `restart` keeps the old values:
 
 ```bash
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml -f compose.host.yaml up -d
+docker compose -f docker-compose.yaml -f docker-compose.prod.yaml -f compose.host.yaml up -d --force-recreate app
 ```
 
 ### Login redirects to `/login` in an infinite loop
@@ -156,7 +156,7 @@ Most likely the `SESSION_DOMAIN` is wrong, `APP_URL` does not match the actual U
 2. `SESSION_DRIVER=redis` and Redis is reachable (`docker compose logs redis`).
 3. `REDIS_PASSWORD` is `null` (the string, not an empty value) if the Redis container has no auth.
 
-Also check: if `SESSION_COOKIE_SAME_SITE` is `strict`, email magic links will not carry the cookie. Use `lax`.
+Also check: if `SESSION_SAME_SITE` is `strict`, email magic links will not carry the cookie. Use `lax` (the default).
 
 ### App returns 502 after deploy
 
@@ -176,7 +176,7 @@ If migrations are running against a large dataset, startup can take longer than 
 docker compose exec postgres psql -U beerjudge -c "ALTER USER beerjudge PASSWORD 'newpassword';"
 ```
 
-Then update `DB_PASSWORD` in `.env.production` to match and restart the app container.
+Then update `DB_PASSWORD` in `.env.production` (and wherever Compose reads it, see above) to match, and recreate the app container with `up -d --force-recreate app`.
 
 ### "network proxy declared as external, but could not be found"
 

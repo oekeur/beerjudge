@@ -5,20 +5,20 @@ Score your assigned beer entries and submit your scoresheets before the competit
 ## Prerequisites
 
 - An active member account
-- Registered as a judge for the competition (see step 1)
+- An active member account (register as a judge in step 1 if an admin has not added you)
 - The competition must be in `judging` status
 
 ## Steps
 
 ### 1. Register as a judge
 
-Navigate to the home page (`/`). Find the competition listed there and click **Register as judge**. You can withdraw your registration before judging begins by clicking **Leave as judge**.
+Either an admin adds you as a judge, or you open the judging screen once judging starts and click **Register as judge**. **Leave as judge** on the same screen removes you.
 
 ### 2. Open the judging screen
 
-Once the competition moves to judging status, a **Judge** button appears on the home page. Click it, or navigate directly to `/judging/{competition-id}`.
+Once the competition moves to judging status, a **Judge entries** link appears on the home page. Click it, or navigate directly to `/judging/{competition-id}`.
 
-You will see all eligible entries listed as scoresheets. Your own entries are excluded — you cannot score beer you brewed.
+You will see all eligible entries in tasting order (`#1`, `#2`, ...), set by the admin. Use the **Order** toggle to switch to **My ranking**, which sorts by your own scores. Your own entries are excluded — you cannot score beer you brewed.
 
 ### 3. Score an entry
 
@@ -38,7 +38,7 @@ Click the **info icon** next to any section heading to open the BJCP style guide
 
 Add tasting notes in the text area beneath each score row. Notes save automatically as you type.
 
-Expand **Off-flavour descriptors** to tick any faults present (diacetyl, acetaldehyde, DMS, etc.).
+Expand **Off-Flavor Descriptors** to tick any faults present (diacetyl, acetaldehyde, DMS, etc.).
 
 Your scoresheet saves to the browser automatically after every change. The sync badge in the entry header shows the save state:
 
@@ -53,11 +53,11 @@ Your scoresheet saves to the browser automatically after every change. The sync 
 
 When all five sections have a score, click **Submit** at the bottom of the scoresheet. The card collapses to a read-only summary showing your scores and the scoring band (e.g., Very Good, 30–37).
 
-A submitted scoresheet is locked in the UI. To change a score after submitting, click **Reopen** — this sets the sheet back to draft and lets you edit it again. You can resubmit as many times as you like until the competition closes.
+A submitted scoresheet is locked in the UI. To change a score after submitting, click **Reopen to edit** — this sets the sheet back to draft and lets you edit it again. You can resubmit as many times as you like until the competition closes.
 
 ### 5. Track progress (admin only)
 
-If you are an admin, a collapsible panel at the top of the screen shows how many judges have submitted for each entry (`submitted / total`). This refreshes every 30 seconds.
+If you are an admin, a collapsible panel at the top of the screen shows how many judges have submitted for each entry (`submitted / eligible`, where eligible judges exclude the entry's brewer). This refreshes every 30 seconds.
 
 ### 6. Work offline
 

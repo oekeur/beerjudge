@@ -21,6 +21,7 @@ POST /competitions/{competition}/judges  auth, active-member
 DELETE /competitions/{competition}/judges auth, active-member
 GET  /competitions/{competition}/results/{member}  auth, active-member
 GET  /competitions/{competition}/results  auth, active-member
+GET  /competitions/{competition}/judge-report/{judge}  auth, active-member
 GET  /competitions/{competition}/entries/create  auth, active-member
 POST /competitions/{competition}/entries  auth, active-member
 ```
@@ -53,13 +54,13 @@ Logging out and invalidating the session before redirecting to `/login` breaks t
 
 ## Comparison: RequireAdmin
 
-`App\Http\Middleware\RequireAdmin` (alias: `admin`) checks `is_admin` on the authenticated user. It aborts with 403 rather than redirecting, because:
+`RequireAdmin` is currently unused (see below). `App\Http\Middleware\RequireAdmin` (alias: `admin`) checks `is_admin` on the authenticated user. It aborts with 403 rather than redirecting, because:
 
 - It only runs after `auth` has already verified the session is valid.
 - An active member who is not an admin is a normal application state; a 403 is appropriate.
 - There is no redirect-loop risk because the `auth` middleware would not redirect an authenticated member away from `/login`.
 
-`RequireAdmin` is applied selectively within the Filament panel setup, not on the web routes file.
+`RequireAdmin` is registered as the `admin` alias but is not applied to any route or to the Filament panel. Panel access is controlled by `Member::canAccessPanel()`.
 
 ---
 

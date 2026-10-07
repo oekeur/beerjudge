@@ -33,7 +33,7 @@ The status changes to **Open**. Members can now register entries.
 
 ## Step 4: Distribute the entry link
 
-1. On the competition edit page, find the **Entry submission link** in the invite-links widget.
+1. On the competition edit page, open the **Entries** tab. The entry form URL is shown at the top with a Copy button.
 2. Copy and share it with members.
 
 Members who follow the link and are logged in can submit entries.
@@ -53,14 +53,14 @@ The system:
 
 **Verification:** each entry now has a bottle number. Check via the **Entries** tab.
 
-**Troubleshooting:** if bottle numbers appear missing after the transition, reload the Entries tab. The assignment runs in a transaction; if it fails, the status update is rolled back and an exception is logged.
+**Troubleshooting:** if bottle numbers appear missing after the transition, reload the Entries tab. The assignment runs in a transaction; if it fails, the status stays Open and no bottle numbers change.
 
 ## Step 6: Set up judges
 
 1. Open the competition edit page.
-2. Use the **Judge participation link** to register each judge, or attach them directly via the **Dashboard** tab.
+2. Add judges in the Judges field on the **Dashboard** tab, or copy the link next to that field and send it to judges (it works once the competition is in Judging).
 
-Judges register via `POST /competitions/{competition}/judges`. A judge cannot score their own entries; the judging screen enforces this by excluding those entries from their list.
+A member can also click **Register as judge** on the judging screen (`POST /competitions/{competition}/judges`, allowed while open or judging); **Leave as judge** removes them. A judge cannot score their own entries; the judging screen enforces this by excluding those entries from their list.
 
 ## Step 7: Judge the competition
 

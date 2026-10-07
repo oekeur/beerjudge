@@ -24,18 +24,18 @@ In practice, drafts are short-lived. The admin creates the competition, attaches
 
 ## The `judging` transition as an action point
 
-Moving from `open` to `judging` is the most consequential transition. It does two things atomically:
+Moving from `open` to `judging` is the most consequential transition. It does two things in sequence (assignment runs in its own transaction; if it throws, the status stays Open):
 
 1. Assigns bottle numbers to every entry.
 2. Locks registration.
 
 Combining them in one action prevents the situation where bottle numbers are assigned but registration is still open (a new entry would have no number), or where registration closes but no numbers are assigned yet (the judging screen would show entries without identifiers).
 
-The Filament action requires confirmation specifically because this transition is irreversible through the UI.
+The Filament action asks for confirmation because registration locks and bottle numbers are assigned. The Status field on the Overview tab can still change the status manually.
 
 ## No server-side state machine
 
-The lifecycle transitions are enforced only in the Filament UI. There is no `canTransitionTo()` guard on the model itself. Updating `status` directly in the database, in tests, or via Tinker is possible.
+The lifecycle transitions are enforced only by the Filament action buttons, and the Status field on the Overview tab bypasses them. There is no `canTransitionTo()` guard on the model itself. Updating `status` directly in the database, in tests, or via Tinker is possible.
 
 This is a deliberate tradeoff. A 10-person club running four competitions per year does not need the complexity of a state machine library. The Filament action buttons are the only interface most admins will ever use, and they already enforce the correct order. Adding a model-level guard would increase complexity without adding meaningful protection for this scale.
 

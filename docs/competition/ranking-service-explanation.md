@@ -2,7 +2,7 @@
 
 ## The problem this solves
 
-Results need to be computed from multiple judges' scoresheets, merged into a single ranked list, and served on every results page request. The data lives in three tables (`entries`, `scoresheets`, and their related members and styles). Without a dedicated service, this logic would leak into the controller and be duplicated if rankings ever needed to appear in a Filament widget or a batch-print view.
+Results need to be computed from multiple judges' scoresheets, merged into a single ranked list, and served on every results page request. The data lives in three tables (`entries`, `scoresheets`, and their related members and styles). Without a dedicated service, this logic would leak into the controller and be duplicated if rankings ever needed to appear in a Filament widget or a batch-print view. It also feeds the per-judge report through `judgeComparison()`.
 
 `CompetitionRankingService` centralises all ranking logic: score averaging, tiebreak handling, and BJCP band assignment.
 
@@ -21,7 +21,7 @@ If the data set ever grew large enough for page latency to matter, caching the r
 
 `rank()` and `sortAndPlace()` share the same sort comparator. The static method exists for callers that already have row data in memory and need to apply the same ordering without re-querying the database.
 
-The primary use case is the Filament results widget, which may filter or reorder rows before displaying them. Rather than re-implementing the comparator inline, the widget calls `sortAndPlace()`.
+`sortAndPlace()` is currently unused by application code. It exists for callers that already hold row data and need the same ordering without re-querying.
 
 ## The tiebreak rule
 
@@ -35,7 +35,7 @@ fn (array $a, array $b): int =>
     ?: $b['avg_overall'] <=> $a['avg_overall']
 ```
 
-If `avg_total` differs, that determines placement. If `avg_total` is equal, `avg_overall` decides. If both are equal, the order is stable (PHP's `usort` is not guaranteed stable across all PHP versions, but `sort()` on a Collection uses `usort` internally; ties at both levels are extremely rare in practice).
+If `avg_total` differs, that determines placement. If `avg_total` is equal, `avg_overall` decides. If both are equal, sorting is stable on the PHP 8.3+ this app requires, so tied entries stay in entry id order. Tied entries still get consecutive placements, not a shared rank.
 
 ## Why draft scoresheets are excluded
 

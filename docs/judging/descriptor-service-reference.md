@@ -21,7 +21,7 @@ Each element has three keys:
 | `name` | `string` | `trans("descriptor.{$slug}.name")` |
 | `description` | `string` | `trans("descriptor.{$slug}.description")` |
 
-Names and descriptions come from the `lang/*/descriptor.php` translation files. If a translation key is missing, `trans()` returns the key string.
+Names and descriptions come from the `descriptor.{slug}.name` and `descriptor.{slug}.description` keys in `lang/en.json` and `lang/nl.json`. If a key is missing, `__()` returns the key string.
 
 ### `DescriptorService::slugs(): array`
 
@@ -85,4 +85,4 @@ $descriptors = DescriptorService::descriptors();
 - [Judging screen reference](reference.md) — scoresheet payload, validation rules
 - [Why descriptors are stored as JSON](descriptor-service-explanation.md)
 - `app/Services/DescriptorService.php`
-- `lang/en/descriptor.php`
+- `lang/en.json`, `lang/nl.json`

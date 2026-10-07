@@ -11,7 +11,7 @@ See [README.md](../README.md) for which env file to copy in each setup scenario.
 | Variable | Type | Default | Required for prod | Notes |
 |---|---|---|---|---|
 | `APP_NAME` | string | `BeerJudge` | no | Appears in page titles and mail footer. |
-| `CLUB_NAME` | string | _(empty)_ | yes | Shown on the home page and admin header. Set it before inviting members. |
+| `CLUB_NAME` | string | _(empty)_ | yes | Prefixed to the app name (`<club> BeerJudge`) in the navigation, page headings and titles of the auth pages, the 500 error page, and the admin panel brand. Set it before inviting members. |
 | `APP_ENV` | string | `local` | yes | Set to `production`. Controls error detail, caching defaults, and log verbosity. |
 | `APP_KEY` | string | _(empty)_ | yes | Laravel encryption key. Generate with `php artisan key:generate --show`. Never leave blank. |
 | `APP_DEBUG` | bool | `true` | yes | Set to `false` in production. When `true`, full stack traces are sent to the browser. |
@@ -47,7 +47,7 @@ See [README.md](../README.md) for which env file to copy in each setup scenario.
 | `DB_USERNAME` | string | _(unset)_ | `beerjudge` | Database user. |
 | `DB_PASSWORD` | string | _(unset)_ | `secret` | Database password. Change before any production deployment. |
 
-`DB_HOST` and `DB_PORT` are not needed when `DB_CONNECTION=sqlite`. When running inside the Docker stack, `docker-compose.yaml` injects `DB_HOST=postgres` and `DB_PORT=5432` directly into the container environment, overriding the `.env` values.
+`DB_HOST` and `DB_PORT` are not needed when `DB_CONNECTION=sqlite`. When running inside the Docker stack, `docker-compose.yaml` injects `DB_CONNECTION=pgsql`, `DB_HOST=postgres`, `DB_PORT=5432`, `REDIS_HOST=redis` and `REDIS_PORT=6379` directly into the app container environment, overriding the `.env` values.
 
 ---
 
@@ -62,6 +62,8 @@ See [README.md](../README.md) for which env file to copy in each setup scenario.
 | `SESSION_ENCRYPT` | bool | `false` | `false` | Encrypt session payload at rest. Not required when the session store is a private Redis instance. |
 | `SESSION_PATH` | string | `/` | `/` | Cookie path scope. |
 | `SESSION_DOMAIN` | string | `null` | `null` | Cookie domain. `null` defaults to the request host. |
+| `SESSION_SAME_SITE` | string | _(unset, config default `lax`)_ | _(unset)_ | Must be `lax`. Magic links open from an email client, which is a cross-site navigation; under `strict` the browser withholds the session cookie on the redirect after `/magic-link/{token}`, so the member lands on `/login` and the single-use link is spent. |
+| `SESSION_SECURE_COOKIE` | bool | _(unset)_ | _(unset)_ | Set to `true` in production so the session cookie is only sent over HTTPS. |
 | `QUEUE_CONNECTION` | string | `database` | `redis` | Queue backend. `database` is fine for low-volume use; `redis` is preferred in production. |
 | `BROADCAST_CONNECTION` | string | `log` | `log` | Broadcast driver. `log` disables real broadcasting; the app does not use websockets. |
 | `FILESYSTEM_DISK` | string | `local` | `local` | Default storage disk. `local` stores files under `storage/app`. |
@@ -97,7 +99,7 @@ Only needed when `CACHE_STORE`, `SESSION_DRIVER`, or `QUEUE_CONNECTION` is set t
 | `MAIL_FROM_ADDRESS` | string | `hello@example.com` | yes | From address on all outgoing mail. Change to a real address. |
 | `MAIL_FROM_NAME` | string | `${APP_NAME}` | no | From name. Defaults to `APP_NAME`. |
 
-Mail is only used for magic-link login emails and (when implemented) result publication notifications. With `MAIL_MAILER=log`, those emails appear in `storage/logs/laravel.log` and are never actually sent.
+Mail is used for magic-link login emails, password reset emails, and the approval email sent when an admin activates a member. With `MAIL_MAILER=log`, those emails appear in `storage/logs/laravel.log` and are never actually sent.
 
 ---
 

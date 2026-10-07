@@ -31,7 +31,7 @@ On page reload or browser restart, the app re-reads IndexedDB and picks up any p
 
 ## Idempotency via `client_uuid`
 
-Every scoresheet gets a UUID when first created in the browser. The UUID travels with every POST. The server upserts on `(client_uuid, judge_id)` rather than creating a new row each time. This means retrying a failed POST is always safe — the server will update the existing record rather than create a duplicate.
+Every scoresheet gets a UUID when first created in the browser. The UUID travels with every POST. The server looks up an existing sheet by `client_uuid` for this judge, and if none matches, by `(entry_id, judge_id)`; it updates that sheet or creates one. A judge therefore has at most one sheet per entry, and retrying a failed POST never creates a duplicate.
 
 The same UUID cannot be used by two different judges. If judge B sends a UUID already owned by judge A, the server returns HTTP 422. This prevents a crafted request from overwriting another judge's scores.
 

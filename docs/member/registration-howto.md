@@ -14,22 +14,22 @@ Two roles are involved: an admin (creates the invitation) and the new person (co
 
 ## Part 1: Create the invitation (admin)
 
-### Step 1: Open the Invitations resource in Filament
+### Step 1: Open the Members page in Filament
 
-Navigate to `/admin` and select **Invitations** from the sidebar.
+Navigate to `/admin` and open **Members** in the sidebar.
 
 ### Step 2: Create a new invitation
 
-Click **New Invitation**. Choose the invitation type:
+Click **Generate invite link**. Choose the invitation type:
 
-- **Single use:** expires after the first person completes registration. Use this when inviting one specific person.
-- **Time-bound:** remains valid until the `expires_at` datetime you set. Multiple people can register with the same link. Use this for open club sign-up windows.
+- **Single-use:** expires after the first person completes registration. Use this when inviting one specific person.
+- **Time-bound (multiple uses until expiry):** remains valid until the **Expires at** datetime you set. Multiple people can register with the same link. Use this for open club sign-up windows.
 
-Save the form.
+Submit the modal.
 
 ### Step 3: Copy the invitation link
 
-Open the invitation record. The invitation URL takes the form:
+The link is copied to your clipboard and also shown in a persistent notification. Active multi-use links stay listed on the Members page under **Active multi-use invite links**. The URL takes the form:
 
 ```
 https://<your-domain>/join/<token>
@@ -43,7 +43,7 @@ Copy the full URL and send it to the new person out of band (email, chat, etc.).
 
 ### Step 1: Open the invitation link
 
-Visit the URL the admin sent you. The link loads the registration form. If you see a "Gone" (410) page, the invitation has expired or was already used; contact the admin.
+Visit the URL the admin sent you. The link loads the registration form. If the link is no longer valid you see an "Invite link no longer works" page (HTTP 410) that says whether it expired or was already used; ask an admin for a new link.
 
 ### Step 2: Fill in the form
 
@@ -56,7 +56,7 @@ Visit the URL the admin sent you. The link loads the registration form. If you s
 
 ### Step 3: Submit
 
-Click **Register**. On success, you are redirected to the login page with a confirmation message.
+Click **Create account**. You are redirected to the login page with a message that an admin must approve your account first, and that you will get an email when that happens.
 
 ---
 
@@ -64,14 +64,14 @@ Click **Register**. On success, you are redirected to the login page with a conf
 
 New accounts are created with `is_active = false`. The new member cannot log in until an admin activates the account.
 
-**Admin:** open Filament, go to **Members**, find the new member, and toggle **Active** to on. Save.
+**Admin:** open Filament and go to **Members** (the **Pending approval** filter lists inactive members). Click **Approve** on the row, select several members and use **Approve selected**, or edit the member and switch **Active** on. Whichever path you use, the member gets a "Your account is approved" email.
 
 ---
 
 ## Verification
 
 - The new member appears in the **Members** list in Filament with `Active = false` immediately after registration.
-- After activation, the member can log in at `/login`.
+- After activation, the member receives the approval email and can log in at `/login`.
 - Attempting to log in before activation returns an "account is not active" error on the login page.
 
 ---
@@ -88,7 +88,7 @@ The token in the URL does not match any invitation. Check the copied URL for tru
 An account already exists with that email. The member should use the password reset flow or contact an admin.
 
 **Member cannot log in after registering**
-The account is still inactive. An admin must toggle `is_active` to true in Filament.
+The account is still inactive. An admin must approve it (Approve, Approve selected, or the Active toggle).
 
 ---
 
