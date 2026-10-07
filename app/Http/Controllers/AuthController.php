@@ -62,19 +62,30 @@ class AuthController extends Controller
         return back()->with('success', __('auth.magic_link_sent'));
     }
 
-    public function verifyMagicLink(string $token, Request $request): RedirectResponse
+    public function showMagicLinkConfirm(string $token): View|RedirectResponse
     {
         $magicLink = MagicLink::findByPlaintext($token);
 
         if ($magicLink === null || ! $magicLink->isValid()) {
-            return redirect()->route('login')->withErrors(['email' => __('auth.magic_link_invalid')]);
+            return $this->invalidMagicLink();
         }
 
-        $magicLink->markUsed();
+        return view('auth.magic-link-confirm', ['token' => $token]);
+    }
+
+    public function consumeMagicLink(string $token, Request $request): RedirectResponse
+    {
+        $magicLink = MagicLink::findByPlaintext($token);
+
+        if ($magicLink === null || ! $magicLink->consume()) {
+            return $this->invalidMagicLink();
+        }
 
         $member = $magicLink->member;
 
-        abort_if($member === null, 401);
+        if ($member === null) {
+            return $this->invalidMagicLink();
+        }
 
         Auth::login($member, remember: true);
         $request->session()->regenerate();
@@ -82,5 +93,10 @@ class AuthController extends Controller
         return $member->is_admin
             ? redirect()->intended('/admin')
             : redirect()->intended('/');
+    }
+
+    private function invalidMagicLink(): RedirectResponse
+    {
+        return redirect()->route('login')->withErrors(['email' => __('auth.magic_link_invalid')]);
     }
 }

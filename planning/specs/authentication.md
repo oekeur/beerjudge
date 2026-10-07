@@ -17,7 +17,8 @@ Session-based auth for a closed group of known members. Three ways in: password,
 
 `GET /magic-link` — request form.
 `POST /magic-link` — generates a 64-char token, stores it in `magic_links` with a 15-minute expiry, dispatches `MagicLinkNotification` email. Rate-limited to 3 requests per 5 minutes per IP.
-`GET /magic-link/{token}` — validates the token (not expired, not used), logs the member in (remember-me on), regenerates the session, marks `used_at` and redirects to the intended URL. Invalid, expired or used tokens redirect to `/login` with an error.
+`GET /magic-link/{token}` — validates the token (not expired, not used) and renders a page with a Log in button; it does not consume the token, so mail scanners that prefetch links cannot burn it.
+`POST /magic-link/{token}` — consumes the token atomically (sets `used_at`), logs the member in (remember-me on), regenerates the session and redirects to the intended URL. Invalid, expired or used tokens on either verb redirect to `/login` with an error.
 
 Tokens are single-use. The member must request a new one if they miss the 15-minute window.
 

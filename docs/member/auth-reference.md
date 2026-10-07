@@ -96,25 +96,52 @@ If the email matches a member, `MagicLink::createForMember()` generates a token 
 
 ### `GET /magic-link/{token}`
 
-Verifies a magic link token and logs the member in.
+Shows a confirmation page with a Log in button. Does not consume the token, so mail scanners that prefetch links cannot burn it.
 
-- **Controller:** `AuthController@verifyMagicLink`
+- **Controller:** `AuthController@showMagicLinkConfirm`
 - **Route name:** `auth.magic-link.verify`
-- **Middleware:** `guest`, `throttle:5,1` (5 attempts per minute per IP)
+- **Middleware:** `guest`, `throttle:magic-link-token` (5 attempts per minute per IP, shared by GET and POST on the token path)
 - **Path parameter:** `token` — the plaintext 64-character token from the email link
 
 #### Behaviour
 
 1. Hashes the token with SHA-256 and looks up the matching `MagicLink` record.
 2. Calls `isValid()`: rejects the token if `used_at` is set or `expires_at` is in the past.
-3. Calls `markUsed()` to stamp `used_at`.
-4. Calls `Auth::login()` and regenerates the session.
-5. Redirects admins to `/admin`, others to `/`.
+3. Renders `auth.magic-link-confirm` with a form that POSTs to `auth.magic-link.consume`.
 
 #### Responses
 
 | Condition | Response |
 |---|---|
+| Valid, unused, unexpired token | 200 confirmation page |
+| Unknown or expired or used token | 302 redirect to `login` with `email` error |
+| Rate limit exceeded | 429 |
+
+### `POST /magic-link/{token}`
+
+Consumes the token and logs the member in.
+
+- **Controller:** `AuthController@consumeMagicLink`
+- **Route name:** `auth.magic-link.consume`
+- **Middleware:** `guest`, `throttle:magic-link-token` (shared with GET), CSRF
+- **Path parameter:** `token` — the plaintext token from the email link
+
+#### Behaviour
+
+1. Looks up the `MagicLink` by hash.
+2. Calls `MagicLink::consume()`, a conditional `UPDATE` on `used_at IS NULL` and `expires_at > now()`. Of two concurrent requests, only one succeeds.
+3. Calls `Auth::login()` (remember-me on) and regenerates the session.
+4. Redirects admins to `/admin`, others to `/`.
+
+#### Responses
+
+| Condition | Response |
+|---|---|
+| Valid, unused, unexpired token | 302 redirect to `/admin` or `/` |
+| Unknown or expired or used token | 302 redirect to `login` with `email` error |
+| Rate limit exceeded | 429 |
+
+---|---|
 | Valid, unused, unexpired token | 302 redirect to `/admin` or `/` |
 | Unknown or expired or used token | 302 redirect to `login` with `email` error |
 | Rate limit exceeded | 429 |

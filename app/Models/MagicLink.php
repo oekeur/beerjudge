@@ -48,6 +48,18 @@ class MagicLink extends Model
     }
 
     /**
+     * Marks the link used in a single conditional UPDATE and returns whether this call won.
+     * Of two concurrent requests with the same token, only one gets true.
+     */
+    public function consume(): bool
+    {
+        return self::whereKey($this->id)
+            ->whereNull('used_at')
+            ->where('expires_at', '>', now())
+            ->update(['used_at' => now()]) === 1;
+    }
+
+    /**
      * @return BelongsTo<Member, $this>
      */
     public function member(): BelongsTo
