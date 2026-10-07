@@ -2,6 +2,10 @@
 # Lightweight dev mode: SQLite + database drivers, no Redis or Postgres required.
 # Exported vars take precedence over .env because Laravel uses createImmutable().
 export DB_CONNECTION=sqlite
+# config/database.php falls back to database/database.sqlite only when DB_DATABASE
+# is unset; a .env set up for Postgres has DB_DATABASE=beerjudge, which SQLite
+# would read as a relative file path.
+export DB_DATABASE="$PWD/database/database.sqlite"
 export SESSION_DRIVER=database
 export SESSION_ENCRYPT=false
 export QUEUE_CONNECTION=database
