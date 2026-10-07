@@ -147,13 +147,17 @@ The app ships as a Docker image (nginx + php-fpm + queue worker in one container
 
 ### Deploy
 
-1. Copy the repo to the server and create `.env` from `.env.docker.example`. Set at minimum:
-   - `APP_KEY` — generate with `php artisan key:generate --show`
+Full steps, verification and redeploys are in [How to deploy with Docker](docs/docker-howto.md). In short:
+
+1. Copy the repo to the server and create `.env.production` from `.env.docker.example`. Set at minimum:
+   - `APP_KEY`: generate with `php artisan key:generate --show`
    - `APP_ENV=production`, `APP_DEBUG=false`
    - `APP_URL=https://yourdomain.com`
    - `CLUB_NAME`, `DB_PASSWORD`, `MAIL_*`
 
-2. Create `compose.prod.yaml` on the server (not in the repo — it contains host-specific config):
+   Compose passes `${DB_PASSWORD}` to Postgres from the shell or `.env`, not from `.env.production`, so set the same value there too.
+
+2. Create `compose.host.yaml` on the server (not in the repo; it holds host-specific config). `docker-compose.prod.yaml` already attaches the app to the `proxy` network; this file names the virtual host and the real network:
 
    ```yaml
    services:
@@ -162,16 +166,21 @@ The app ships as a Docker image (nginx + php-fpm + queue worker in one container
          VIRTUAL_HOST: yourdomain.com
          LETSENCRYPT_HOST: yourdomain.com
          VIRTUAL_PORT: 80
+
    networks:
-     default:
+     proxy:
        external: true
-       name: webproxy   # name of your nginx-proxy network
+       name: webproxy   # the actual Docker network name nginx-proxy uses
    ```
 
 3. Start:
 
    ```bash
-   docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+   docker compose \
+     -f docker-compose.yaml \
+     -f docker-compose.prod.yaml \
+     -f compose.host.yaml \
+     up -d --build
    ```
 
 The container runs `php artisan migrate --force` on every start, so deploys are zero-touch. Data persists in named Docker volumes (`postgres_data`, `redis_data`).
