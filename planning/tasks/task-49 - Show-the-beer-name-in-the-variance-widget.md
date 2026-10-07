@@ -1,9 +1,10 @@
 ---
 id: TASK-49
 title: Show the beer name in the variance widget
-status: To Do
+status: Planned
 assignee: []
 created_date: '2026-10-07 15:10'
+updated_date: '2026-10-07 19:11'
 labels:
   - judge-variance
 dependencies: []
@@ -17,3 +18,9 @@ ordinal: 49000
 <!-- SECTION:DESCRIPTION:BEGIN -->
 JudgeVarianceWidget.php:51 renders TextColumn::make('name'), but entries has no name column (dropped 2026-06-10), so the Beer column is always empty.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-07-launch-email-bugfix-batch.md (Phase 3: Small fixes)
+<!-- SECTION:NOTES:END -->

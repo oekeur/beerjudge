@@ -1,9 +1,10 @@
 ---
 id: TASK-42
 title: Remove the leftover results-summary Blade view if unused
-status: To Do
+status: Planned
 assignee: []
 created_date: '2026-10-07 14:39'
+updated_date: '2026-10-07 19:11'
 labels:
   - dashboard-widgets
 dependencies: []
@@ -24,3 +25,9 @@ resources/views/filament/competition/results-summary.blade.php is the only templ
 <!-- AC:BEGIN -->
 - [ ] #1 Grep confirms no reference, file deleted, tests pass
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-07-launch-email-bugfix-batch.md (Phase 3: Small fixes)
+<!-- SECTION:NOTES:END -->

@@ -1,9 +1,10 @@
 ---
 id: TASK-27
 title: Verify production env against the launch checklist
-status: To Do
+status: Planned
 assignee: []
 created_date: '2026-10-07 14:39'
+updated_date: '2026-10-07 19:11'
 labels:
   - launch-ops
 dependencies: []
@@ -29,3 +30,9 @@ The repo-root .env.production is a local copy that drifted from the server's fil
 - [ ] #4 Redis binds to localhost or the internal network only, or REDIS_PASSWORD is set
 - [ ] #5 Local .env.production copy matches the server or is deleted
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-07-launch-email-bugfix-batch.md (Phase 1: Production env verified)
+<!-- SECTION:NOTES:END -->
