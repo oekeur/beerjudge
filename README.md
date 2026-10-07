@@ -95,6 +95,47 @@ Final score is the average of submitted totals. Tiebreak is the averaged overall
 
 Admin sees results as soon as the competition closes. Members see their own scoresheet once the admin publishes (`published_at` set). One URL per participant: their scores and judge notes, then the full standings with brewer names revealed. Admins can render all participants at once for batch printing.
 
+## Documentation
+
+**Judging**
+- [Reference](docs/judging/reference.md) — routes, payload shape, validation rules, sync states
+- [How to judge a competition](docs/judging/howto-judge.md)
+- [Why the judging screen is offline-first](docs/judging/explanation-offline-sync.md)
+- [DescriptorService reference](docs/judging/descriptor-service-reference.md) — off-flavour descriptor list and validation
+- [Why descriptors are stored as JSON](docs/judging/descriptor-service-explanation.md)
+
+**Competition**
+- [Lifecycle reference](docs/competition/lifecycle-reference.md) — status transitions, schema, Filament actions
+- [How to run a competition](docs/competition/lifecycle-howto.md)
+- [Why the lifecycle has four states](docs/competition/lifecycle-explanation.md)
+- [Results reference](docs/competition/results-reference.md) — routes, access rules, view data
+- [How to view results](docs/competition/results-howto.md)
+- [Ranking service reference](docs/competition/ranking-service-reference.md)
+- [Bottle assignment reference](docs/competition/bottle-assignment-reference.md)
+
+**Members**
+- [Registration reference](docs/member/registration-reference.md) — invitation model, routes, validation
+- [How to register a new member](docs/member/registration-howto.md)
+- [Auth reference](docs/member/auth-reference.md) — password, magic link, password reset routes
+- [How to log in](docs/member/auth-howto.md)
+
+**Admin**
+- [Artisan commands reference](docs/admin/artisan-commands-reference.md) — member:create, member:delete, member:password
+- [How to create a member via CLI](docs/admin/artisan-commands-howto.md)
+- [BJCP seeder reference](docs/admin/bjcp-seeder-reference.md)
+- [How to seed BJCP styles](docs/admin/bjcp-seeder-howto.md)
+- [Why Filament](docs/admin/filament-overview-explanation.md)
+
+**Architecture**
+- [Two-frontend architecture](docs/architecture/two-frontend-explanation.md) — Filament vs Blade+Alpine split
+- [BJCP scoring model](docs/architecture/bjcp-scoring-explanation.md) — sections, bands, ranking, tiebreak
+
+**Operations**
+- [Environment variables](docs/env-reference.md)
+- [Docker reference](docs/docker-reference.md)
+- [How to deploy with Docker](docs/docker-howto.md)
+- [PWA reference](docs/pwa-reference.md)
+
 ## Self-hosting
 
 The app ships as a Docker image (nginx + php-fpm + queue worker in one container). Postgres and Redis run as separate containers via Docker Compose.
