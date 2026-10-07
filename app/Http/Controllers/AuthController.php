@@ -56,7 +56,7 @@ class AuthController extends Controller
         if ($member !== null) {
             $plain = MagicLink::createForMember($member);
             $url = route('auth.magic-link.verify', ['token' => $plain]);
-            $member->notify(new MagicLinkNotification($url));
+            $member->notify((new MagicLinkNotification($url))->locale($member->locale));
         }
 
         return back()->with('success', __('auth.magic_link_sent'));
