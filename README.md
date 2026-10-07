@@ -140,38 +140,39 @@ Admin sees results as soon as the competition closes. Members see their own scor
 
 The app ships as a Docker image (nginx + php-fpm + queue worker in one container). Postgres and Redis run as separate containers via Docker Compose.
 
+The image is built on a development machine and pushed to the private package `ghcr.io/oekeur/beerjudge:latest`. The server holds no checkout: only `docker-compose.yaml`, `docker-compose.prod.yaml` and `.env.production`, and it pulls the image. CI does not build or push images. Full steps, verification and rollback are in [How to deploy with Docker](docs/docker-howto.md).
+
 ### Prerequisites
 
-- Docker + Docker Compose on the server
-- An [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) setup (or another reverse proxy) handling TLS termination
+- Docker + Docker Compose on the server and the development machine
+- An [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) setup on the server handling TLS termination, on an external Docker network named `proxy`
+- `docker login ghcr.io` on both machines
 
 ### Deploy
 
-1. Copy the repo to the server and create `.env` from `.env.docker.example`. Set at minimum:
-   - `APP_KEY` — generate with `php artisan key:generate --show`
+1. On the development machine, from a clean checkout of `main`:
+
+   ```bash
+   docker compose build app
+   docker push ghcr.io/oekeur/beerjudge:latest
+   ```
+
+2. First time only: copy `docker-compose.yaml` and `docker-compose.prod.yaml` to the server and create `.env.production` from `.env.docker.example`. Set at minimum:
+   - `APP_KEY`: generate with `php artisan key:generate --show`
    - `APP_ENV=production`, `APP_DEBUG=false`
    - `APP_URL=https://yourdomain.com`
    - `CLUB_NAME`, `DB_PASSWORD`, `MAIL_*`
+   - `VIRTUAL_HOST` (and `LETSENCRYPT_HOST` if acme-companion issues the certificate); nginx-proxy reads them from the app container's environment
 
-2. Create `compose.prod.yaml` on the server (not in the repo — it contains host-specific config):
+   Compose passes `${DB_PASSWORD}` to Postgres from the shell or a `.env` file next to the Compose files, not from `.env.production`, so put the same value in `.env` too.
 
-   ```yaml
-   services:
-     app:
-       environment:
-         VIRTUAL_HOST: yourdomain.com
-         LETSENCRYPT_HOST: yourdomain.com
-         VIRTUAL_PORT: 80
-   networks:
-     default:
-       external: true
-       name: webproxy   # name of your nginx-proxy network
-   ```
-
-3. Start:
+3. On the server:
 
    ```bash
-   docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+   docker compose -f docker-compose.yaml -f docker-compose.prod.yaml pull app
+   docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
    ```
+
+Watchtower on the server cannot pull the private image, so it does not deploy BeerJudge.
 
 The container runs `php artisan migrate --force` on every start, so deploys are zero-touch. Data persists in named Docker volumes (`postgres_data`, `redis_data`).

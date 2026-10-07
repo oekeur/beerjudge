@@ -141,7 +141,7 @@ In production, only the `app` service joins the `proxy` external network so an n
 docker network create proxy
 ```
 
-The service name `proxy` in `docker-compose.prod.yaml` is the network name in Compose configuration; the actual Docker network name may differ (e.g. `webproxy`). Adjust the `name:` field in a host-specific override file.
+The service name `proxy` in `docker-compose.prod.yaml` is the network name in Compose configuration; the actual Docker network name may differ (e.g. `webproxy`). Set it with `name: <network>` under `networks.proxy` in the server's copy of `docker-compose.prod.yaml`.
 
 ---
 
