@@ -1,9 +1,10 @@
 ---
 id: TASK-59
-title: Translate the invalid-credentials login error
+title: Pick a guest's locale from Accept-Language
 status: To Do
 assignee: []
 created_date: '2026-10-07 20:15'
+updated_date: '2026-10-07 21:06'
 labels:
   - i18n
 dependencies: []
@@ -15,10 +16,18 @@ ordinal: 59000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-AuthController.php:33 returns __('Invalid credentials.'), which has no key in lang/en.json or lang/nl.json, so Dutch members see English. Same bug class as TASK-52 (fixed with auth.inactive_account).
+The Dutch string for __('Invalid credentials.') already exists (lang/nl.json:2). The real bug: SetLocale (app/Http/Middleware/SetLocale.php) sets the locale only from the logged-in member's locale, so every guest (login page, failed login, magic-link pages) gets APP_LOCALE=en. Found by the wave incompatibility check, 2026-10-07.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A failed password login with Dutch as the active locale shows a Dutch error, covered by a feature test
+- [ ] #1 A failed password login from a browser sending Accept-Language: nl shows 'Ongeldige inloggegevens.', covered by a feature test
+- [ ] #2 A guest with an unsupported or missing Accept-Language gets the app default locale
+- [ ] #3 A logged-in member's profile locale still wins over Accept-Language
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Decision (Oscar, 2026-10-07): guests get their locale from the Accept-Language header (en/nl only); logged-in members keep their profile locale.
+<!-- SECTION:NOTES:END -->

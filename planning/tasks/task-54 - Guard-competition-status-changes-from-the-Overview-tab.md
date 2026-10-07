@@ -4,7 +4,7 @@ title: Guard competition status changes from the Overview tab
 status: To Do
 assignee: []
 created_date: '2026-10-07 15:10'
-updated_date: '2026-10-07 20:54'
+updated_date: '2026-10-07 20:56'
 labels:
   - dashboard-widgets
 dependencies: []
@@ -25,6 +25,12 @@ The Status select on the Overview tab accepts any value, so an admin can move ba
 - [ ] #2 A closed competition shows a Reopen judging header action that moves it back to Judging, covered by a test
 - [ ] #3 Saving the edit form with a tampered status value does not change the status, covered by a test
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+See planning/2026-10-07-guard-competition-status-changes.md (single task: disable status field, force Draft on create, add reopenJudging header action, tests)
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 

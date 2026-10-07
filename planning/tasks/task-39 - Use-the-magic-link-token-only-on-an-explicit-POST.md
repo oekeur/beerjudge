@@ -4,7 +4,7 @@ title: Use the magic-link token only on an explicit POST
 status: To Do
 assignee: []
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-07 20:54'
+updated_date: '2026-10-07 20:56'
 labels:
   - auth
 dependencies: []
@@ -27,6 +27,12 @@ GET /magic-link/{token} marks the token used before login succeeds, so a mail sc
 - [ ] #2 POST with a valid token marks it used, logs the member in and redirects (admins to /admin, others to /), covered by a feature test
 - [ ] #3 An invalid, expired or used token on GET or POST redirects to /login with the magic_link_invalid error
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+See planning/2026-10-07-magic-link-post-only-consume.md (single phase: GET confirm page, POST consumes atomically; controller, routes, view, lang, MagicLinkTest)
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
