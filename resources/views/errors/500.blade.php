@@ -38,7 +38,7 @@
     <title>{{ $appTitle }} — Server error</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @if ($sentryDsn !== '' && $eventId !== null)
-        <script src="https://browser.sentry-cdn.com/10.58.0/bundle.min.js" crossorigin="anonymous"></script>
+        <script src="/vendor/error-report/bundle.js"></script>
     @endif
 </head>
 <body class="min-h-screen bg-amber-50 flex items-center justify-center">
@@ -56,15 +56,29 @@
             >
                 Send error report
             </button>
+            <p id="sentry-report-fallback" class="hidden text-xs text-gray-500 text-center mb-4">
+                Report failed to send — quote this ID if you contact us: <span class="font-mono">{{ (string) $eventId }}</span>
+            </p>
         @endif
         <a href="/" class="block text-center text-sm text-amber-700 hover:underline">Back to home</a>
     </div>
 
     @if ($sentryDsn !== '' && $eventId !== null)
         <script>
-            Sentry.init({ dsn: @json($sentryDsn) });
+            try {
+                Sentry.init({ dsn: @json($sentryDsn) });
+            } catch (e) {
+                // Sentry SDK failed to load or initialise (e.g. blocked by an ad-blocker);
+                // the click handler below still attaches and falls back gracefully.
+            }
 
             document.getElementById('sentry-report-btn').addEventListener('click', function () {
+                if (typeof Sentry === 'undefined' || typeof Sentry.showReportDialog !== 'function') {
+                    document.getElementById('sentry-report-btn').classList.add('hidden');
+                    document.getElementById('sentry-report-fallback').classList.remove('hidden');
+                    return;
+                }
+
                 Sentry.showReportDialog({
                     eventId: @json((string) $eventId),
                     @if ($userName !== null || $userEmail !== null)

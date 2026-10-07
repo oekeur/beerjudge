@@ -187,6 +187,21 @@ cp resources/images/icon.svg public/favicon.svg
 
 **PWA meta tags** are present in all Blade views (after `<meta name="viewport">`). Any new view that renders a full HTML document must include them.
 
+## Error page Sentry bundle
+
+`resources/views/errors/500.blade.php` cannot use `@vite()` (a 500 can be caused by a broken build, so the error page must not depend on Vite/the manifest being healthy). Its "Send error report" button needs the Sentry browser SDK, so it's built separately, ahead of time, and served as a plain static file — not pulled from `browser.sentry-cdn.com`, since that domain is blocked by common ad-blocker filter lists (e.g. EasyPrivacy), which silently kills the button for anyone running one.
+
+**Files:**
+- `resources/js/error-report-bundle.js` — entry point, assigns the `@sentry/browser` import to `window.Sentry`
+- `vite.error-report.config.js` — separate Vite config (`build.lib`, `formats: ['iife']`) that bundles it standalone, independent of the main `vite.config.js`/manifest
+- `public/vendor/error-report/bundle.js` — the built output, referenced directly by `<script src="/vendor/error-report/bundle.js">` in the error view. Committed to git (like the PWA icons above) so it exists even if a deploy's build step fails or is skipped.
+
+**Regenerating after bumping `@sentry/browser` in `package.json`:**
+```bash
+npm run build:error-report
+```
+This also runs automatically as part of the normal `npm run build`.
+
 ## Tasks
 
 Tasks live in Backlog.md, rooted at `planning/` (config: `backlog.config.yml`). `planning/roadmap.md`, `planning/requirements/` and `planning/specs/` stay the product docs; tasks link them with `--doc`. Dated plan files (`planning/YYYY-MM-DD-*.md`) hold execution plans.
