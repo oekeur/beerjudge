@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\RequireActiveMember;
 use App\Http\Middleware\SetLocale;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -56,7 +57,8 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
                 SetLocale::class,
-            ])
+                RequireActiveMember::class,
+            ], isPersistent: true)
             ->renderHook('panels::head.end', function (): HtmlString {
                 $dsn = is_string(config('sentry.dsn')) ? config('sentry.dsn') : '';
                 $user = auth()->user();
