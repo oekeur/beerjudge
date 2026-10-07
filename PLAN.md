@@ -52,7 +52,7 @@ Tasks:
 - [x] Position two beer glass SVGs at the min/max points using percentage-based `left` offsets computed from the display range.
 - [x] Glass SVG: simple pint glass silhouette (tapered body, foam top, highlight stripe). Fill = `srmToHex(srm_min/max)`. Size: ~32px wide × 64px tall.
 - [x] Labels below each glass: "SRM {value}". Use `text-amber-700 dark:text-amber-400`.
-- [x] When only one SRM value is set, show a single glass with no strip (or a flat swatch). When both are null, hide the section with `x-show`.
+- [x] When only one SRM value is set, render a flat bar in that value's colour, with the min glass when only `srm_min` is set and no glass when only `srm_max` is set (see TASK-57). When both are null, hide the section with `x-show`.
 - [x] [RISK] Confirm SVG `fill` attribute binding works in Alpine before committing to the full layout.
 
 Unknowns:
@@ -81,5 +81,5 @@ Unknowns:
 - [x] **Visualization approach:** Extended gradient strip with two boundary glasses and reduced opacity outside the range. (Decided 2026-06-19)
 - [x] **Layout placement:** Modal only. (Decided 2026-06-19)
 - [x] **SRM lookup table vs Morey equation:** Lookup table. (Decided in brainstorm)
-- [ ] **Single value display:** When only `srm_min` or only `srm_max` is set, show a flat swatch with that one value. No strip.
-- [ ] **Padding formula:** Confirm `max(3, round(range * 0.3))` feels right after smoke-testing.
+- [x] **Single value display:** When only one of `srm_min` / `srm_max` is set, the section draws a full-width flat bar in that value's colour (`judging.js:301`), with no gradient and no white masks (both need `hasBoth`). One glass is drawn, labelled with the value. This works for a min-only style. A max-only style draws no glass, because the glass is tied to `srmMin !== null` (`show.blade.php:432`) and the max glass needs `hasBoth` (`show.blade.php:441`); tracked in a separate task. No seeded style is min-only or max-only.
+- [ ] **Padding formula:** Confirm `max(3, round(range * 0.3))` feels right after smoke-testing. The formula is applied at `judging.js:279`, then the pad is clamped to SRM 1-40 and equalised to the smaller side at `judging.js:280-283`, so near the ends of the scale the visible padding is smaller. Whether it feels right is still Oscar's smoke test.
