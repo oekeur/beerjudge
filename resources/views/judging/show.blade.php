@@ -425,11 +425,11 @@
                         {{-- Gradient strip (top:20px so foam floats above it) --}}
                         <div class="absolute inset-x-0 rounded-lg" :style="styleGuide.srm?.gradientStyle"></div>
                         {{-- Left opacity mask --}}
-                        <div x-show="styleGuide.srm?.hasBoth" class="absolute left-0 rounded-l-lg bg-white opacity-60" :style="'top:20px;height:24px;width:' + styleGuide.srm?.leftMaskPct"></div>
+                        <div data-testid="srm-left-mask" x-show="styleGuide.srm?.hasBoth" class="absolute left-0 rounded-l-lg bg-white opacity-60" :style="{ top: '20px', height: '24px', width: styleGuide.srm?.leftMaskPct }"></div>
                         {{-- Right opacity mask --}}
-                        <div x-show="styleGuide.srm?.hasBoth" class="absolute right-0 rounded-r-lg bg-white opacity-60" :style="'top:20px;height:24px;width:' + styleGuide.srm?.rightMaskPct"></div>
+                        <div data-testid="srm-right-mask" x-show="styleGuide.srm?.hasBoth" class="absolute right-0 rounded-r-lg bg-white opacity-60" :style="{ top: '20px', height: '24px', width: styleGuide.srm?.rightMaskPct }"></div>
                         {{-- Min glass --}}
-                        <div x-show="styleGuide.srm?.srmMin !== null" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + styleGuide.srm?.leftMinPct">
+                        <div x-show="styleGuide.srm?.srmMin !== null" class="absolute flex flex-col items-center" :style="{ top: '0', transform: 'translateX(-50%)', left: styleGuide.srm?.leftMinPct }">
                             <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
                                 <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="styleGuide.srm?.minFill" stroke="currentColor" stroke-width="1.2"/>
                                 <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>
@@ -438,7 +438,7 @@
                             <span class="text-xs text-amber-700 dark:text-amber-400 mt-0.5 tabular-nums whitespace-nowrap" x-text="'SRM ' + styleGuide.srm?.srmMin"></span>
                         </div>
                         {{-- Max glass (only when hasBoth and different from min) --}}
-                        <div x-show="styleGuide.srm?.hasBoth && styleGuide.srm?.srmMax !== styleGuide.srm?.srmMin" class="absolute flex flex-col items-center" :style="'top:0;transform:translateX(-50%);left:' + styleGuide.srm?.leftMaxPct">
+                        <div data-testid="srm-max-glass" x-show="styleGuide.srm?.srmMax !== null && styleGuide.srm?.srmMax !== styleGuide.srm?.srmMin" class="absolute flex flex-col items-center" :style="{ top: '0', transform: 'translateX(-50%)', left: styleGuide.srm?.leftMaxPct }">
                             <svg width="28" height="52" viewBox="0 0 28 52" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-300 dark:text-gray-600" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))">
                                 <path d="M4 8 L6 46 Q6 48 14 48 Q22 48 22 46 L24 8 Z" :fill="styleGuide.srm?.maxFill" stroke="currentColor" stroke-width="1.2"/>
                                 <path d="M4 8 Q6 4 14 4 Q22 4 24 8 L23 12 Q20 9 14 9 Q8 9 5 12 Z" fill="#f5f0e8" stroke="currentColor" stroke-width="1"/>

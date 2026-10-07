@@ -284,8 +284,8 @@ window.judgingApp = function (serverData) {
                     const displayMin = (srmMin ?? single) - effectivePad;
                     const displayMax = (srmMax ?? single) + effectivePad;
                     const range = displayMax - displayMin;
-                    const pct = (v) => Math.round((v - displayMin) / range * 100) + '%';
-                    const maskPct = (v) => Math.round(v / range * 100) + '%';
+                    const pct = (v) => range === 0 ? '50%' : Math.round((v - displayMin) / range * 100) + '%';
+                    const maskPct = (v) => range === 0 ? '50%' : Math.round(v / range * 100) + '%';
                     srm = {
                         hasBoth,
                         srmMin,
