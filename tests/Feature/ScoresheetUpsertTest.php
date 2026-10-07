@@ -91,6 +91,39 @@ class ScoresheetUpsertTest extends TestCase
         $this->assertEquals(10, Scoresheet::where('client_uuid', $uuid)->value('aroma'));
     }
 
+    public function test_descriptors_are_stored_and_replaced_on_resave(): void
+    {
+        $comp = $this->makeJudgingCompetition();
+        $style = $this->makeStyle();
+        $brewer = $this->makeMember();
+        $judge = $this->makeMember();
+        $entry = $this->makeEntry($comp, $brewer, $style);
+        $uuid = fake()->uuid();
+
+        $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, $uuid, ['descriptors' => ['diacetyl', 'dms']]))->assertOk();
+
+        $this->assertSame(['diacetyl', 'dms'], Scoresheet::where('client_uuid', $uuid)->sole()->descriptors);
+
+        $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, $uuid, ['descriptors' => []]))->assertOk();
+
+        $this->assertSame([], Scoresheet::where('client_uuid', $uuid)->sole()->descriptors);
+    }
+
+    public function test_judging_screen_returns_saved_descriptors(): void
+    {
+        $comp = $this->makeJudgingCompetition();
+        $style = $this->makeStyle();
+        $brewer = $this->makeMember();
+        $judge = $this->makeMember();
+        $entry = $this->makeEntry($comp, $brewer, $style);
+
+        $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, fake()->uuid(), ['descriptors' => ['acetaldehyde']]))->assertOk();
+
+        $this->actingAs($judge)->get("/judging/{$comp->id}")
+            ->assertOk()
+            ->assertViewHas('serverData', fn (array $data): bool => $data['existingSheets'][0]['descriptors'] === ['acetaldehyde']);
+    }
+
     public function test_judge_cannot_score_own_entry(): void
     {
         $comp = $this->makeJudgingCompetition();
