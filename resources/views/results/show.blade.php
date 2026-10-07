@@ -3,14 +3,10 @@
     $memberName = $member->name;
     $memberId = $member->id;
 @endphp
-<x-page :title="'Results — ' . $competition->name . ' — ' . $memberName">
+<x-page :title="'Results — ' . $competition->name . ' — ' . $memberName" :vite="['resources/css/app.css', 'resources/js/app.js']">
     <x-slot:head>
         <style>
-            @media print {
-                .no-print { display: none !important; }
-                body { background: white; color: black; }
-                .page-break { page-break-after: always; }
-            }
+            @include('results.partials.print-styles')
         </style>
     </x-slot:head>
 <body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white font-sans p-6 max-w-4xl mx-auto">
@@ -41,70 +37,100 @@
 
         @foreach($memberEntries as $row)
         @php
-            /** @var array{entry: \App\Models\Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, \App\Models\Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, placement: int} $row */
+            /** @var array{entry: \App\Models\Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, \App\Models\Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, band_key: string, placement: int} $row */
+            $ordinal = match ($row['placement'] % 10) {
+                1 => $row['placement'] % 100 === 11 ? 'th' : 'st',
+                2 => $row['placement'] % 100 === 12 ? 'th' : 'nd',
+                3 => $row['placement'] % 100 === 13 ? 'th' : 'rd',
+                default => 'th',
+            };
         @endphp
-        <div class="mb-8">
-            <div class="flex justify-between items-baseline mb-2">
-                <h3 class="text-base font-semibold">
-                    {{ $row['entry']->style?->code }} · {{ $row['entry']->style?->name }}
-                    @if($row['entry']->abv)<span class="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">{{ $row['entry']->abv }}% ABV</span>@endif
-                </h3>
-                <span class="text-sm text-gray-500 dark:text-gray-400">#{{ $row['entry']->bottle_number }}</span>
-            </div>
+        <div class="mb-8 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
 
-            <div class="flex gap-6 mb-3 text-sm">
+            {{-- Entry header panel --}}
+            <div class="bg-gray-50 dark:bg-gray-900 px-5 py-4 flex justify-between items-start border-b border-gray-200 dark:border-gray-700">
                 <div>
-                    <span class="font-bold text-xl">{{ number_format($row['avg_total'], 1) }}</span>
-                    <span class="text-gray-500 dark:text-gray-400">/ 50</span>
-                    <span class="ml-2 font-medium
-                        {{ $row['avg_total'] >= 38 ? 'text-green-700 dark:text-green-400' : ($row['avg_total'] >= 30 ? 'text-teal-700 dark:text-teal-400' : ($row['avg_total'] >= 21 ? 'text-yellow-700 dark:text-yellow-400' : 'text-red-700 dark:text-red-400')) }}">
-                        {{ $row['band'] }}
-                    </span>
+                    <h3 class="text-base font-semibold">
+                        {{ $row['entry']->style?->code }} · {{ $row['entry']->style?->name }}
+                    </h3>
+                    <div class="flex gap-4 mt-1 text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                        @if($row['entry']->abv)<span>{{ $row['entry']->abv }}% ABV</span>@endif
+                        <span>Bottle #{{ $row['entry']->bottle_number }}</span>
+                        <span>{{ $row['sheet_count'] }} {{ Str::plural('judge', $row['sheet_count']) }}</span>
+                    </div>
                 </div>
-                <div class="text-gray-600 dark:text-gray-400">Place: <strong>{{ $row['placement'] }}</strong> of {{ $rankedEntries->count() }}</div>
-                <div class="text-gray-600 dark:text-gray-400">{{ $row['sheet_count'] }} {{ Str::plural('judge', $row['sheet_count']) }}</div>
+                <div class="text-right">
+                    <div class="flex items-baseline justify-end gap-1">
+                        <span class="text-3xl font-bold">{{ number_format($row['avg_total'], 1) }}</span>
+                        <span class="text-gray-400 dark:text-gray-500 text-sm">/ 50</span>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 mt-1.5">
+                        <span class="text-sm font-bold px-2.5 py-1 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">
+                            {{ $row['placement'] }}{{ $ordinal }} of {{ $rankedEntries->count() }}
+                        </span>
+                        <span class="text-xs font-medium px-2 py-0.5 rounded {{ \App\Services\CompetitionRankingService::bandColor($row['band_key']) }}">
+                            {{ $row['band'] }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             @if($row['sheets']->isNotEmpty())
-            <table class="w-full text-sm border-collapse mb-2">
+            {{-- Judge score table --}}
+            <table class="w-full text-sm border-collapse">
                 <thead>
-                    <tr class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                        <th class="text-left py-1 px-2 font-medium">Judge</th>
-                        <th class="text-center py-1 px-2 font-medium">Aroma<br><span class="text-xs font-normal text-gray-500">/12</span></th>
-                        <th class="text-center py-1 px-2 font-medium">App.<br><span class="text-xs font-normal text-gray-500">/3</span></th>
-                        <th class="text-center py-1 px-2 font-medium">Flavour<br><span class="text-xs font-normal text-gray-500">/20</span></th>
-                        <th class="text-center py-1 px-2 font-medium">Mouth.<br><span class="text-xs font-normal text-gray-500">/5</span></th>
-                        <th class="text-center py-1 px-2 font-medium">Overall<br><span class="text-xs font-normal text-gray-500">/10</span></th>
-                        <th class="text-center py-1 px-2 font-medium">Total</th>
+                    <tr class="bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">
+                        <th class="text-left py-2 px-3 font-medium">Judge</th>
+                        <th class="text-center py-2 px-3 font-medium">Aroma<br><span class="text-[10px] font-normal">/12</span></th>
+                        <th class="text-center py-2 px-3 font-medium">App.<br><span class="text-[10px] font-normal">/3</span></th>
+                        <th class="text-center py-2 px-3 font-medium">Flavour<br><span class="text-[10px] font-normal">/20</span></th>
+                        <th class="text-center py-2 px-3 font-medium">Mouth.<br><span class="text-[10px] font-normal">/5</span></th>
+                        <th class="text-center py-2 px-3 font-medium">Overall<br><span class="text-[10px] font-normal">/10</span></th>
+                        <th class="text-center py-2 px-3 font-medium">Total</th>
+                        <th class="w-8"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($row['sheets'] as $sheet)
-                    <tr class="border-t border-gray-200 dark:border-gray-700">
-                        <td class="py-1 px-2 text-gray-700 dark:text-gray-300">{{ $sheet->judge?->name }}</td>
-                        <td class="text-center py-1 px-2">{{ $sheet->aroma }}</td>
-                        <td class="text-center py-1 px-2">{{ $sheet->appearance }}</td>
-                        <td class="text-center py-1 px-2">{{ $sheet->flavour }}</td>
-                        <td class="text-center py-1 px-2">{{ $sheet->mouthfeel }}</td>
-                        <td class="text-center py-1 px-2">{{ $sheet->overall }}</td>
-                        <td class="text-center py-1 px-2 font-semibold">{{ $sheet->total }}</td>
+                @foreach($row['sheets'] as $sheet)
+                @php
+                    $hasNotes = $sheet->aroma_notes || $sheet->appearance_notes || $sheet->flavour_notes || $sheet->mouthfeel_notes || $sheet->overall_notes;
+                @endphp
+                <tbody @if($hasNotes) x-data="{ open: false }" @endif>
+                    <tr
+                        class="border-t border-gray-100 dark:border-gray-800 {{ $hasNotes ? 'hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer' : '' }}"
+                        @if($hasNotes) @click="open = !open" @endif
+                    >
+                        <td class="py-2.5 px-3 font-medium">{{ $sheet->judge?->name }}</td>
+                        <td class="text-center py-2.5 px-3 tabular-nums">{{ $sheet->aroma }}</td>
+                        <td class="text-center py-2.5 px-3 tabular-nums">{{ $sheet->appearance }}</td>
+                        <td class="text-center py-2.5 px-3 tabular-nums">{{ $sheet->flavour }}</td>
+                        <td class="text-center py-2.5 px-3 tabular-nums">{{ $sheet->mouthfeel }}</td>
+                        <td class="text-center py-2.5 px-3 tabular-nums">{{ $sheet->overall }}</td>
+                        <td class="text-center py-2.5 px-3 font-semibold tabular-nums">{{ $sheet->total }}</td>
+                        <td class="text-center py-2.5 px-1 text-gray-400 text-xs chevron">
+                            @if($hasNotes)
+                                <span x-text="open ? '▴' : '▾'">▾</span>
+                            @endif
+                        </td>
                     </tr>
-                    @if($sheet->aroma_notes || $sheet->appearance_notes || $sheet->flavour_notes || $sheet->mouthfeel_notes || $sheet->overall_notes)
-                    <tr class="border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
-                        <td colspan="7" class="py-2 px-3 text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                            @if($sheet->aroma_notes)<div><strong>Aroma:</strong> {{ $sheet->aroma_notes }}</div>@endif
-                            @if($sheet->appearance_notes)<div><strong>Appearance:</strong> {{ $sheet->appearance_notes }}</div>@endif
-                            @if($sheet->flavour_notes)<div><strong>Flavour:</strong> {{ $sheet->flavour_notes }}</div>@endif
-                            @if($sheet->mouthfeel_notes)<div><strong>Mouthfeel:</strong> {{ $sheet->mouthfeel_notes }}</div>@endif
-                            @if($sheet->overall_notes)<div><strong>Overall:</strong> {{ $sheet->overall_notes }}</div>@endif
+                    @if($hasNotes)
+                    <tr x-show="open" class="notes-row bg-gray-50/60 dark:bg-gray-900/40" style="display: none;">
+                        <td colspan="8" class="px-5 py-4">
+                            <div class="max-w-2xl space-y-2.5 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                                @if($sheet->aroma_notes)<p><span class="inline-block w-20 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide align-top">Aroma</span> {{ $sheet->aroma_notes }}</p>@endif
+                                @if($sheet->appearance_notes)<p><span class="inline-block w-20 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide align-top">Appearance</span> {{ $sheet->appearance_notes }}</p>@endif
+                                @if($sheet->flavour_notes)<p><span class="inline-block w-20 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide align-top">Flavour</span> {{ $sheet->flavour_notes }}</p>@endif
+                                @if($sheet->mouthfeel_notes)<p><span class="inline-block w-20 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide align-top">Mouthfeel</span> {{ $sheet->mouthfeel_notes }}</p>@endif
+                                @if($sheet->overall_notes)<p><span class="inline-block w-20 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide align-top">Overall</span> {{ $sheet->overall_notes }}</p>@endif
+                            </div>
                         </td>
                     </tr>
                     @endif
-                    @endforeach
                 </tbody>
+                @endforeach
             </table>
+            <p class="no-print text-xs text-gray-400 dark:text-gray-500 px-3 py-2 border-t border-gray-100 dark:border-gray-800">Click a row with notes to read them in full.</p>
             @else
-            <p class="text-sm text-gray-500 dark:text-gray-400 italic">No submitted scoresheets.</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 italic px-5 py-4">No submitted scoresheets.</p>
             @endif
         </div>
         @endforeach
@@ -112,39 +138,7 @@
     @endif
 
     {{-- Part 2: Full standings --}}
-    <section>
-        <h2 class="text-lg font-bold border-b border-gray-300 dark:border-gray-700 pb-1 mb-4">Full Standings</h2>
-        <table class="w-full text-sm border-collapse">
-            <thead>
-                <tr class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                    <th class="text-left py-1 px-2 font-medium">#</th>
-                    <th class="text-left py-1 px-2 font-medium">Brewer</th>
-                    <th class="text-left py-1 px-2 font-medium">Style</th>
-                    <th class="text-center py-1 px-2 font-medium">Score</th>
-                    <th class="text-center py-1 px-2 font-medium">Band</th>
-                    <th class="text-center py-1 px-2 font-medium">Sheets</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($rankedEntries as $row)
-                @php
-                    /** @var array{entry: \App\Models\Entry, sheets: \Illuminate\Database\Eloquent\Collection<int, \App\Models\Scoresheet>, avg_total: float, avg_overall: float, sheet_count: int, band: string, placement: int} $row */
-                @endphp
-                <tr class="border-t border-gray-200 dark:border-gray-700 {{ $row['entry']->member_id === $memberId ? 'bg-amber-50 dark:bg-amber-900/20' : '' }}">
-                    <td class="py-1 px-2 font-bold text-gray-900 dark:text-white">{{ $row['placement'] }}</td>
-                    <td class="py-1 px-2 text-gray-700 dark:text-gray-300">{{ $row['entry']->member?->name }}</td>
-                    <td class="py-1 px-2 text-gray-600 dark:text-gray-400">{{ $row['entry']->style?->code }}@if($row['entry']->abv)<span class="text-xs text-gray-400 dark:text-gray-500 ml-1">{{ $row['entry']->abv }}% ABV</span>@endif</td>
-                    <td class="text-center py-1 px-2 font-semibold">{{ number_format($row['avg_total'], 1) }}</td>
-                    <td class="text-center py-1 px-2 text-xs font-medium
-                        {{ $row['avg_total'] >= 38 ? 'text-green-700 dark:text-green-400' : ($row['avg_total'] >= 30 ? 'text-teal-700 dark:text-teal-400' : ($row['avg_total'] >= 21 ? 'text-yellow-700 dark:text-yellow-400' : 'text-red-700 dark:text-red-400')) }}">
-                        {{ $row['band'] }}
-                    </td>
-                    <td class="text-center py-1 px-2 text-gray-600 dark:text-gray-400">{{ $row['sheet_count'] }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </section>
+    @include('results.partials.full-standings', ['currentMemberId' => $memberId])
 
 </body>
 </x-page>

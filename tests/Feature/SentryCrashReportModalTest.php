@@ -33,8 +33,9 @@ class SentryCrashReportModalTest extends TestCase
 
         $html = view('errors.500')->render();
 
-        $this->assertStringContainsString('browser.sentry-cdn.com', $html);
+        $this->assertStringContainsString('/vendor/error-report/bundle.js', $html);
         $this->assertStringContainsString('Send error report', $html);
+        $this->assertStringContainsString('aaaabbbbccccddddaaaabbbbccccdddd', $html);
         $this->assertStringContainsString('Back to home', $html);
     }
 
@@ -44,7 +45,7 @@ class SentryCrashReportModalTest extends TestCase
 
         $html = view('errors.500')->render();
 
-        $this->assertStringNotContainsString('browser.sentry-cdn.com', $html);
+        $this->assertStringNotContainsString('/vendor/error-report/bundle.js', $html);
         $this->assertStringNotContainsString('Send error report', $html);
         $this->assertStringContainsString('Back to home', $html);
     }
@@ -59,7 +60,7 @@ class SentryCrashReportModalTest extends TestCase
 
         $html = view('errors.500')->render();
 
-        $this->assertStringNotContainsString('browser.sentry-cdn.com', $html);
+        $this->assertStringNotContainsString('/vendor/error-report/bundle.js', $html);
         $this->assertStringNotContainsString('Send error report', $html);
     }
 

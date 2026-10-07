@@ -3,7 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && npm run build:error-report",
+        "build:error-report": "vite build --config vite.error-report.config.js",
         "dev": "vite",
         "test:browser": "playwright test",
         "docs:dev": "vitepress dev docs",
