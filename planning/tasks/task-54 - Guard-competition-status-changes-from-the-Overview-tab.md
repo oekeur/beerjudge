@@ -1,10 +1,10 @@
 ---
 id: TASK-54
 title: Guard competition status changes from the Overview tab
-status: Backlog
+status: To Do
 assignee: []
 created_date: '2026-10-07 15:10'
-updated_date: '2026-10-07 18:09'
+updated_date: '2026-10-07 20:54'
 labels:
   - dashboard-widgets
 dependencies: []
@@ -18,6 +18,19 @@ ordinal: 54000
 <!-- SECTION:DESCRIPTION:BEGIN -->
 The Status select on the Overview tab accepts any value, so an admin can move backwards or jump to Judging without BottleNumberAssignmentService::assign(). Header buttons only offer the forward step.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [ ] #1 On the competition edit page the Status field cannot be changed; on create it still defaults to Draft
+- [ ] #2 A closed competition shows a Reopen judging header action that moves it back to Judging, covered by a test
+- [ ] #3 Saving the edit form with a tampered status value does not change the status, covered by a test
+<!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Decision (Oscar, 2026-10-07): Status is read-only on edit; add a Reopen judging header action on closed competitions. Judging -> Open is not offered.
+<!-- SECTION:NOTES:END -->
 
 ## Comments
 

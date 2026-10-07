@@ -1,9 +1,10 @@
 ---
 id: TASK-55
 title: Remove or apply the unused RequireAdmin middleware
-status: Backlog
+status: To Do
 assignee: []
 created_date: '2026-10-07 15:10'
+updated_date: '2026-10-07 20:54'
 labels:
   - auth
 dependencies: []
@@ -17,3 +18,14 @@ ordinal: 55000
 <!-- SECTION:DESCRIPTION:BEGIN -->
 RequireAdmin is aliased as 'admin' in bootstrap/app.php but applied nowhere; panel access goes through Member::canAccessPanel().
 <!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [ ] #1 RequireAdmin class, its 'admin' alias and its MiddlewareTest cases are removed; the suite passes
+<!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Decision (Oscar, 2026-10-07): remove it.
+<!-- SECTION:NOTES:END -->

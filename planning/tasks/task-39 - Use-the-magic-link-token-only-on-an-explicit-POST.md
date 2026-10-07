@@ -1,10 +1,10 @@
 ---
 id: TASK-39
 title: Use the magic-link token only on an explicit POST
-status: Backlog
+status: To Do
 assignee: []
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-07 18:09'
+updated_date: '2026-10-07 20:54'
 labels:
   - auth
 dependencies: []
@@ -20,6 +20,19 @@ ordinal: 39000
 <!-- SECTION:DESCRIPTION:BEGIN -->
 GET /magic-link/{token} marks the token used before login succeeds, so a mail scanner that follows links, or any failed login, burns it. Proposed: GET shows a 'Log in' button, POST consumes the token. Not yet decided.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [ ] #1 GET /magic-link/{token} with a valid token renders a page with a Log in button and does not mark the token used, covered by a feature test
+- [ ] #2 POST with a valid token marks it used, logs the member in and redirects (admins to /admin, others to /), covered by a feature test
+- [ ] #3 An invalid, expired or used token on GET or POST redirects to /login with the magic_link_invalid error
+<!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Decision (Oscar, 2026-10-07): yes. GET shows a Log in button, POST consumes the token.
+<!-- SECTION:NOTES:END -->
 
 ## Comments
 
