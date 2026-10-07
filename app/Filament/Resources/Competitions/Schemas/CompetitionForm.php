@@ -49,7 +49,8 @@ class CompetitionForm
                                     ->nullable(),
                                 Select::make('status')
                                     ->options(CompetitionStatus::class)
-                                    ->default(CompetitionStatus::Draft),
+                                    ->default(CompetitionStatus::Draft)
+                                    ->disabled(),
                             ]),
 
                         Tab::make(__('competition.tab.styles'))

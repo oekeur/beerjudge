@@ -49,6 +49,19 @@ class EditCompetition extends EditRecord
                 ->action(fn () => $record->update(['status' => CompetitionStatus::Closed]))
                 ->after(fn () => $this->refreshFormData(['status'])) : null,
 
+            $record->isClosed() ? Action::make('reopenJudging')
+                ->label(__('competition.action.reopen_judging'))
+                ->color('warning')
+                ->requiresConfirmation()
+                ->modalHeading(__('competition.action.reopen_judging'))
+                ->modalDescription(__('competition.action.reopen_judging_description'))
+                ->action(function () use ($record) {
+                    $record->update(['status' => CompetitionStatus::Judging]);
+
+                    // Header actions are resolved from the status at mount; a redirect rebuilds them.
+                    $this->redirect(static::getResource()::getUrl('edit', ['record' => $record]));
+                }) : null,
+
             $record->isJudging() ? Action::make('openJudgingScreen')
                 ->label(__('competition.action.open_judging_screen'))
                 ->color('gray')
