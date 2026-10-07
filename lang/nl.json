@@ -33,6 +33,9 @@
     "member.filter.pending_approval": "Wacht op goedkeuring",
     "member.action.approve": "Goedkeuren",
     "member.action.approve_selected": "Geselecteerden goedkeuren",
+    "member.activated_subject": "Je account is goedgekeurd",
+    "member.activated_intro": "Een beheerder heeft je account goedgekeurd. Je kunt nu inloggen.",
+    "member.activated_action": "Inloggen",
 
     "style.section.identity": "Identiteit",
     "style.section.vital_statistics": "Vitale Statistieken",
@@ -54,7 +57,7 @@
     "auth.register": "Account aanmaken",
     "auth.register_intro": "Vul je gegevens in om lid te worden van de club.",
     "auth.register_submit": "Account aanmaken",
-    "auth.register_success": "Account aangemaakt. Een beheerder keurt het goed voordat je kunt inloggen.",
+    "auth.register_success": "Account aangemaakt. Een beheerder keurt het goed voordat je kunt inloggen; je krijgt een e-mail zodra dat gebeurd is.",
     "auth.invite_invalid_title": "Uitnodigingslink werkt niet meer",
     "auth.invite_expired_heading": "Deze uitnodigingslink is verlopen",
     "auth.invite_expired_body": "Uitnodigingslinks blijven een beperkte tijd geldig. Deze is over de vervaldatum heen en kan niet meer gebruikt worden om een account aan te maken.",

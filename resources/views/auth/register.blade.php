@@ -2,11 +2,8 @@
 <x-auth-card>
     <h1 class="text-2xl font-bold text-amber-900 dark:text-amber-300 mb-2">{{ $appTitle }}</h1>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('auth.register_intro') }}</p>
-    <div class="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 px-4 py-3 text-sm text-amber-800 dark:text-amber-300 mb-3">
-        After registering, an admin will need to approve your account before you can log in.
-    </div>
-    <div class="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 px-4 py-3 text-sm text-blue-800 dark:text-blue-300 mb-6">
-        <span class="font-medium">Beta version</span> — expect rough edges. Email notifications are not set up yet, so you won't receive a confirmation email.
+    <div class="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 px-4 py-3 text-sm text-amber-800 dark:text-amber-300 mb-6">
+        After registering, an admin will need to approve your account before you can log in. You'll get an email once it's approved.
     </div>
     <form method="POST" action="{{ url('/join/' . $token) }}">
         @csrf

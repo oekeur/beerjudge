@@ -33,7 +33,7 @@ Admins generate invitation links in Filament. Two types:
 
 An invitation that fails validation on either verb renders `auth.invite-invalid` with status 410 instead of the stock error page. `HasTokenExpiry::invalidReason()` splits the two cases so the screen can say which one applies: an expired time-bound link shows its expiry date, a claimed single-use link says it was a one-time link. Both point the visitor at a club admin for a fresh link and link through to `/login` for people who already registered. Unknown tokens still 404 (`firstOrFail`).
 
-Registration produces a regular member account. New members are active by default; the admin can deactivate them in Filament.
+Registration produces a regular member account with `is_active = false`; the member cannot log in until an admin approves it in Filament (Approve on a row, Approve selected in bulk, or the Active toggle on the edit form). When `is_active` changes from false to true by any path, `Member::booted()` sends `MemberActivatedNotification` in the member's locale with a link to `/login`. Deactivating, or creating a member who is already active, sends nothing.
 
 ## Sessions
 

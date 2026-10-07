@@ -37,6 +37,7 @@ The MemberResource in Filament supports:
 - Create member (name, email, password, locale, is_admin, is_active)
 - Edit member (same fields; password change optional on edit)
 - List members (searchable, sortable; inactive member count shown as a badge)
+- Approve pending members, one at a time or in bulk; each approved member is emailed (see `authentication.md`, Invitation-based registration)
 
 Members cannot self-edit their profile; all changes go through Filament.
 
