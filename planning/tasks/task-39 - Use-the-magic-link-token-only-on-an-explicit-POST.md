@@ -1,10 +1,10 @@
 ---
 id: TASK-39
 title: Use the magic-link token only on an explicit POST
-status: To Do
+status: Review
 assignee: []
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-07 20:56'
+updated_date: '2026-10-07 21:37'
 labels:
   - auth
 dependencies: []
