@@ -10,6 +10,7 @@
             'scoresheets' => fn (Relation $query) => $query->where('status', \App\Enums\ScoresheetStatus::Submitted),
         ])
         ->orderBy('sort_order')
+        ->orderBy('id')
         ->get();
 
     $allJudges   = $competition->judges;

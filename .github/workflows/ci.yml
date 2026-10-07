@@ -46,6 +46,9 @@ jobs:
 
   browser-tests:
     runs-on: ubuntu-latest
+    # A stalled step (apt mirrors have hung for 12+ minutes) fails fast instead of
+    # running to the 6-hour default.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -66,7 +69,10 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
       - run: composer install --no-interaction --prefer-dist
       - run: npm ci
-      - run: npx playwright install chromium --with-deps
+      # No --with-deps: it runs apt-get update on every run, even on a browser cache
+      # hit, and that has stalled on Ubuntu mirrors. The runner image already ships
+      # the system libraries Chromium needs.
+      - run: npx playwright install chromium
       - name: Create browser-test environment
         run: |
           cp .env.browser-test.example .env.browser-test

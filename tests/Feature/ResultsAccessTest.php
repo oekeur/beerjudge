@@ -80,6 +80,7 @@ class ResultsAccessTest extends TestCase
         $comp = Competition::create(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'judging']);
         $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results");
         $response->assertOk();
+        $response->assertDontSee('Print all');
     }
 
     public function test_member_can_view_results_index_when_closed(): void
