@@ -204,5 +204,11 @@
     "profile.save": "Opslaan",
     "profile.saved": "Profiel opgeslagen.",
     "profile.wrong_current_password": "Het ingevoerde huidige wachtwoord is onjuist.",
-    "profile.password_hint": "Laat leeg om je huidige wachtwoord te behouden."
+    "profile.password_hint": "Laat leeg om je huidige wachtwoord te behouden.",
+    "competition.results_mail_subject": "Resultaten van :competition",
+    "competition.results_mail_intro": "De resultaten van :competition zijn binnen. Je scores en de volledige ranglijst staan op je resultatenblad.",
+    "competition.results_mail_action": "Bekijk je resultaten",
+    "competition.action.resend_results": "Resultatenmail opnieuw versturen",
+    "competition.action.resend_results_member": "Lid",
+    "competition.action.resend_results_sent": "Resultatenmail verstuurd"
 }

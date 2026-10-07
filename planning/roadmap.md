@@ -4,7 +4,9 @@ Features planned or specced but not yet built. Ordered by value per unit of effo
 
 ---
 
-## 1. Email on publish
+## 1. Email on publish (built)
+
+Built: see `specs/results.md`, section "Results email". The notes below are the original design questions.
 
 **Spec:** `requirements/homebrew-competition-enhancements-prd.md` — Enhancement 4.
 
