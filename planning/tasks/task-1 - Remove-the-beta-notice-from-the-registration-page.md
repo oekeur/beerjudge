@@ -1,10 +1,10 @@
 ---
 id: TASK-1
 title: Remove the beta notice from the registration page
-status: Review
+status: Done
 assignee: []
 created_date: '2026-10-07 14:36'
-updated_date: '2026-10-07 14:46'
+updated_date: '2026-10-07 14:55'
 labels:
   - auth
 dependencies: []
@@ -32,3 +32,9 @@ resources/views/auth/register.blade.php:9 shows: "Beta version — expect rough 
 <!-- SECTION:NOTES:BEGIN -->
 Removed in register.blade.php; grep of resources/ and lang/ finds no other 'not set up' claim. Approval notice now says an email follows.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Beta notice removed from register.blade.php; approval notice says an email follows. Shipped in 5081efb (PR #19).
+<!-- SECTION:FINAL_SUMMARY:END -->

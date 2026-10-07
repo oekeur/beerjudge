@@ -1,10 +1,10 @@
 ---
 id: TASK-46
 title: Email members when an admin activates their account
-status: Review
+status: Done
 assignee: []
 created_date: '2026-10-07 14:43'
-updated_date: '2026-10-07 14:46'
+updated_date: '2026-10-07 14:55'
 labels:
   - auth
 dependencies: []
@@ -35,3 +35,9 @@ Registration creates members with is_active=false; an admin approves them via th
 Member::booted() updated hook sends MemberActivatedNotification on is_active false->true, locale from member. tests/Feature/MemberActivationEmailTest.php (8 tests) covers model update, row approve, bulk approve, no-op cases. Fixed pre-existing bug: bulk 'Approve selected' was never registered because ->toolbarActions([]) after ->bulkActions() replaced it. Full suite 193 green, PHPStan clean.
 Review: on branch feat/member-activation-email, check /join/{token} page text, the Members table bulk approve (select rows, Approve selected), and the email itself.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+MemberActivatedNotification sent from Member::booted() on is_active false->true, in the member's locale. Also fixed bulk 'Approve selected', which never registered. 8 tests in MemberActivationEmailTest; full suite green. Shipped in 5081efb (PR #19). Merged on Oscar's go-ahead without a manual browser check.
+<!-- SECTION:FINAL_SUMMARY:END -->
