@@ -18,6 +18,12 @@ export default defineConfig({
 
     sidebar: [
       {
+        text: 'Overview',
+        items: [
+          { text: 'User journeys', link: '/user-journeys' },
+        ],
+      },
+      {
         text: 'Judging',
         items: [
           { text: 'Reference', link: '/judging/reference' },
