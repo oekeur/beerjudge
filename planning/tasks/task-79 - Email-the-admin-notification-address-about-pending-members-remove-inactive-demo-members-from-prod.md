@@ -3,10 +3,10 @@ id: TASK-79
 title: >-
   Email the admin notification address about pending members; remove inactive
   demo members from prod
-status: Planned
+status: Review
 assignee: []
 created_date: '2026-10-08 22:05'
-updated_date: '2026-10-08 22:05'
+updated_date: '2026-10-08 22:08'
 labels:
   - auth
   - launch-ops
@@ -47,3 +47,9 @@ Phase 3 - Oscar runs the runbook: pg_dump via the postgres container, read-only 
 [RISK] none open; queued-mail delivery on prod is verified by AC 7
 Open (non-blocking): what to do with ACTIVE demo members (member1/member2 are seeded as admins with password 'password')
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-09 Phase 3 run on prod: pg_dump backup at VPS ~/backup-2026-10-09-pre-demo-cleanup.sql (413660 bytes, 15 tables). Listing: 0 inactive members on prod; member1..8 are all active (1 and 2 admins), so AC 8's delete set is empty and nothing was deleted. member2,4,5,6,7,8 still have password 'password' (Hash::check); member1 and 3 do not. Demo data sits in competitions 'TEST - CLOSED', 'TEST - JUDGING', 'TEST - OPEN FOR SUBMITTING' (not the seeder names); 'Old World Hops' has no demo references. Waiting on Oscar: what to do with the active demo accounts; Phase 3 and AC 8 need revising to match.
+<!-- SECTION:NOTES:END -->
