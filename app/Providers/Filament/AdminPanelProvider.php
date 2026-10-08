@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Http\Middleware\RequireActiveMember;
 use App\Http\Middleware\SetLocale;
+use App\Support\SentryFeedbackLabels;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -63,23 +64,34 @@ class AdminPanelProvider extends PanelProvider
                 $dsn = is_string(config('sentry.dsn')) ? config('sentry.dsn') : '';
                 $user = auth()->user();
                 $userJson = $user !== null
-                    ? json_encode(['name' => $user->name, 'email' => $user->email])
+                    ? SentryFeedbackLabels::attributeJson(['name' => $user->name, 'email' => $user->email])
                     : 'null';
+
+                $labelsJson = SentryFeedbackLabels::json();
 
                 return new HtmlString(<<<HTML
 <meta name="sentry-dsn" content="{$dsn}">
 <meta name="sentry-user" content='{$userJson}'>
-<script type="module">
-import { init, feedbackIntegration, setUser } from 'https://browser.sentry-cdn.com/10.58.0/bundle.esm.min.js';
-
+<meta name="sentry-feedback-labels" content='{$labelsJson}'>
+<script src="/vendor/error-report/bundle.js"></script>
+<script>
+(function () {
 const dsn = document.querySelector('meta[name="sentry-dsn"]')?.content ?? '';
-if (!dsn) {
-    // No DSN configured — skip Sentry initialisation
+if (!dsn || !window.Sentry) {
+    // No DSN configured, or the bundle failed to load — skip Sentry initialisation
 } else {
+    const { init, feedbackIntegration, setUser } = window.Sentry;
+    let feedbackLabels = {};
+    try {
+        feedbackLabels = JSON.parse(document.querySelector('meta[name="sentry-feedback-labels"]')?.content ?? '{}');
+    } catch (_) {
+        // Malformed labels meta — fall back to the widget's English defaults
+    }
+
     init({
         dsn,
         integrations: [
-            feedbackIntegration({ colorScheme: 'light', autoInject: true }),
+            feedbackIntegration({ colorScheme: 'light', autoInject: true, ...feedbackLabels }),
         ],
     });
 
@@ -93,6 +105,7 @@ if (!dsn) {
         // Malformed user meta — skip setUser
     }
 }
+})();
 </script>
 HTML);
             });

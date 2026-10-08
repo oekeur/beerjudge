@@ -42,4 +42,6 @@ Part done in plan task 2.1: competition summary widget labels and variance 'pts'
 Part done in plan task 2.3: entries repeater labels (member, style, ABV, brewer notes) and the Sort by ABV action translated.
 
 Part done in plan task 3.1: judging screen aria-labels and guide titles translated.
+
+Part done in plan task 3.2: Sentry 'Report a Bug' feedback widget translated on both sites.
 <!-- SECTION:NOTES:END -->
