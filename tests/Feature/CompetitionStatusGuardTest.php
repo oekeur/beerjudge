@@ -14,6 +14,7 @@ use App\Notifications\CompetitionResultsNotification;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -129,5 +130,165 @@ class CompetitionStatusGuardTest extends TestCase
         Livewire::test(EditCompetition::class, ['record' => $competition->id])
             ->assertActionDoesNotExist('moveToOpen')
             ->assertActionExists('moveToClosed');
+    }
+
+    public function test_reopen_description_warns_that_members_cannot_see_results(): void
+    {
+        $competition = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2026, 'status' => 'closed']);
+
+        foreach (['en' => 'Members cannot see results until the competition is closed again.', 'nl' => 'Leden kunnen de resultaten pas weer zien als de wedstrijd opnieuw gesloten is.'] as $locale => $sentence) {
+            app()->setLocale($locale);
+
+            $this->assertStringContainsString($sentence, __('competition.action.reopen_judging_description'));
+
+            $component = Livewire::test(EditCompetition::class, ['record' => $competition->id])
+                ->mountAction(TestAction::make('reopenJudging'));
+
+            $this->assertStringContainsString($sentence, (string) $component->instance()->getMountedAction()->getModalDescription());
+        }
+    }
+
+    public function test_forward_actions_rebuild_the_header_in_the_same_component(): void
+    {
+        $competition = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2026, 'status' => 'draft']);
+        $component = Livewire::test(EditCompetition::class, ['record' => $competition->id]);
+
+        $component->callAction(TestAction::make('moveToOpen'))->assertNoRedirect();
+        $this->assertSame(CompetitionStatus::Open, $competition->fresh()->status);
+        $this->assertSame(['moveToJudging'], $this->lifecycleActionNames($component));
+
+        $component->callAction(TestAction::make('moveToJudging'))->assertNoRedirect();
+        $this->assertSame(CompetitionStatus::Judging, $competition->fresh()->status);
+        $this->assertSame(['moveToClosed'], $this->lifecycleActionNames($component));
+
+        Notification::fake();
+        $component->callAction(TestAction::make('moveToClosed'))->assertNoRedirect();
+        $this->assertSame(CompetitionStatus::Closed, $competition->fresh()->status);
+        $this->assertSame(['reopenJudging'], $this->lifecycleActionNames($component));
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function lifecycleActionNames(Testable $component): array
+    {
+        $names = collect($component->instance()->getCachedHeaderActions())
+            ->map(fn ($action) => $action->getName())
+            ->intersect(['moveToOpen', 'moveToJudging', 'moveToClosed', 'reopenJudging']);
+
+        return $names->values()->all();
+    }
+
+    public function test_unsaved_form_edits_stay_on_screen_and_are_not_saved_by_any_transition(): void
+    {
+        $competition = Competition::forceCreate(['name' => 'Saved', 'year' => 2026, 'status' => 'draft']);
+        Notification::fake();
+
+        $component = Livewire::test(EditCompetition::class, ['record' => $competition->id])
+            ->set('data.name', 'Unsaved');
+
+        foreach (['moveToOpen' => CompetitionStatus::Open, 'moveToJudging' => CompetitionStatus::Judging, 'moveToClosed' => CompetitionStatus::Closed] as $action => $status) {
+            $component->callAction(TestAction::make($action))
+                ->assertNoRedirect()
+                ->assertSet('data.name', 'Unsaved');
+
+            $fresh = $competition->fresh();
+            $this->assertSame('Saved', $fresh->name);
+            $this->assertSame($status, $fresh->status);
+        }
+    }
+
+    /**
+     * @return array{Competition, Style}
+     */
+    private function competitionWithStyle(string $status): array
+    {
+        $style = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
+        $competition = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2026, 'status' => $status]);
+        $competition->styles()->attach($style->id);
+
+        return [$competition, $style];
+    }
+
+    public function test_entry_registered_after_the_page_loaded_survives_move_to_judging(): void
+    {
+        [$competition, $style] = $this->competitionWithStyle('open');
+        Entry::create(['competition_id' => $competition->id, 'member_id' => Member::factory()->create()->id, 'style_id' => $style->id]);
+
+        $page = Livewire::test(EditCompetition::class, ['record' => $competition->id]);
+
+        Entry::create(['competition_id' => $competition->id, 'member_id' => Member::factory()->create()->id, 'style_id' => $style->id]);
+
+        $page->callAction(TestAction::make('moveToJudging'))->assertNoRedirect();
+
+        $this->assertSame([1, 2], $competition->entries()->orderBy('id')->pluck('bottle_number')->all());
+    }
+
+    public function test_judge_joined_after_the_page_loaded_survives_move_to_closed(): void
+    {
+        [$competition] = $this->competitionWithStyle('judging');
+        $page = Livewire::test(EditCompetition::class, ['record' => $competition->id]);
+
+        $competition->judges()->syncWithoutDetaching([Member::factory()->create()->id]);
+
+        Notification::fake();
+        $page->callAction(TestAction::make('moveToClosed'))->assertNoRedirect();
+
+        $this->assertSame(1, $competition->judges()->count());
+    }
+
+    public function test_member_entry_edit_after_the_page_loaded_survives_move_to_judging(): void
+    {
+        [$competition, $style] = $this->competitionWithStyle('open');
+        $entry = Entry::create([
+            'competition_id' => $competition->id,
+            'member_id' => Member::factory()->create()->id,
+            'style_id' => $style->id,
+            'brewer_notes' => 'old',
+        ]);
+        $page = Livewire::test(EditCompetition::class, ['record' => $competition->id]);
+
+        Entry::whereKey($entry->id)->update(['brewer_notes' => 'new']);
+
+        $page->callAction(TestAction::make('moveToJudging'))->assertNoRedirect();
+
+        $this->assertSame('new', $entry->fresh()->brewer_notes);
+    }
+
+    public function test_entry_registered_after_the_page_loaded_survives_move_to_open(): void
+    {
+        [$competition, $style] = $this->competitionWithStyle('draft');
+        $page = Livewire::test(EditCompetition::class, ['record' => $competition->id]);
+
+        Entry::create(['competition_id' => $competition->id, 'member_id' => Member::factory()->create()->id, 'style_id' => $style->id]);
+
+        $page->callAction(TestAction::make('moveToOpen'))->assertNoRedirect();
+
+        $this->assertSame(1, $competition->entries()->count());
+    }
+
+    public function test_entry_registered_after_the_page_loaded_survives_move_to_closed(): void
+    {
+        [$competition, $style] = $this->competitionWithStyle('judging');
+        $page = Livewire::test(EditCompetition::class, ['record' => $competition->id]);
+
+        Entry::create(['competition_id' => $competition->id, 'member_id' => Member::factory()->create()->id, 'style_id' => $style->id, 'bottle_number' => 1]);
+
+        Notification::fake();
+        $page->callAction(TestAction::make('moveToClosed'))->assertNoRedirect();
+
+        $this->assertSame(1, $competition->entries()->count());
+    }
+
+    public function test_judge_joined_after_the_page_loaded_survives_move_to_judging(): void
+    {
+        [$competition] = $this->competitionWithStyle('open');
+        $page = Livewire::test(EditCompetition::class, ['record' => $competition->id]);
+
+        $competition->judges()->syncWithoutDetaching([Member::factory()->create()->id]);
+
+        $page->callAction(TestAction::make('moveToJudging'))->assertNoRedirect();
+
+        $this->assertSame(1, $competition->judges()->count());
     }
 }

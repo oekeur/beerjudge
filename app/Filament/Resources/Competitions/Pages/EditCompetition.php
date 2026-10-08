@@ -6,6 +6,7 @@ use App\Enums\CompetitionStatus;
 use App\Filament\Resources\Competitions\CompetitionResource;
 use App\Models\Competition;
 use App\Services\BottleNumberAssignmentService;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -19,6 +20,24 @@ class EditCompetition extends EditRecord
 {
     protected static string $resource = CompetitionResource::class;
 
+    /**
+     * Runs a status change, then rebuilds the header actions in place so the page offers the next
+     * status's buttons. Unsaved form edits are left alone; only the status field is refreshed.
+     * Actions already in the Livewire action cache stay there (the running action still needs to
+     * resolve); only the rendered header list is replaced.
+     *
+     * @param  Closure(): mixed  $transition
+     */
+    private function transitionAndRefreshHeader(Closure $transition): void
+    {
+        $transition();
+
+        $this->refreshFormData(['status']);
+
+        $this->cachedHeaderActions = [];
+        $this->cacheInteractsWithHeaderActions();
+    }
+
     protected function getHeaderActions(): array
     {
         $record = $this->record;
@@ -27,8 +46,9 @@ class EditCompetition extends EditRecord
             $record->isDraft() ? Action::make('moveToOpen')
                 ->label(__('competition.action.move_to_open'))
                 ->color('info')
-                ->action(fn () => $record->update(['status' => CompetitionStatus::Open]))
-                ->after(fn () => $this->refreshFormData(['status'])) : null,
+                ->action(fn () => $this->transitionAndRefreshHeader(
+                    fn () => $record->update(['status' => CompetitionStatus::Open]),
+                )) : null,
 
             $record->isOpen() ? Action::make('moveToJudging')
                 ->label(__('competition.action.move_to_judging'))
@@ -36,18 +56,18 @@ class EditCompetition extends EditRecord
                 ->requiresConfirmation()
                 ->modalHeading(__('competition.action.lock_registration.heading'))
                 ->modalDescription(__('competition.action.lock_registration.description'))
-                ->action(function () use ($record) {
+                ->action(fn () => $this->transitionAndRefreshHeader(function () use ($record) {
                     app(BottleNumberAssignmentService::class)->assign($record);
                     $record->update(['status' => CompetitionStatus::Judging]);
-                })
-                ->after(fn () => $this->refreshFormData(['status'])) : null,
+                })) : null,
 
             $record->isJudging() ? Action::make('moveToClosed')
                 ->label(__('competition.action.move_to_closed'))
                 ->color('danger')
                 ->requiresConfirmation()
-                ->action(fn () => $record->update(['status' => CompetitionStatus::Closed]))
-                ->after(fn () => $this->refreshFormData(['status'])) : null,
+                ->action(fn () => $this->transitionAndRefreshHeader(
+                    fn () => $record->update(['status' => CompetitionStatus::Closed]),
+                )) : null,
 
             $record->isClosed() ? Action::make('reopenJudging')
                 ->label(__('competition.action.reopen_judging'))

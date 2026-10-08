@@ -1,10 +1,10 @@
 ---
 id: TASK-66
 title: Warn that reopening judging hides results from members
-status: Backlog
+status: Done
 assignee: []
 created_date: '2026-10-07 21:40'
-updated_date: '2026-10-08 13:14'
+updated_date: '2026-10-08 15:16'
 labels:
   - dashboard-widgets
   - results
@@ -22,7 +22,7 @@ Reopen judging (TASK-54) moves a closed competition back to Judging. ResultsCont
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The Reopen judging confirmation says members cannot see results until the competition is closed again, in English and Dutch
+- [x] #1 The Reopen judging confirmation says members cannot see results until the competition is closed again, in English and Dutch
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -30,3 +30,9 @@ Reopen judging (TASK-54) moves a closed competition back to Judging. ResultsCont
 <!-- SECTION:NOTES:BEGIN -->
 Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 2.2)
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Reopen judging confirmation now says members cannot see results until the competition is closed again (en + nl; nl also translates 'Bottle numbers' as 'Flessennummers'). Verified: test reads the mounted modal description in en and nl, fails at base; gates CLEAN. Plan task 2.2.
+<!-- SECTION:FINAL_SUMMARY:END -->

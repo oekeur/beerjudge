@@ -42,16 +42,10 @@ await journey('A2-setup-competition', async actor => {
     await page.getByRole('tab', { name: 'Entries' }).click()
     await expect(page.getByText(/\/entries\/create/).first()).toBeVisible()
   })
-  await step('move to open (header refresh, known TASK-63)', async () => {
+  await step('move to open rebuilds the header without a reload', async () => {
     await page.getByRole('button', { name: 'Move to Open' }).click()
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(1000)
-    globalThis.staleHeader = await page.getByRole('button', { name: 'Move to Open' }).isVisible()
-    console.log('  stale "Move to Open" still shown after transition:', globalThis.staleHeader)
-  })
-  await step('after reload header offers Move to Judging', async () => {
-    await page.reload()
     await expect(page.getByRole('button', { name: 'Move to Judging' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Move to Open' })).toHaveCount(0)
   })
   await step('competition list shows Open', async () => {
     await page.goto('/admin/competitions')
