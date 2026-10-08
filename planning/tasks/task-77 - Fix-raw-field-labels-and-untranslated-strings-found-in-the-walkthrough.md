@@ -4,6 +4,7 @@ title: Fix raw field labels and untranslated strings found in the walkthrough
 status: Backlog
 assignee: []
 created_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:14'
 labels:
   - i18n
 dependencies: []
@@ -27,3 +28,9 @@ Found in the 2026-10-08 walkthrough (docs/user-journeys.md, finding 9): the entr
 - [ ] #3 Scoresheet aria-labels and the member login title come from lang files in en and nl
 - [ ] #4 The feedback button text follows the member's locale, or the limitation is documented
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (split over tasks 1.2, 2.1, 2.3, 3.1, 3.2, 4.1)
+<!-- SECTION:NOTES:END -->

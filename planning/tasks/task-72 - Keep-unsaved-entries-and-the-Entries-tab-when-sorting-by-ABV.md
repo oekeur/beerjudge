@@ -4,6 +4,7 @@ title: Keep unsaved entries and the Entries tab when sorting by ABV
 status: Backlog
 assignee: []
 created_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:14'
 labels:
   - abv-tasting-order
 dependencies: []
@@ -25,3 +26,9 @@ The sortByAbv action in CompetitionForm.php sorts saved entries and then redirec
 - [ ] #1 Sort by ABV either saves pending repeater changes first or refuses with a message while there are unsaved changes
 - [ ] #2 After sorting the admin stays on the Entries tab and sees the new order
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 2.3)
+<!-- SECTION:NOTES:END -->

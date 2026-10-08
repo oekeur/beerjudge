@@ -4,6 +4,7 @@ title: Make the competition Dashboard and Variance widgets poll
 status: Backlog
 assignee: []
 created_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:14'
 labels:
   - dashboard-widgets
 dependencies: []
@@ -26,3 +27,9 @@ ResultsSummaryWidget and JudgeVarianceWidget set $pollingInterval = '5s', but on
 - [ ] #2 Same for the Results & Variance tab
 - [ ] #3 A test covers that both widgets render a polling directive
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 2.1)
+<!-- SECTION:NOTES:END -->

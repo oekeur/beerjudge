@@ -4,6 +4,7 @@ title: 'Make offline judging read as queued, not failed'
 status: Backlog
 assignee: []
 created_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:14'
 labels:
   - pwa
 dependencies: []
@@ -25,3 +26,9 @@ A scoresheet submitted without a connection shows the red retry badge (judging.r
 - [ ] #1 A sheet waiting for a connection shows a neutral queued/offline state; the red retry state is kept for server rejections
 - [ ] #2 Decide and document whether the judging page itself should load offline; if yes, the service worker serves it from cache
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 3.1)
+<!-- SECTION:NOTES:END -->

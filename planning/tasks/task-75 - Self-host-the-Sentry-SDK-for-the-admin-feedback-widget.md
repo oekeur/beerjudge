@@ -4,6 +4,7 @@ title: Self-host the Sentry SDK for the admin feedback widget
 status: Backlog
 assignee: []
 created_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:14'
 labels:
   - sentry
 dependencies: []
@@ -25,3 +26,9 @@ AdminPanelProvider.php imports the Sentry SDK from https://browser.sentry-cdn.co
 - [ ] #1 The admin panel loads the Sentry SDK from a self-hosted file, like public/vendor/error-report/bundle.js
 - [ ] #2 No request to browser.sentry-cdn.com remains in the app
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 3.2)
+<!-- SECTION:NOTES:END -->

@@ -4,6 +4,7 @@ title: Remove status from Competition mass assignment
 status: Backlog
 assignee: []
 created_date: '2026-10-07 21:40'
+updated_date: '2026-10-08 13:14'
 labels:
   - security-hardening
 dependencies: []
@@ -22,3 +23,9 @@ Competition::$fillable includes status, so the read-only Status field (TASK-54) 
 <!-- AC:BEGIN -->
 - [ ] #1 status is set only through explicit lifecycle methods or forceFill; existing writers and tests still pass
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 2.4)
+<!-- SECTION:NOTES:END -->

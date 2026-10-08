@@ -4,7 +4,7 @@ title: Rebuild header actions after the forward lifecycle transitions
 status: Backlog
 assignee: []
 created_date: '2026-10-07 21:40'
-updated_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:14'
 labels:
   - dashboard-widgets
 dependencies: []
@@ -28,4 +28,6 @@ After Move to Open, Move to Judging or Move to Closed on the competition edit pa
 
 <!-- SECTION:NOTES:BEGIN -->
 Seen again in the 2026-10-08 browser walkthrough: after Move to Open the header still offered Move to Open until a reload (3 of 3 runs). docs/user-journeys.md, finding 3.
+
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 2.2)
 <!-- SECTION:NOTES:END -->

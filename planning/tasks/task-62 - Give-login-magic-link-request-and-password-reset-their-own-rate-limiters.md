@@ -4,7 +4,7 @@ title: 'Give login, magic-link request and password reset their own rate limiter
 status: Backlog
 assignee: []
 created_date: '2026-10-07 21:40'
-updated_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:14'
 labels:
   - security-hardening
   - auth
@@ -30,4 +30,6 @@ Numeric throttle:N,M keys guests on sha1(domain|ip) with no route component (ven
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-10-08 walkthrough: login, magic-link request and reset from one IP in quick succession produced a 429 on a later login. Separate task filed for keying login by more than the IP.
+
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 1.1)
 <!-- SECTION:NOTES:END -->

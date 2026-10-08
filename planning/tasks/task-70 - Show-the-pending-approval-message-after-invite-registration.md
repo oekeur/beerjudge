@@ -4,6 +4,7 @@ title: Show the pending-approval message after invite registration
 status: Backlog
 assignee: []
 created_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:14'
 labels:
   - auth
 dependencies: []
@@ -25,3 +26,9 @@ RegistrationController@store redirects to login with ->with('success', __('auth.
 - [ ] #1 After registering through an invite, the login page shows auth.register_success in the member's locale
 - [ ] #2 A feature test asserts the message is rendered on the login page after registration
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 1.2)
+<!-- SECTION:NOTES:END -->
