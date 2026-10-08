@@ -1,6 +1,11 @@
-<x-page :title="$appTitle . ' — Log in'">
+<x-page :title="$appTitle . ' — ' . __('auth.login')">
 <x-auth-card>
     <h1 class="text-2xl font-bold text-amber-900 dark:text-amber-300 mb-6">{{ $appTitle }}</h1>
+    @if (session('success'))
+        <p class="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg px-3 py-2 text-sm mb-4" data-testid="flash-success">
+            {{ is_string(session('success')) ? session('success') : '' }}
+        </p>
+    @endif
     <form method="POST" action="/login">
         @csrf
         @if ($errors->any())
