@@ -35,7 +35,7 @@ class DemoSeeder extends Seeder
         // ---------------------------------------------------------------
         // Competition 1 — Autumn Harvest 2024 (closed, all styles, 5 entries)
         // ---------------------------------------------------------------
-        $comp1 = Competition::create([
+        $comp1 = Competition::forceCreate([
             'name' => 'Autumn Harvest 2024',
             'year' => 2024,
             'judging_date' => '2024-10-19',
@@ -70,7 +70,7 @@ class DemoSeeder extends Seeder
         // ---------------------------------------------------------------
         // Competition 2 — Spring Cup 2025 (judging, subset of 12 styles, 10 entries)
         // ---------------------------------------------------------------
-        $comp2 = Competition::create([
+        $comp2 = Competition::forceCreate([
             'name' => 'Spring Cup 2025',
             'year' => 2025,
             'judging_date' => '2025-04-12',
@@ -120,7 +120,7 @@ class DemoSeeder extends Seeder
         // ---------------------------------------------------------------
         // Competition 3 — Summer Ales 2025 (open, subset of 8 styles, 3 entries)
         // ---------------------------------------------------------------
-        $comp3 = Competition::create([
+        $comp3 = Competition::forceCreate([
             'name' => 'Summer Ales 2025',
             'year' => 2025,
             'judging_date' => null,

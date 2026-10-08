@@ -16,7 +16,7 @@ class CompetitionLifecycleTest extends TestCase
 
     public function test_bottle_number_assignment_is_sequential(): void
     {
-        $comp = Competition::create(['name' => 'Test', 'year' => 2025, 'status' => 'open']);
+        $comp = Competition::forceCreate(['name' => 'Test', 'year' => 2025, 'status' => 'open']);
         $styles = collect(['1A', '1B', '1C'])->map(fn ($code) => Style::create(['code' => $code, 'category_name' => 'SA', 'name' => $code]));
         $comp->styles()->attach($styles->pluck('id'));
         $member = Member::factory()->create(['name' => 'M', 'email' => 'm@t.com']);
@@ -31,7 +31,7 @@ class CompetitionLifecycleTest extends TestCase
 
     public function test_bottle_number_assignment_produces_unique_numbers(): void
     {
-        $comp = Competition::create(['name' => 'Test2', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Test2', 'year' => 2025, 'status' => 'judging']);
         $styles = collect(['2A', '2B', '2C'])->map(fn ($code) => Style::create(['code' => $code, 'category_name' => 'SA', 'name' => $code]));
         $comp->styles()->attach($styles->pluck('id'));
         $member = Member::factory()->create(['name' => 'M2', 'email' => 'm2@t.com']);

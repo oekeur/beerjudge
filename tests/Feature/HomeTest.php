@@ -19,9 +19,9 @@ class HomeTest extends TestCase
     public function test_member_sees_non_draft_competitions(): void
     {
         $member = Member::factory()->create();
-        Competition::create(['name' => 'Hidden Draft', 'year' => 2025, 'status' => 'draft']);
-        Competition::create(['name' => 'Spring Open', 'year' => 2025, 'status' => 'open']);
-        Competition::create(['name' => 'Autumn Judging', 'year' => 2025, 'status' => 'judging']);
+        Competition::forceCreate(['name' => 'Hidden Draft', 'year' => 2025, 'status' => 'draft']);
+        Competition::forceCreate(['name' => 'Spring Open', 'year' => 2025, 'status' => 'open']);
+        Competition::forceCreate(['name' => 'Autumn Judging', 'year' => 2025, 'status' => 'judging']);
 
         $response = $this->actingAs($member)->get('/');
 
@@ -36,7 +36,7 @@ class HomeTest extends TestCase
     public function test_judging_competition_shows_judge_link(): void
     {
         $member = Member::factory()->create();
-        $competition = Competition::create(['name' => 'Current Cup', 'year' => 2025, 'status' => 'judging']);
+        $competition = Competition::forceCreate(['name' => 'Current Cup', 'year' => 2025, 'status' => 'judging']);
 
         $response = $this->actingAs($member)->get('/');
 
@@ -47,7 +47,7 @@ class HomeTest extends TestCase
     public function test_closed_competition_shows_results_link(): void
     {
         $member = Member::factory()->create();
-        $competition = Competition::create(['name' => 'Past Cup', 'year' => 2024, 'status' => 'closed']);
+        $competition = Competition::forceCreate(['name' => 'Past Cup', 'year' => 2024, 'status' => 'closed']);
 
         $response = $this->actingAs($member)->get('/');
 

@@ -24,7 +24,7 @@ class ScoresheetValidationTest extends TestCase
         parent::setUp();
 
         $style = Style::create(['code' => '1A', 'category_name' => 'Standard American', 'name' => 'Light Lager']);
-        $this->comp = Competition::create(['name' => 'Test Cup', 'year' => 2025, 'status' => 'judging']);
+        $this->comp = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => 'judging']);
         $this->comp->styles()->attach($style->id);
         $brewer = Member::factory()->create(['email' => 'brewer@v.com']);
         $this->judge = Member::factory()->create(['email' => 'judge@v.com']);

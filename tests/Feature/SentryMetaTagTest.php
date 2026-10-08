@@ -14,7 +14,7 @@ class SentryMetaTagTest extends TestCase
 
     private function makeJudgingFixture(): array
     {
-        $comp = Competition::create(['name' => 'Sentry Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Sentry Cup', 'year' => 2025, 'status' => 'judging']);
         $style = Style::create(['code' => '1A', 'category_name' => 'Standard American', 'name' => 'Light Lager']);
         $comp->styles()->attach($style->id);
         $judge = Member::factory()->create(['name' => 'Judge Joe', 'email' => 'joe@example.com']);

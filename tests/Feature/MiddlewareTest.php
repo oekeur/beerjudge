@@ -16,7 +16,7 @@ class MiddlewareTest extends TestCase
     public function test_inactive_member_is_redirected_to_login(): void
     {
         $member = Member::factory()->create(['is_active' => false]);
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
 
         $this->actingAs($member)->get("/judging/{$comp->id}")
             ->assertRedirect('/login');
@@ -25,7 +25,7 @@ class MiddlewareTest extends TestCase
     public function test_inactive_member_sees_translated_error_on_login_page(): void
     {
         $member = Member::factory()->create(['is_active' => false, 'locale' => 'nl']);
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
 
         $this->actingAs($member)->followingRedirects()->get("/judging/{$comp->id}")
             ->assertSee('Je account is niet actief.');
@@ -34,7 +34,7 @@ class MiddlewareTest extends TestCase
     public function test_active_member_is_not_redirected_to_login(): void
     {
         $member = Member::factory()->create(['is_active' => true]);
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
 
         $response = $this->actingAs($member)->get("/judging/{$comp->id}");
 
@@ -46,7 +46,7 @@ class MiddlewareTest extends TestCase
     public function test_non_admin_member_gets_403_on_results_when_competition_not_closed(): void
     {
         $member = Member::factory()->create(['is_admin' => false]);
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
 
         $this->actingAs($member)->get("/competitions/{$comp->id}/results")
             ->assertForbidden();
@@ -55,7 +55,7 @@ class MiddlewareTest extends TestCase
     public function test_non_admin_member_can_access_results_when_competition_is_closed(): void
     {
         $member = Member::factory()->create(['is_admin' => false]);
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'closed']);
+        $comp = Competition::forceCreate(['name' => 'Cup', 'year' => 2025, 'status' => 'closed']);
 
         $this->actingAs($member)->get("/competitions/{$comp->id}/results")
             ->assertOk();
@@ -64,7 +64,7 @@ class MiddlewareTest extends TestCase
     public function test_admin_can_access_results_regardless_of_status(): void
     {
         $admin = Member::factory()->create(['is_admin' => true]);
-        $comp = Competition::create(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Cup', 'year' => 2025, 'status' => 'judging']);
 
         $this->actingAs($admin)->get("/competitions/{$comp->id}/results")
             ->assertOk();

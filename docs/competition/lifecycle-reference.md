@@ -80,13 +80,13 @@ After each status update, the page calls `$this->refreshFormData(['status'])` to
 
 ## Valid transitions
 
-The header buttons offer only the forward step. There is no server-side state machine guard, and the **Status** field on the Overview tab accepts any value.
+The header buttons offer only the forward step. There is no server-side state machine guard. The **Status** field on the Overview tab is read-only, and `status` is not mass assignable; the buttons call `Competition::transitionTo()`, which sets any status you pass it.
 
 ```
 draft → open → judging → closed
 ```
 
-The Status field can move a competition backwards, or jump to Judging, without running `BottleNumberAssignmentService::assign()`.
+Calling `transitionTo()` directly (for example from Tinker) can move a competition backwards, or jump to Judging, without running `BottleNumberAssignmentService::assign()`.
 
 ## Entry constraints during the lifecycle
 

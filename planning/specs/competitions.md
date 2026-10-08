@@ -33,7 +33,7 @@ draft → open → judging → closed
 
 **`closed`** — everything locks. No new scoresheets, no edits to existing ones. Results are final and visible to members.
 
-Status transitions are manual — an admin changes the status in Filament. There is no automatic promotion.
+Status transitions are manual — an admin changes the status with the lifecycle buttons on the Filament edit page (the Status field is read-only and `status` is not mass assignable). There is no automatic promotion.
 
 ## Style selection
 

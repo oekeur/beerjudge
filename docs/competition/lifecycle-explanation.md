@@ -31,11 +31,11 @@ Moving from `open` to `judging` is the most consequential transition. It does tw
 
 Combining them in one action prevents the situation where bottle numbers are assigned but registration is still open (a new entry would have no number), or where registration closes but no numbers are assigned yet (the judging screen would show entries without identifiers).
 
-The Filament action asks for confirmation because registration locks and bottle numbers are assigned. The Status field on the Overview tab can still change the status manually.
+The Filament action asks for confirmation because registration locks and bottle numbers are assigned. The Status field on the Overview tab is read-only, so these buttons are the only way to change the status in the admin panel.
 
 ## No server-side state machine
 
-The lifecycle transitions are enforced only by the Filament action buttons, and the Status field on the Overview tab bypasses them. There is no `canTransitionTo()` guard on the model itself. Updating `status` directly in the database, in tests, or via Tinker is possible.
+The lifecycle order is enforced only by the Filament action buttons, which call `Competition::transitionTo()`. The Status field on the Overview tab is read-only, and `status` is not mass assignable: `create()` or `update()` with a status throws `MassAssignmentException` in development and testing, and the value is silently discarded in production. There is no `canTransitionTo()` guard on the model, so `transitionTo()` accepts any status. Tinker sessions and tests set the status with `transitionTo()` or `forceCreate()`.
 
 This is a deliberate tradeoff. A 10-person club running four competitions per year does not need the complexity of a state machine library. The Filament action buttons are the only interface most admins will ever use, and they already enforce the correct order. Adding a model-level guard would increase complexity without adding meaningful protection for this scale.
 

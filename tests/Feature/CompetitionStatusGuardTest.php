@@ -12,6 +12,7 @@ use App\Models\Member;
 use App\Models\Style;
 use App\Notifications\CompetitionResultsNotification;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Features\SupportTesting\Testable;
@@ -31,7 +32,7 @@ class CompetitionStatusGuardTest extends TestCase
 
     private function competition(string $status): Competition
     {
-        return Competition::create(['name' => 'Test Cup', 'year' => 2026, 'status' => $status]);
+        return Competition::forceCreate(['name' => 'Test Cup', 'year' => 2026, 'status' => $status]);
     }
 
     public function test_status_field_is_disabled_on_edit(): void
@@ -290,5 +291,33 @@ class CompetitionStatusGuardTest extends TestCase
         $page->callAction(TestAction::make('moveToJudging'))->assertNoRedirect();
 
         $this->assertSame(1, $competition->judges()->count());
+    }
+
+    public function test_status_cannot_be_mass_assigned_on_create(): void
+    {
+        $this->expectException(MassAssignmentException::class);
+
+        Competition::create(['name' => 'Sneaky Cup', 'year' => 2026, 'status' => 'closed']);
+    }
+
+    public function test_status_cannot_be_mass_assigned_on_update(): void
+    {
+        $competition = $this->competition('open');
+
+        try {
+            $competition->update(['status' => 'closed']);
+            $this->fail('Expected MassAssignmentException.');
+        } catch (MassAssignmentException) {
+            $this->assertSame(CompetitionStatus::Open, $competition->fresh()->status);
+        }
+    }
+
+    public function test_transition_to_sets_the_status(): void
+    {
+        $competition = $this->competition('open');
+
+        $competition->transitionTo(CompetitionStatus::Judging);
+
+        $this->assertSame(CompetitionStatus::Judging, $competition->fresh()->status);
     }
 }

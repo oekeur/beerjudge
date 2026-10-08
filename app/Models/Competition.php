@@ -26,7 +26,7 @@ class Competition extends Model
     protected $attributes = ['status' => 'draft'];
 
     protected $fillable = [
-        'name', 'year', 'judging_date', 'status',
+        'name', 'year', 'judging_date',
     ];
 
     protected function casts(): array
@@ -36,6 +36,16 @@ class Competition extends Model
             'results_mailed_at' => 'datetime',
             'status' => CompetitionStatus::class,
         ];
+    }
+
+    /**
+     * Sets the lifecycle status. Status is not mass assignable; this is the only writer.
+     * It saves through the model, so the `updated` hook that mails results still fires.
+     * It applies no lifecycle rules: those live in the EditCompetition actions.
+     */
+    public function transitionTo(CompetitionStatus $status): void
+    {
+        $this->forceFill(['status' => $status])->save();
     }
 
     /**

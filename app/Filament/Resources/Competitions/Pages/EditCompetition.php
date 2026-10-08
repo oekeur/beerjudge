@@ -47,7 +47,7 @@ class EditCompetition extends EditRecord
                 ->label(__('competition.action.move_to_open'))
                 ->color('info')
                 ->action(fn () => $this->transitionAndRefreshHeader(
-                    fn () => $record->update(['status' => CompetitionStatus::Open]),
+                    fn () => $record->transitionTo(CompetitionStatus::Open),
                 )) : null,
 
             $record->isOpen() ? Action::make('moveToJudging')
@@ -58,7 +58,7 @@ class EditCompetition extends EditRecord
                 ->modalDescription(__('competition.action.lock_registration.description'))
                 ->action(fn () => $this->transitionAndRefreshHeader(function () use ($record) {
                     app(BottleNumberAssignmentService::class)->assign($record);
-                    $record->update(['status' => CompetitionStatus::Judging]);
+                    $record->transitionTo(CompetitionStatus::Judging);
                 })) : null,
 
             $record->isJudging() ? Action::make('moveToClosed')
@@ -66,7 +66,7 @@ class EditCompetition extends EditRecord
                 ->color('danger')
                 ->requiresConfirmation()
                 ->action(fn () => $this->transitionAndRefreshHeader(
-                    fn () => $record->update(['status' => CompetitionStatus::Closed]),
+                    fn () => $record->transitionTo(CompetitionStatus::Closed),
                 )) : null,
 
             $record->isClosed() ? Action::make('reopenJudging')
@@ -76,7 +76,7 @@ class EditCompetition extends EditRecord
                 ->modalHeading(__('competition.action.reopen_judging'))
                 ->modalDescription(__('competition.action.reopen_judging_description'))
                 ->action(function () use ($record) {
-                    $record->update(['status' => CompetitionStatus::Judging]);
+                    $record->transitionTo(CompetitionStatus::Judging);
 
                     // Header actions are resolved from the status at mount; a redirect rebuilds them.
                     $this->redirect(static::getResource()::getUrl('edit', ['record' => $record]));

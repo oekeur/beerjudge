@@ -51,10 +51,10 @@ Bottle numbers and sort order are separate fields. Sort order is the tasting ord
 
 ```php
 app(BottleNumberAssignmentService::class)->assign($record);
-$record->update(['status' => CompetitionStatus::Judging]);
+$record->transitionTo(CompetitionStatus::Judging);
 ```
 
-Bottle number assignment runs before the status update. If assignment fails, the status remains `open`.
+Bottle number assignment runs before the status transition. If assignment fails, the status remains `open`.
 
 ## Related
 
