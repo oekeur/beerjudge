@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@agent'
 created_date: '2026-10-08 11:39'
-updated_date: '2026-10-08 14:00'
+updated_date: '2026-10-08 14:12'
 labels:
   - i18n
 dependencies: []
@@ -36,4 +36,6 @@ Found in the 2026-10-08 walkthrough (docs/user-journeys.md, finding 9): the entr
 Plan: planning/2026-10-08-journey-walkthrough-fixes.md (split over tasks 1.2, 2.1, 2.3, 3.1, 3.2, 4.1)
 
 Part done in plan task 1.2: member login page title translated (auth.login).
+
+Part done in plan task 2.1: competition summary widget labels and variance 'pts' suffix translated.
 <!-- SECTION:NOTES:END -->
