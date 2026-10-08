@@ -26,6 +26,7 @@
     "competition.entry.brewer_notes": "Notities brouwer",
     "competition.entry_link": "Inzending link",
     "competition.invite_link_label": "Genereer uitnodigingslink",
+    "competition.invite_type": "Soort uitnodiging",
     "competition.invite_type_single": "Eenmalig gebruik",
     "competition.invite_type_time_bound": "Tijdgebonden (meerdere keren tot verloopdatum)",
     "competition.invite_expires_at": "Verloopt op",

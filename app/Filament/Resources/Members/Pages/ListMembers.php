@@ -32,7 +32,7 @@ class ListMembers extends ListRecords
                 ->icon('heroicon-o-link')
                 ->schema([
                     Radio::make('type')
-                        ->label(__('competition.invite_type_single'))
+                        ->label(__('competition.invite_type'))
                         ->options([
                             Invitation::TYPE_SINGLE_USE => __('competition.invite_type_single'),
                             Invitation::TYPE_TIME_BOUND => __('competition.invite_type_time_bound'),

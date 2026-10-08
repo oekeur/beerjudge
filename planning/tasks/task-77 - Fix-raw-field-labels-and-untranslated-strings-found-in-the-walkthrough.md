@@ -1,11 +1,11 @@
 ---
 id: TASK-77
 title: Fix raw field labels and untranslated strings found in the walkthrough
-status: In Progress
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-10-08 11:39'
-updated_date: '2026-10-09 11:57'
+updated_date: '2026-10-09 11:58'
 labels:
   - i18n
 dependencies: []
@@ -24,10 +24,10 @@ Found in the 2026-10-08 walkthrough (docs/user-journeys.md, finding 9): the entr
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Repeater fields have translated labels (Style, ABV)
-- [ ] #2 The invite type radio has its own label
-- [ ] #3 Scoresheet aria-labels and the member login title come from lang files in en and nl
-- [ ] #4 The feedback button text follows the member's locale, or the limitation is documented
+- [x] #1 Repeater fields have translated labels (Style, ABV)
+- [x] #2 The invite type radio has its own label
+- [x] #3 Scoresheet aria-labels and the member login title come from lang files in en and nl
+- [x] #4 The feedback button text follows the member's locale, or the limitation is documented
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -45,3 +45,9 @@ Part done in plan task 3.1: judging screen aria-labels and guide titles translat
 
 Part done in plan task 3.2: Sentry 'Report a Bug' feedback widget translated on both sites.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Split across plan tasks: 1.2 member login title (auth.login); 2.1 competition summary widget labels and variance suffix; 2.3 entries repeater labels (member, style, ABV, brewer notes) and Sort by ABV action; 3.1 judging-screen aria-labels and guide titles; 3.2 Sentry feedback widget texts on both sites; 4.1 invite type radio label (competition.invite_type). Each part verified by its own tests and Pass A/B gates; all landed on improve/journey-walkthrough-fixes.
+<!-- SECTION:FINAL_SUMMARY:END -->

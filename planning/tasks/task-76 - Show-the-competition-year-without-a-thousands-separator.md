@@ -1,10 +1,10 @@
 ---
 id: TASK-76
 title: Show the competition year without a thousands separator
-status: Backlog
+status: Done
 assignee: []
 created_date: '2026-10-08 11:39'
-updated_date: '2026-10-08 13:14'
+updated_date: '2026-10-09 11:58'
 labels:
   - v1
 dependencies: []
@@ -23,7 +23,7 @@ The Year column in the Filament competition list renders 2024 as '2,024' (2026-1
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The competition list shows the year as 2024
+- [x] #1 The competition list shows the year as 2024
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -31,3 +31,9 @@ The Year column in the Filament competition list renders 2024 as '2,024' (2026-1
 <!-- SECTION:NOTES:BEGIN -->
 Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 4.1)
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Competition list year column no longer uses ->numeric() (2024, not 2,024); sorting stays numeric in the database. Verified: AdminListPolishTest fails at base and passes; full suite; Pass A and Pass B CLEAN. Plan task 4.1.
+<!-- SECTION:FINAL_SUMMARY:END -->

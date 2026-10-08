@@ -15,7 +15,6 @@ class CompetitionsTable
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('year')
-                    ->numeric()
                     ->sortable(),
                 TextColumn::make('judging_date')
                     ->date()

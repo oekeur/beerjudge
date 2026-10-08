@@ -26,6 +26,7 @@
     "competition.entry.brewer_notes": "Brewer notes",
     "competition.entry_link": "Entry submission link",
     "competition.invite_link_label": "Generate invite link",
+    "competition.invite_type": "Invite type",
     "competition.invite_type_single": "Single-use",
     "competition.invite_type_time_bound": "Time-bound (multiple uses until expiry)",
     "competition.invite_expires_at": "Expires at",
