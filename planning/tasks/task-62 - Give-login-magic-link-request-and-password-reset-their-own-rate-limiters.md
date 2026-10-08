@@ -4,6 +4,7 @@ title: 'Give login, magic-link request and password reset their own rate limiter
 status: Backlog
 assignee: []
 created_date: '2026-10-07 21:40'
+updated_date: '2026-10-08 11:39'
 labels:
   - security-hardening
   - auth
@@ -24,3 +25,9 @@ Numeric throttle:N,M keys guests on sha1(domain|ip) with no route component (ven
 - [ ] #1 Each throttled guest auth route uses a named limiter keyed by its own name plus IP, keeping its current numbers
 - [ ] #2 A test shows hits on one route do not count toward another route's limit
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-08 walkthrough: login, magic-link request and reset from one IP in quick succession produced a 429 on a later login. Separate task filed for keying login by more than the IP.
+<!-- SECTION:NOTES:END -->
