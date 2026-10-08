@@ -179,16 +179,16 @@ Result of the final run: 99 of 101 steps passed. The two failures are findings 1
 
 **Findings**
 
-1. **No feedback after registering through an invite.** `RegistrationController` flashes `auth.register_success` ("Account created. An admin will approve it...") under `success`, but `auth/login.blade.php` never renders `session('success')`. The new member sees an empty login form. Seen in 3 of 3 runs.
-2. **The competition Dashboard and Variance widgets do not refresh.** Both widgets set `$pollingInterval = '5s'`, but on the edit page there is no `wire:poll` in the DOM and no Livewire request in 16 seconds idle. After saving two judges the Judges tile stays at 0 until the page is reloaded. Seen in 3 of 3 runs.
-3. **Header actions stay on the previous status** after **Move to Open** until a reload. Already tracked as TASK-63.
-4. **Sort by ABV drops unsaved entry rows.** The action redirects to the edit page, which lands on the Overview tab and discards the form state. In one probe, an added but unsaved row was not in the database after sorting.
-5. **Login throttle is per IP.** `POST /login` uses `throttle:6,1`, which keys guests by IP; the seventh login from one IP within a minute got a 429 page. On a club evening where everyone shares one Wi-Fi connection, members would share that limit too (expected, not observed in production).
-6. **Offline judging looks like an error.** A sheet submitted without a connection shows a red "Retry" ("Opnieuw") badge, although it is queued and is sent within 5 seconds of the connection returning, without a reload (1 of 1 probes). Reloading the judging page while offline fails with `ERR_INTERNET_DISCONNECTED`, because the service worker caches assets but not the page.
-7. **The admin panel loads Sentry from `browser.sentry-cdn.com`** (`AdminPanelProvider.php`). The request was aborted on every admin page load in the run. The error page bundles Sentry locally because ad blockers block that domain.
-8. **The Year column shows "2,024"** in the competition list: the year is formatted with a thousands separator.
-9. **Labels and translations**: the entries repeater labels read "Style id" and "Abv"; the invite type radio is labelled "Single-use", the same as its first option; the "Report a Bug" button and the scoresheet's accessible labels stay English in the Dutch interface; the login page title is a fixed "Log in".
-10. **Phone width**: at 390 px the member nav wraps the app name and "Log out" onto two lines.
-11. **The style guide panel** on the judging screen is not exposed as a dialog to screen readers.
+1. **No feedback after registering through an invite.** `RegistrationController` flashes `auth.register_success` ("Account created. An admin will approve it...") under `success`, but `auth/login.blade.php` never renders `session('success')`. The new member sees an empty login form. Seen in 3 of 3 runs. TASK-70.
+2. **The competition Dashboard and Variance widgets do not refresh.** Both widgets set `$pollingInterval = '5s'`, but on the edit page there is no `wire:poll` in the DOM and no Livewire request in 16 seconds idle. After saving two judges the Judges tile stays at 0 until the page is reloaded. Seen in 3 of 3 runs. TASK-71.
+3. **Header actions stay on the previous status** after **Move to Open** until a reload. Tracked as TASK-63.
+4. **Sort by ABV drops unsaved entry rows.** The action redirects to the edit page, which lands on the Overview tab and discards the form state. In one probe, an added but unsaved row was not in the database after sorting. TASK-72.
+5. **Login throttle is per IP.** `POST /login` uses `throttle:6,1`, which keys guests by IP; the seventh login from one IP within a minute got a 429 page. On a club evening where everyone shares one Wi-Fi connection, members would share that limit too (expected, not observed in production). TASK-73; TASK-62 covers the related shared counter across auth routes.
+6. **Offline judging looks like an error.** A sheet submitted without a connection shows a red "Retry" ("Opnieuw") badge, although it is queued and is sent within 5 seconds of the connection returning, without a reload (1 of 1 probes). Reloading the judging page while offline fails with `ERR_INTERNET_DISCONNECTED`, because the service worker caches assets but not the page. TASK-74.
+7. **The admin panel loads Sentry from `browser.sentry-cdn.com`** (`AdminPanelProvider.php`). The request was aborted on every admin page load in the run. The error page bundles Sentry locally because ad blockers block that domain. TASK-75.
+8. **The Year column shows "2,024"** in the competition list: the year is formatted with a thousands separator. TASK-76.
+9. **Labels and translations**: the entries repeater labels read "Style id" and "Abv"; the invite type radio is labelled "Single-use", the same as its first option; the "Report a Bug" button and the scoresheet's accessible labels stay English in the Dutch interface; the login page title is a fixed "Log in". TASK-77.
+10. **Phone width**: at 390 px the member nav wraps the app name and "Log out" onto two lines. TASK-78.
+11. **The style guide panel** on the judging screen is not exposed as a dialog to screen readers. Not filed.
 
 **Not covered by this run**: dark mode, installing the PWA, the contents of the admin progress panel on the judging screen, and email rendering in a real mail client (mail went to the log).
