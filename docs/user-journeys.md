@@ -173,7 +173,7 @@ Open observations, not decided:
 
 ### 2026-10-08
 
-All journeys run in headless Chromium (Playwright 1.61) against a local server on a fresh SQLite database seeded with the BJCP styles and `DemoSeeder`. Video and a screenshot per step were recorded; every screenshot was reviewed by hand. The admin builds a new competition (A2) that members enter (M3), judge (M4) and read results for (M5), so the run covers the whole chain on new data as well as the seeded competitions. Members 3 and 4 used the Dutch interface; member 6 entered and member 3 judged at phone width (390 px).
+Run with `scripts/journeys/run-all.sh` (see its README). All journeys run in headless Chromium (Playwright 1.61) against a local server on a fresh SQLite database seeded with the BJCP styles and `DemoSeeder`. Video and a screenshot per step were recorded; every screenshot was reviewed by hand. The admin builds a new competition (A2) that members enter (M3), judge (M4) and read results for (M5), so the run covers the whole chain on new data as well as the seeded competitions. Members 3 and 4 used the Dutch interface; member 6 entered and member 3 judged at phone width (390 px).
 
 Result of the final run: 99 of 101 steps passed. The two failures are findings 1 and 2.
 
