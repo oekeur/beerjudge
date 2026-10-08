@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@agent'
 created_date: '2026-10-08 11:39'
-updated_date: '2026-10-08 15:28'
+updated_date: '2026-10-09 11:57'
 labels:
   - i18n
 dependencies: []
@@ -40,4 +40,6 @@ Part done in plan task 1.2: member login page title translated (auth.login).
 Part done in plan task 2.1: competition summary widget labels and variance 'pts' suffix translated.
 
 Part done in plan task 2.3: entries repeater labels (member, style, ABV, brewer notes) and the Sort by ABV action translated.
+
+Part done in plan task 3.1: judging screen aria-labels and guide titles translated.
 <!-- SECTION:NOTES:END -->

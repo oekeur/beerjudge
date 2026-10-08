@@ -6,6 +6,9 @@ use App\Enums\ScoresheetStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int|null $client_revision
+ */
 class Scoresheet extends Model
 {
     /** @var array<string, int> */
@@ -22,7 +25,7 @@ class Scoresheet extends Model
     protected $fillable = [
         'entry_id', 'judge_id', 'aroma', 'appearance', 'flavour', 'mouthfeel', 'overall',
         'total', 'aroma_notes', 'appearance_notes', 'flavour_notes', 'mouthfeel_notes',
-        'overall_notes', 'descriptors', 'client_uuid', 'status', 'submitted_at',
+        'overall_notes', 'descriptors', 'client_uuid', 'client_revision', 'status', 'submitted_at',
     ];
 
     protected function casts(): array
@@ -30,6 +33,7 @@ class Scoresheet extends Model
         return [
             'descriptors' => 'array',
             'submitted_at' => 'datetime',
+            'client_revision' => 'integer',
             'status' => ScoresheetStatus::class,
         ];
     }
@@ -40,6 +44,32 @@ class Scoresheet extends Model
             $sheet->total = $sheet->aroma + $sheet->appearance
                 + $sheet->flavour + $sheet->mouthfeel + $sheet->overall;
         });
+    }
+
+    /**
+     * The sheet as the judging screen holds it in the browser.
+     *
+     * @return array<string, mixed>
+     */
+    public function toJudgingPayload(): array
+    {
+        return [
+            'entry_id' => $this->entry_id,
+            'client_uuid' => $this->client_uuid,
+            'client_revision' => $this->client_revision,
+            'aroma' => $this->aroma,
+            'appearance' => $this->appearance,
+            'flavour' => $this->flavour,
+            'mouthfeel' => $this->mouthfeel,
+            'overall' => $this->overall,
+            'aroma_notes' => $this->aroma_notes ?? '',
+            'appearance_notes' => $this->appearance_notes ?? '',
+            'flavour_notes' => $this->flavour_notes ?? '',
+            'mouthfeel_notes' => $this->mouthfeel_notes ?? '',
+            'overall_notes' => $this->overall_notes ?? '',
+            'descriptors' => $this->descriptors ?? [],
+            'status' => $this->status,
+        ];
     }
 
     /**

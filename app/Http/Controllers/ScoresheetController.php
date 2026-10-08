@@ -34,6 +34,15 @@ class ScoresheetController extends Controller
                 ->where('judge_id', $judge->id)
                 ->first();
 
+        // A request delayed in transit can arrive after a newer save of the same sheet. A payload
+        // whose revision is not above the stored one is ignored and answered with the stored sheet,
+        // so the client converges. Payloads without a revision (older clients) always apply.
+        $revision = $data['client_revision'] ?? null;
+        $isStale = $sheet !== null
+            && $revision !== null
+            && $sheet->client_revision !== null
+            && $revision <= $sheet->client_revision;
+
         $attributes = [
             'entry_id' => $entryId,
             'judge_id' => $judge->id,
@@ -49,22 +58,28 @@ class ScoresheetController extends Controller
             'overall_notes' => $data['overall_notes'] ?? null,
             'descriptors' => $data['descriptors'] ?? [],
             'client_uuid' => $data['client_uuid'],
+            'client_revision' => $revision ?? $sheet?->client_revision,
             'status' => $data['status'],
             'submitted_at' => $data['status'] === ScoresheetStatus::Submitted->value ? now() : null,
         ];
 
-        if ($sheet) {
-            $sheet->update($attributes);
-        } else {
-            $sheet = Scoresheet::create($attributes);
+        if (! $isStale) {
+            if ($sheet) {
+                $sheet->update($attributes);
+            } else {
+                $sheet = Scoresheet::create($attributes);
+            }
         }
 
         return response()->json([
             'id' => $sheet->id,
             'client_uuid' => $sheet->client_uuid,
+            'client_revision' => $sheet->client_revision,
             'total' => $sheet->total,
             'status' => $sheet->status,
             'saved_at' => $sheet->updated_at?->toISOString(),
+            'ignored' => $isStale,
+            'sheet' => $sheet->toJudgingPayload(),
         ]);
     }
 }

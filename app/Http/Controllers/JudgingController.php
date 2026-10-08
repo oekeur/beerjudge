@@ -32,6 +32,7 @@ class JudgingController extends Controller
             ->keyBy('entry_id');
 
         $serverData = [
+            'competitionId' => $competition->id,
             'isAdmin' => $judge->is_admin,
             'progressUrl' => route('judging.progress', $competition),
             'entries' => $entries->map(fn ($e, $i) => [
@@ -62,22 +63,7 @@ class JudgingController extends Controller
                 'range' => $band['range'],
                 'description' => __("judging.band.{$band['key']}.description"),
             ], CompetitionRankingService::bands()),
-            'existingSheets' => $existingSheets->map(fn ($s) => [
-                'entry_id' => $s->entry_id,
-                'client_uuid' => $s->client_uuid,
-                'aroma' => $s->aroma,
-                'appearance' => $s->appearance,
-                'flavour' => $s->flavour,
-                'mouthfeel' => $s->mouthfeel,
-                'overall' => $s->overall,
-                'aroma_notes' => $s->aroma_notes ?? '',
-                'appearance_notes' => $s->appearance_notes ?? '',
-                'flavour_notes' => $s->flavour_notes ?? '',
-                'mouthfeel_notes' => $s->mouthfeel_notes ?? '',
-                'overall_notes' => $s->overall_notes ?? '',
-                'descriptors' => $s->descriptors ?? [],
-                'status' => $s->status,
-            ])->values(),
+            'existingSheets' => $existingSheets->map(fn (Scoresheet $s) => $s->toJudgingPayload())->values(),
         ];
 
         if ($request->boolean('register')) {

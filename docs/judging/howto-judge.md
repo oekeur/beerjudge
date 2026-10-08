@@ -47,7 +47,8 @@ Your scoresheet saves to the browser automatically after every change. The sync 
 | Saving (pulsing amber) | Writing to server |
 | Saved (grey) | Draft saved |
 | Submitted (green) | Final, locked |
-| Retry (red) | Network error — tap to retry |
+| Waiting for connection (grey) | No connection. The sheet is safe on your device and syncs by itself when the connection returns |
+| Retry (red) | The server answered with an error. Tap to retry |
 
 ### 4. Submit a scoresheet
 
@@ -61,19 +62,26 @@ If you are an admin, a collapsible panel at the top of the screen shows how many
 
 ### 6. Work offline
 
-The judging screen works without a network connection. Every scoresheet is written to local storage (IndexedDB) first. When the network returns, pending sheets sync automatically. If a sync fails, it retries after 5 seconds. You can also tap the red **Retry** badge on a specific entry to force an immediate retry.
+Keep the judging screen open: the page itself is not cached, so it must be open before the connection drops. If you lose the connection while it is open, keep scoring. Every scoresheet is written to local storage (IndexedDB) first, and sheets you submit show **Waiting for connection** until the network returns, then sync on their own without a reload. Do not reload the page while offline; it will not load. Your sheets stay on the device and sync the next time you open the screen with a connection.
+
+Open the judging screen in one tab at a time. If you open it in a second tab, that tab shows **Judging is open in another tab.** and stays read-only. Tap **Use this tab** to continue there; the first tab then shows the same message, and anything it had queued is sent from the new tab.
+
+If the server answers with an error, the badge turns red and reads **Retry**. The app retries after 5 seconds; you can also tap the badge to retry at once.
 
 ## Verification
 
-A green **Submitted** badge on an entry confirms the scoresheet reached the server. You can also check your submitted scores by collapsing and reopening the entry card — a submitted card shows the read-only summary view.
+A green **Submitted** badge on an entry confirms the scoresheet reached the server. **Waiting for connection** means it has not yet. You can also check your submitted scores by collapsing and reopening the entry card — a submitted card shows the read-only summary view.
 
 ## Troubleshooting
 
 **The judging screen shows HTTP 403.**
 The competition is not in `judging` status. Contact the admin to advance the competition phase.
 
+**The badge reads Waiting for connection and does not clear.**
+The device is offline or the server is unreachable. The sheet is safe in local storage and syncs when connectivity returns. Check your network connection and keep the page open.
+
 **The Retry badge stays red after tapping.**
-The server may be unreachable. The sheet is safe in local storage and will sync when connectivity returns. Check your network connection.
+The server keeps answering with an error. The sheet is safe in local storage. Tell an admin if it persists.
 
 **A score section shows a red ring after clicking Submit.**
 That section has no score set. Fill in all five sections before submitting.
