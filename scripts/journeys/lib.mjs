@@ -7,6 +7,9 @@ export { expect }
 const HERE = path.dirname(new URL(import.meta.url).pathname)
 const REPO = path.resolve(HERE, '../..')
 export const BASE = process.env.JOURNEY_URL ?? 'http://localhost:8010'
+/** Regex matching BASE plus a path pattern source, with the host escaped. */
+export const baseRe = (pathSource = '', flags = '') =>
+  new RegExp(BASE.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&') + pathSource, flags)
 export const PASSWORD = 'password'
 /** Recordings, screenshots, cached sessions and state; storage/logs is gitignored. */
 export const OUT = path.join(REPO, 'storage/logs/journeys')

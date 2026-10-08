@@ -1,4 +1,4 @@
-import { journey, login, logMark, logSince, expect, PASSWORD } from './lib.mjs'
+import { journey, login, logMark, logSince, expect, PASSWORD, baseRe } from './lib.mjs'
 
 await journey('M1-sign-in', async actor => {
   const { page, step } = await actor('member3')
@@ -13,7 +13,7 @@ await journey('M1-sign-in', async actor => {
   })
   await step('member password login lands on home', async () => {
     await login(page, 'member3@beerjudge.local', undefined, { fresh: true })
-    await expect(page).toHaveURL(/localhost:8010\/$/)
+    await expect(page).toHaveURL(baseRe('/$'))
   })
   await step('logout', async () => {
     await page.getByRole('button', { name: /log ?out|uitloggen|afmelden/i }).click()
@@ -26,7 +26,7 @@ await journey('M1-sign-in', async actor => {
     await page.click('form button[type="submit"]')
     await page.waitForLoadState('networkidle')
     const mail = logSince(mark)
-    const m = mail.match(/http:\/\/localhost:8010\/magic-link\/[A-Za-z0-9]+/)
+    const m = mail.match(baseRe('/magic-link/[A-Za-z0-9]+'))
     if (!m) throw new Error('no magic link in log: ' + mail.slice(0, 300))
     globalThis.magic = m[0]
   })
@@ -37,14 +37,14 @@ await journey('M1-sign-in', async actor => {
   await step('magic link confirm logs in', async () => {
     await page.getByTestId('magic-link-login-button').click()
     await page.waitForLoadState('networkidle')
-    await expect(page).toHaveURL(/localhost:8010\/$/)
+    await expect(page).toHaveURL(baseRe('/$'))
   })
   await step('used magic link no longer works', async () => {
     await page.context().clearCookies()
     await page.goto(globalThis.magic)
     const btn = page.getByTestId('magic-link-login-button')
     if (await btn.isVisible()) { await btn.click(); await page.waitForLoadState('networkidle') }
-    await expect(page).not.toHaveURL(/localhost:8010\/$/)
+    await expect(page).not.toHaveURL(baseRe('/$'))
   })
   await step('password reset requested', async () => {
     const mark = logMark()
@@ -52,7 +52,7 @@ await journey('M1-sign-in', async actor => {
     await page.fill('#email', 'member8@beerjudge.local')
     await page.click('form button[type="submit"]')
     await page.waitForLoadState('networkidle')
-    const m = logSince(mark).match(/http:\/\/localhost:8010\/password\/reset\/[^\s"<)\]]+/)
+    const m = logSince(mark).match(baseRe('/password/reset/[^\\s"<)\\]]+'))
     if (!m) throw new Error('no reset link in log')
     globalThis.reset = m[0].replace(/&amp;/g, '&')
   })
@@ -62,7 +62,7 @@ await journey('M1-sign-in', async actor => {
     await page.fill('#password_confirmation', 'NewPassw0rd!2026')
     await page.click('form button[type="submit"]')
     await page.waitForLoadState('networkidle')
-    await expect(page).toHaveURL(/localhost:8010\/$/)
+    await expect(page).toHaveURL(baseRe('/$'))
   })
   const admin = await actor('member2-admin')
   await admin.step('admin login redirects to /admin', async () => {
