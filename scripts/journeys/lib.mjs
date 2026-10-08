@@ -65,7 +65,7 @@ export const throttled = []
 
 /**
  * Logs in, reusing a cached session cookie when it is still valid. POST /login is
- * throttled at 6 per minute per IP, so a 429 waits out the window and retries.
+ * throttled at 6 per minute per email and IP (30 per minute per IP), so a 429 waits out the window and retries.
  */
 export async function login(page, email, password = PASSWORD, { fresh = false } = {}) {
   fs.mkdirSync(AUTH, { recursive: true })

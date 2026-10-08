@@ -26,9 +26,9 @@ Route::get('/sw.js', function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::get('/magic-link', [AuthController::class, 'showMagicLinkForm'])->name('auth.magic-link.request');
-    Route::post('/magic-link', [AuthController::class, 'sendMagicLink'])->middleware('throttle:3,5');
+    Route::post('/magic-link', [AuthController::class, 'sendMagicLink'])->middleware('throttle:magic-link-request');
     Route::get('/magic-link/{token}', [AuthController::class, 'showMagicLinkConfirm'])->name('auth.magic-link.verify')->middleware('throttle:magic-link-token');
     Route::post('/magic-link/{token}', [AuthController::class, 'consumeMagicLink'])->name('auth.magic-link.consume')->middleware('throttle:magic-link-token');
     Route::get('/join/{token}', [RegistrationController::class, 'show'])->name('register');
@@ -37,7 +37,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/password/reset', [PasswordResetController::class, 'showRequestForm'])->name('password.request');
     Route::post('/password/reset', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
     Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
-    Route::post('/password/reset/confirm', [PasswordResetController::class, 'resetPassword'])->name('password.update')->middleware('throttle:5,1');
+    Route::post('/password/reset/confirm', [PasswordResetController::class, 'resetPassword'])->name('password.update')->middleware('throttle:password-reset-confirm');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
