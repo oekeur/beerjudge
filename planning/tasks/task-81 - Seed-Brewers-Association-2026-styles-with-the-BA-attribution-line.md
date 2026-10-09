@@ -1,11 +1,11 @@
 ---
 id: TASK-81
 title: Seed Brewers Association 2026 styles with the BA attribution line
-status: Review
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-10-09 11:57'
-updated_date: '2026-10-09 19:21'
+updated_date: '2026-10-09 19:32'
 labels:
   - multi-source-styles
   - style-guidelines
@@ -33,7 +33,7 @@ Seed the BA 2026 snapshot as source ba_beer next to BJCP, show the BA attributio
 - [x] #4 A Filament test asserts the style edit page shows the attribution for a BA style and not for a BJCP style
 - [x] #5 A test asserts StyleMultiSelect lists the BJCP Beer group before the Brewers Association group
 - [x] #6 npx playwright test tests/Browser/judging-style-guide-srm.spec.ts passes, and scripts/journeys/run-all.sh fails no step that passes on main (several runs at branch head and on main for any intermittent step)
-- [ ] #7 Oscar has checked the guide modal and style-info sheet for a BA entry in a browser
+- [x] #7 Oscar has checked the guide modal and style-info sheet for a BA entry in a browser
 - [x] #8 At a 390x844 viewport, a BA entry with a 3000+ character guide text opens the guide sheet and the style-info sheet with their top and close button inside the viewport, the text scrollable within the sheet, and the style-info sheet's attribution line not covered by the floating button (Playwright)
 - [x] #9 For a BA entry the attribution shows once, as the first row of the expanded entry body, and in the style-info sheet, and not in the per-aspect guide sheets; a BJCP entry shows it nowhere (Playwright)
 <!-- AC:END -->
@@ -68,3 +68,16 @@ Oscar's review (2026-10-09): the attribution on every aspect's guide sheet is to
 
 Placement change (587bd32, rebased onto main 868217b, no conflicts): attribution moved to the first row of the expanded entry body (data-testid entry-attribution), kept in the style-info sheet, removed from guide sheets. Implementer at 587bd32: PHPUnit 302/302, PHPStan 0, Pint, full Playwright 46 passed 1 skipped, journeys 100 PASS. Orchestrator re-ran judging-style-guide-srm.spec.ts in a fresh tree at 587bd32: 10 passed. Pass B skipped for this round: ~10 lines of markup that move an existing payload field, no new logic; runtime covered by the spec run. Review server: same command as before (restart it).
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Landed with TASK-92 in the PR for feat/ba-style-seeder (squash merge; commit feat(styles): seed Brewers Association 2026 styles with attribution #81).
+AC1-2: tests/Feature/BaStyleSeederTest.php (temp fixture mapping + second run; DatabaseSeeder keeps the BJCP count and adds 168 ba_beer). All new PHPUnit tests failed at the merge base.
+AC3-5: tests/Feature/BaStyleAttributionTest.php (payload style_attribution BA string / null; Filament EditStyle attribution BA only; StyleMultiSelect bjcp_beer before ba_beer).
+AC6: judging-style-guide-srm.spec.ts 10 passed (re-run independently at 587bd32); full Playwright 46 passed 1 skipped; run-all.sh 100 PASS (the 10 baseline failures on old main were fixed by PR #33).
+AC7: Oscar reviewed in the browser and approved after moving the attribution (2026-10-09).
+AC8: both sheets capped at 85dvh with their own scroll, x always visible, scroll reset on open and close; 390x844 Playwright tests incl. a script-dispatched reopen.
+AC9: attribution once as the first row of the expanded entry plus the style-info sheet, not in guide sheets (Playwright).
+Departures from the plan: four gate rounds. Round 1 found the sheet overflow with long BA text (AC 8 added); round 2 the scroll carry-over; round 3 (PLAUSIBLE) its event-loop dependence, fixed deterministically in round 4. AC 6 reworded to no-new-failures-vs-main with Oscar. Oscar moved the attribution out of the guide sheets after review (AC 9). Out of plan but required by the rebase onto PR #33: lang/en.json and lang/nl.json judging.aria.guide no longer say BJCP.
+<!-- SECTION:FINAL_SUMMARY:END -->
