@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@agent'
 created_date: '2026-10-09 11:57'
-updated_date: '2026-10-09 12:06'
+updated_date: '2026-10-09 13:13'
 labels:
   - multi-source-styles
   - style-guidelines
@@ -32,8 +32,9 @@ Seed the BA 2026 snapshot as source ba_beer next to BJCP, show the BA attributio
 - [ ] #3 A judging page feature test asserts style_attribution is the BA attribution string for a BA entry and null for a BJCP entry
 - [ ] #4 A Filament test asserts the style edit page shows the attribution for a BA style and not for a BJCP style
 - [ ] #5 A test asserts StyleMultiSelect lists the BJCP Beer group before the Brewers Association group
-- [ ] #6 npx playwright test tests/Browser/judging-style-guide-srm.spec.ts and the full scripts/journeys/run-all.sh pass
+- [ ] #6 npx playwright test tests/Browser/judging-style-guide-srm.spec.ts passes, and scripts/journeys/run-all.sh fails no step that passes on main (several runs at branch head and on main for any intermittent step)
 - [ ] #7 Oscar has checked the guide modal and style-info sheet for a BA entry in a browser
+- [ ] #8 At a 390x844 viewport, a BA entry with a 3000+ character guide text opens the guide sheet and the style-info sheet with their top and close button inside the viewport, the text scrollable within the sheet, and the attribution line not covered by the floating button (Playwright)
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -49,3 +50,9 @@ Phase 2 - Browser review by Oscar [AC 7]
 [RISK] Licence scope for name-only surfaces - Accepted: attribution only where BA guideline text is shown (Oscar, 2026-10-09)
 Open (non-blocking): none
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Gate round 1 (Pass B, CONFIRMED): long BA text pushed the guide sheet above the viewport; at 390x844 sheet top y=-762, close button off-screen, taps did not close it. Sheet had no max height (pre-existing); BA text triggers it. Oscar: retry with the fix (AC 8). AC 6 reworded to no-new-failures-vs-main: 10 journey steps fail on main and branch alike (m1 password login, m1 magic link/reset x6, a1 invite register + approved login, a4 judges tile 0); m4 score entries 2 and 3 failed 1 of 4 at head, 0 of 1 at base.
+<!-- SECTION:NOTES:END -->
