@@ -3,10 +3,10 @@ id: TASK-79
 title: >-
   Email the admin notification address about pending members; remove inactive
   demo members from prod
-status: Review
+status: Planned
 assignee: []
 created_date: '2026-10-08 22:05'
-updated_date: '2026-10-08 22:08'
+updated_date: '2026-10-09 18:48'
 labels:
   - auth
   - launch-ops
@@ -33,7 +33,7 @@ Record an admin notification address (ADMIN_NOTIFICATION_EMAIL, Oscar's address)
 - [ ] #5 A failed notification dispatch is reported and registration still redirects to login with the success flash
 - [ ] #6 planning/specs/authentication.md and planning/specs/members.md describe the notification
 - [ ] #7 Prod: deployed with ADMIN_NOTIFICATION_EMAIL set; a throwaway registration delivered the mail and the throwaway member was deleted
-- [ ] #8 Prod: after a pg_dump backup, no member like member%@beerjudge.local with is_active=false remains; their scoresheets and entries in the demo competitions are deleted first; active demo members are untouched
+- [x] #8 Prod: after a pg_dump backup, demo members member2..member8@beerjudge.local are deleted together with their scoresheets and entries in the TEST competitions; member1 stays (Oscar, 2026-10-09)
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -52,4 +52,6 @@ Open (non-blocking): what to do with ACTIVE demo members (member1/member2 are se
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-10-09 Phase 3 run on prod: pg_dump backup at VPS ~/backup-2026-10-09-pre-demo-cleanup.sql (413660 bytes, 15 tables). Listing: 0 inactive members on prod; member1..8 are all active (1 and 2 admins), so AC 8's delete set is empty and nothing was deleted. member2,4,5,6,7,8 still have password 'password' (Hash::check); member1 and 3 do not. Demo data sits in competitions 'TEST - CLOSED', 'TEST - JUDGING', 'TEST - OPEN FOR SUBMITTING' (not the seeder names); 'Old World Hops' has no demo references. Waiting on Oscar: what to do with the active demo accounts; Phase 3 and AC 8 need revising to match.
+
+2026-10-09 Oscar: 'Delete members 2-8 for me'. Backup VPS ~/backup-2026-10-09-2047-pre-delete-members-2-8.sql (15 tables). One transaction, guarded to abort on references outside 'TEST - %' competitions (none): deleted 14 scoresheets judged by them, 17 entries (with 21 scoresheets on them), 7 members. Remaining demo account: member1 (admin). Active admins: Member 1, Erwin. Members total 12.
 <!-- SECTION:NOTES:END -->
