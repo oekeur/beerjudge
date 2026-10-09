@@ -1,10 +1,11 @@
 ---
 id: TASK-81
 title: Seed Brewers Association 2026 styles with the BA attribution line
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-09 11:57'
-updated_date: '2026-10-09 11:57'
+updated_date: '2026-10-09 12:06'
 labels:
   - multi-source-styles
   - style-guidelines
