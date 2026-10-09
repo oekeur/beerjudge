@@ -48,6 +48,10 @@ Unknowns:
 
 ## Phase 3: Remove inactive demo members from prod (Oscar runs, runbook)
 
+**Done 2026-10-09, revised.** The prod listing showed no inactive members: member1..member8 were all active. Oscar then decided "Delete members 2-8". Claude ran it over ssh after a fresh pg_dump: one transaction deleted their judged scoresheets, their entries in the `TEST - %` competitions (the demo competitions were renamed on prod), and the 7 members. member1 (admin) stays. Details on TASK-79. [AC 8]
+
+Original runbook, kept for reference:
+
 **Outcome:** no member with an email like `member%@beerjudge.local` and `is_active = false` exists on prod. Their entries (with every scoresheet on those entries) and the scoresheets they judged are gone; the demo competitions stay. Independent of Phases 1-2. The set may be empty or partial: DemoSeeder creates all 8 as active, so any inactive one was deactivated by hand.
 
 Decisions taken (Oscar, 2026-10-08): one-off runbook, no new code; remove the members' references in the demo competitions, then the members; active demo accounts are not deleted.
