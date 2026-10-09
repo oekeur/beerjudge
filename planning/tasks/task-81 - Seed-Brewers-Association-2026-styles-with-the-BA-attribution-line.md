@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@agent'
 created_date: '2026-10-09 11:57'
-updated_date: '2026-10-09 14:26'
+updated_date: '2026-10-09 15:41'
 labels:
   - multi-source-styles
   - style-guidelines
@@ -57,4 +57,6 @@ Open (non-blocking): none
 Gate round 1 (Pass B, CONFIRMED): long BA text pushed the guide sheet above the viewport; at 390x844 sheet top y=-762, close button off-screen, taps did not close it. Sheet had no max height (pre-existing); BA text triggers it. Oscar: retry with the fix (AC 8). AC 6 reworded to no-new-failures-vs-main: 10 journey steps fail on main and branch alike (m1 password login, m1 magic link/reset x6, a1 invite register + approved login, a4 judges tile 0); m4 score entries 2 and 3 failed 1 of 4 at head, 0 of 1 at base.
 
 Gate round 2 (d6413f3): Pass A no unmet AC. Pass B CONFIRMED: the guide sheet's new scroll body keeps scrollTop across opens (openGuide never resets it); BA-161 scrolled to bottom then BA-159 opened at scrollTop 476, first line hidden above the panel, no visual cue. Round-1 fix verified on real data at 390x844, 844x390, 1280x800 (top 127/59/120, x inside, scrolls, backdrop and Escape close); full Playwright 43 passed 1 skipped and journeys 100 PASS at d6413f3; real Sentry widget does not overlap the attribution; BJCP guide sheet unchanged; BJCP style-info sheet taller (60vh body cap -> 85dvh panel cap). Writer map: scroll position is touched only by user scroll; openGuide/openStyleInfo rebuild state, closeGuide/closeStyleInfo set open=false (x, backdrop, Escape). Style-info already kept scroll at the base.
+
+Gate round 3 (83035e9): conformance on the 53-line delta done inline by the orchestrator (reset in openGuide/openStyleInfo via x-ref + $nextTick; spec before/after 1272/3993 -> 0). Pass B PLAUSIBLE only: x-show without x-transition shows in requestAnimationFrame while $nextTick flushes in setTimeout, and Chromium ignores scrollTop writes on display:none; JS-dispatched click reopen kept scrollTop 1468 in 45 of 45 runs; real mouse/touch/Enter/Space in Chromium 0 of 104 failures; WebKit and Firefox not testable here (only Chromium installed). Full Playwright 45 passed 1 skipped at 83035e9. Probes saved outside the repo.
 <!-- SECTION:NOTES:END -->
