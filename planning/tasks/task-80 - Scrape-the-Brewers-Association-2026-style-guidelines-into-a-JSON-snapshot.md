@@ -1,8 +1,9 @@
 ---
 id: TASK-80
 title: Scrape the Brewers Association 2026 style guidelines into a JSON snapshot
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-09 11:57'
 updated_date: '2026-10-09 11:57'
 labels:
