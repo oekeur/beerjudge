@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Competition;
 use App\Models\Scoresheet;
+use App\Models\Style;
 use App\Services\CompetitionRankingService;
 use App\Services\DescriptorService;
 use Illuminate\Http\JsonResponse;
@@ -40,6 +41,8 @@ class JudgingController extends Controller
                 'tasting_number' => $i + 1,
                 'style_code' => $e->style?->code,
                 'style_name' => $e->style?->name,
+                'style_source' => $e->style?->source,
+                'style_attribution' => Style::attributionFor($e->style?->source),
                 'brewer_name' => $e->member?->name,
                 'srm_min' => $e->style?->srm_min,
                 'srm_max' => $e->style?->srm_max,

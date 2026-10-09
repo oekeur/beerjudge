@@ -74,9 +74,10 @@ The `source` column identifies where a style came from. `Style::SOURCE_LABELS` m
 | `bjcp_beer` | BJCP Beer |
 | `bjcp_mead` | BJCP Mead |
 | `bjcp_cider` | BJCP Cider |
+| `ba_beer` | Brewers Association |
 | `custom` | Custom |
 
-`bjcp_mead` and `bjcp_cider` are reserved; no seeders exist for them yet.
+`bjcp_mead` and `bjcp_cider` are reserved; no seeders exist for them yet. `ba_beer` is seeded by `BaStyleSeeder`.
 
 ---
 
@@ -101,5 +102,6 @@ Do not include `source` in the upsert update columns list. It is part of the uni
 
 ## Related
 
+- [BA seeder reference](ba-seeder-reference.md)
 - [How to seed or refresh BJCP styles](bjcp-seeder-howto.md)
 - [Filament admin panel overview](filament-overview-explanation.md)

@@ -1,14 +1,15 @@
 # Styles
 
-The BJCP 2021 style guide is seeded once as the master catalogue. Each competition selects from this catalogue the styles it accepts.
+The BJCP 2021 and Brewers Association (BA) 2026 style guides are seeded as the master catalogue. Each competition selects from this catalogue the styles it accepts. Admins can also create custom styles.
 
 ## Data model
 
 | Column | Type | Notes |
 |---|---|---|
 | id | bigint | PK |
-| code | string | Unique BJCP code, e.g. `23A` |
-| version | string | `2021` |
+| source | string | `bjcp_beer`, `ba_beer`, `custom`. Identity key together with `code` |
+| code | string | Unique per source: BJCP code (`23A`) or BA code (`BA-001`..`BA-168`) |
+| version | string | `2021` (BJCP), `2026` (BA), null for custom |
 | category_name | string | e.g. `Pale American Ale` |
 | category_description | text | nullable |
 | name | string | Style name, e.g. `American Pale Ale` |
@@ -32,7 +33,30 @@ The BJCP 2021 style guide is seeded once as the master catalogue. Each competiti
 
 ## Seeding
 
-`BjcpStyleSeeder` reads `bjcp_styleguide-2021.json` and upserts all styles by `code`. Running the seeder again is safe — it updates existing rows, not duplicates. The full BJCP 2021 style set is seeded by `php artisan migrate --seed` and by the demo seeder.
+`BjcpStyleSeeder` reads `bjcp_styleguide-2021.json` and upserts by `(code, source)`. `BaStyleSeeder` reads `ba_styleguide-2026.json` (produced by `styles:scrape-ba`) and does the same for `ba_beer`. Running either again is safe: it updates existing rows, not duplicates. `DatabaseSeeder` runs both, BJCP first. For an existing production database run `php artisan db:seed --class=BaStyleSeeder --force`.
+
+### BA field mapping
+
+| JSON | Column |
+|---|---|
+| `code` | `code` (`BA-001`..`BA-168`) |
+| `name` | `name` |
+| `category` | `category_name` |
+| `appearance`, `aroma`, `flavor`, `mouthfeel`, `overall_impression` | same-named columns; labelled parts joined by `\n` |
+| `og_*`, `fg_*`, `abv_*`, `ibu_*`, `srm_*` | same-named columns, null when absent |
+| `edition` | `version` |
+| (constant) | `source` = `ba_beer` |
+| (none) | `category_description`, `comments`, `history`, `style_comparison`, `ingredients`, `examples`, `tags` = null |
+
+### Re-seed hazard
+
+The upsert key is `(code, source)`, so seeding a later BA edition would rewrite the rows that existing entries point to, changing the style text of past competitions. Other BA editions are out of scope; adding one needs a new source key (e.g. `ba_beer_2027`) or a data migration.
+
+## Attribution
+
+The BA licence requires an attribution line wherever BA guideline text is shown: "Based on Brewers Association 2026 Beer Style Guidelines with changes. Used with permission of Brewers Association." The text lives in `Style::SOURCE_ATTRIBUTIONS` (English, not translated). Reading agreed 2026-10-09: it appears once at the top of an expanded entry on the judging screen, on the style-info sheet and on the Filament style edit page; not on the per-aspect style-guide sheets, and not on pages that show only a style's code or name (results sheet, judge report, entry form, pickers). The judging payload carries `style_source` and `style_attribution` per entry.
+
+The style picker (`StyleMultiSelect`) orders source groups by the key order of `Style::SOURCE_LABELS`.
 
 ## Style guidelines on the judging screen
 
@@ -40,8 +64,8 @@ Each entry's judging card includes a collapsible panel with the style guide cont
 
 ## Admin management (Filament)
 
-StyleResource in Filament is read-mostly. Admins can view and edit style content (useful for corrections to the seeded data) but cannot create new styles or delete existing ones through the UI. The list is searchable and sortable.
+StyleResource in Filament lets admins view, edit and create styles. The `source` field is disabled in the form; custom styles are created with source `custom`. The list is searchable and sortable.
 
 ## Out of scope
 
-Style versions other than BJCP 2021. User-created custom styles. Sub-styles or speciality-ingredient variants. Style-level rankings or statistics (planned — see roadmap).
+BA editions other than 2026. Translating BA text. Sub-styles or speciality-ingredient variants. Style-level rankings or statistics (planned — see roadmap).

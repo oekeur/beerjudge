@@ -60,6 +60,24 @@ class BrowserTestSeeder extends Seeder
             'srm_max' => 40,
         ]);
 
+        // BA guideline fields run to 3000+ characters; the judging sheets must scroll them.
+        $longText = implode("\n\n", array_fill(0, 16, 'Long guideline paragraph that wraps over many lines on a phone screen so the bottom sheet has to scroll its content instead of growing past the top of the viewport. Judges read this while scoring.'));
+
+        $baStyle = Style::create([
+            'source' => 'ba_beer',
+            'code' => 'BA-900',
+            'category_name' => 'Browser Test Category',
+            'name' => 'BA Test Bitter',
+            'version' => '2026',
+            'category_description' => $longText,
+            'history' => $longText,
+            'style_comparison' => $longText,
+            'aroma' => $longText,
+            'appearance' => "Color: Gold\nClarity: Chill haze\n\n".$longText,
+            'srm_min' => 5,
+            'srm_max' => 12,
+        ]);
+
         $judge = Member::create([
             'name' => 'Browser Judge',
             'email' => 'judge@browser-test.local',
@@ -83,7 +101,7 @@ class BrowserTestSeeder extends Seeder
             'judging_date' => now()->toDateString(),
             'status' => 'judging',
         ]);
-        $judgingComp->styles()->attach([$style->id, $maxOnlyStyle->id, $minOnlyStyle->id, $edgeEqualStyle->id]);
+        $judgingComp->styles()->attach([$style->id, $maxOnlyStyle->id, $minOnlyStyle->id, $edgeEqualStyle->id, $baStyle->id]);
 
         Entry::create([
             'competition_id' => $judgingComp->id,
@@ -94,7 +112,7 @@ class BrowserTestSeeder extends Seeder
 
         // Own data for judging-style-guide-srm.spec.ts: no other spec scores these, so the
         // guideline buttons survive judging-score-buttons.spec.ts submitting entry 1.
-        foreach ([[$maxOnlyStyle, 'SRM Max Brewer', 2], [$minOnlyStyle, 'SRM Min Brewer', 3], [$edgeEqualStyle, 'SRM Edge Brewer', 4]] as [$srmStyle, $brewerName, $bottle]) {
+        foreach ([[$maxOnlyStyle, 'SRM Max Brewer', 2], [$minOnlyStyle, 'SRM Min Brewer', 3], [$edgeEqualStyle, 'SRM Edge Brewer', 4], [$baStyle, 'BA Brewer', 5]] as [$srmStyle, $brewerName, $bottle]) {
             $srmBrewer = Member::create([
                 'name' => $brewerName,
                 'email' => strtolower(str_replace(' ', '-', $brewerName)).'@browser-test.local',

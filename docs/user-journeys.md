@@ -142,7 +142,7 @@ The deterministic suites (`php artisan test`, `npm run test:browser`) check each
 - **Steps**:
   1. Join as a judge from the judge-join link or the banner on `/judging/{id}`; leave the same way.
   2. The list holds every entry except your own, in tasting order. **My ranking** sorts by your own scores.
-  3. Expand an entry, score the five sections, add notes and off-flavour descriptors. The info buttons open the BJCP guideline for that section.
+  3. Expand an entry, score the five sections, add notes and off-flavour descriptors. The info buttons open the style guideline (BJCP or Brewers Association) for that section.
   4. **Submit**. A submitted sheet can be reopened and saved again until the competition closes.
   5. Without a connection, sheets are kept in IndexedDB and sent when the connection returns.
 - **Code**: `JudgingController`, `ScoresheetController`, `resources/views/judging/show.blade.php`, `resources/js/judging.js`.

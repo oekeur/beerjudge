@@ -34,7 +34,7 @@ Score each of the five BJCP sections using the numbered buttons:
 | Mouthfeel | 5 |
 | Overall Impression | 10 |
 
-Click the **info icon** next to any section heading to open the BJCP style guideline for that section. The appearance section includes an SRM colour gradient showing the expected colour range for the style.
+Click the **info icon** next to any section heading to open the style guideline (BJCP or Brewers Association) for that section. The appearance section includes an SRM colour gradient showing the expected colour range for the style.
 
 Add tasting notes in the text area beneath each score row. Notes save automatically as you type.
 

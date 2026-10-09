@@ -108,7 +108,7 @@ window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, st
         _sync: { chains: {}, waiting: {} },
         _saveVersion: {},
         styleGuide: { open: false, section: '', text: '', srm: null },
-        styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '' },
+        styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '', attribution: null },
         progress: {},
         progressOpen: false,
 
@@ -624,6 +624,7 @@ window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, st
                 text: entry?.style_guide?.[sectionKey] ?? 'No descriptor available.',
                 srm,
             };
+            this.$nextTick(() => { this.$refs.styleGuideScroll.scrollTop = 0; });
         },
 
         guideLabel(sectionKey, styleName) {
@@ -635,6 +636,7 @@ window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, st
         },
 
         closeGuide() {
+            this.$refs.styleGuideScroll.scrollTop = 0;
             this.styleGuide.open = false;
         },
 
@@ -648,11 +650,14 @@ window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, st
                 categoryDescription: entry?.style_info?.category_description ?? '',
                 history: entry?.style_info?.history ?? '',
                 styleComparison: entry?.style_info?.style_comparison ?? '',
+                attribution: entry?.style_attribution ?? null,
             };
+            this.$nextTick(() => { this.$refs.styleInfoScroll.scrollTop = 0; });
         },
 
 
         closeStyleInfo() {
+            this.$refs.styleInfoScroll.scrollTop = 0;
             this.styleInfo.open = false;
         },
 

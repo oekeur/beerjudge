@@ -130,7 +130,7 @@
     "judging.updated_from_other_device": "Bijgewerkt vanaf een ander apparaat",
     "judging.aria.score": ":section score, 0 tot :max",
     "judging.aria.notes": ":section notities",
-    "judging.aria.guide": "Bekijk BJCP-richtlijn voor :section bij :style",
+    "judging.aria.guide": "Bekijk richtlijn voor :section bij :style",
     "judging.aria.style_info": "Bekijk stijlinfo voor :style",
     "judging.reopen": "Heropenen om te bewerken",
     "judging.total": "Totaal:",

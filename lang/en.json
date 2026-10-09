@@ -130,7 +130,7 @@
     "judging.updated_from_other_device": "Updated from another device",
     "judging.aria.score": ":section score, 0 to :max",
     "judging.aria.notes": ":section notes",
-    "judging.aria.guide": "View BJCP :section guideline for :style",
+    "judging.aria.guide": "View :section guideline for :style",
     "judging.aria.style_info": "View style info for :style",
     "judging.reopen": "Reopen to edit",
     "judging.total": "Total:",
