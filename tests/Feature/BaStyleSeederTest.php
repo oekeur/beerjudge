@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\Competition;
 use App\Models\Style;
 use Database\Seeders\BaStyleSeeder;
 use Database\Seeders\BjcpStyleSeeder;
 use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\DemoSeeder;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Tests\TestCase;
 
@@ -114,5 +116,17 @@ class BaStyleSeederTest extends TestCase
 
         $this->assertSame($bjcpCount, Style::where('source', 'bjcp_beer')->count());
         $this->assertSame(168, Style::where('source', 'ba_beer')->count());
+    }
+
+    public function test_demo_competition_gets_only_bjcp_styles(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $this->seed(DemoSeeder::class);
+
+        $styles = Competition::where('name', 'Autumn Harvest 2024')->firstOrFail()->styles;
+
+        $this->assertSame(0, $styles->where('source', 'ba_beer')->count());
+        $this->assertSame(Style::where('source', 'bjcp_beer')->count(), $styles->count());
+        $this->assertGreaterThan(0, $styles->count());
     }
 }

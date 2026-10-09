@@ -65,6 +65,7 @@ export default defineConfig({
           { text: 'How to create a member via CLI', link: '/admin/artisan-commands-howto' },
           { text: 'BJCP seeder reference', link: '/admin/bjcp-seeder-reference' },
           { text: 'How to seed BJCP styles', link: '/admin/bjcp-seeder-howto' },
+          { text: 'BA seeder reference', link: '/admin/ba-seeder-reference' },
           { text: 'Why Filament', link: '/admin/filament-overview-explanation' },
         ],
       },
