@@ -71,7 +71,7 @@ try {
     await page.screenshot({ path: `${OUT}/admin-competition.png` });
 
     // 7. Results — temporarily close the competition
-    artisan('App\\Models\\Competition::find(1)->update(["status" => "closed"]);');
+    artisan('App\\Models\\Competition::find(1)->transitionTo(App\\Enums\\CompetitionStatus::Closed);');
     await page.goto(`${BASE_URL}/competitions/1/results/2`);
     await page.waitForLoadState('networkidle');
     await page.screenshot({ path: `${OUT}/results.png`, fullPage: true });
@@ -79,7 +79,7 @@ try {
     await page.close();
 } finally {
     await browser.close();
-    artisan('App\\Models\\Competition::find(1)->update(["status" => "judging"]);');
+    artisan('App\\Models\\Competition::find(1)->transitionTo(App\\Enums\\CompetitionStatus::Judging);');
 }
 
 console.log('Screenshots saved to docs/screenshots/');

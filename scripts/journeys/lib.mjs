@@ -7,6 +7,9 @@ export { expect }
 const HERE = path.dirname(new URL(import.meta.url).pathname)
 const REPO = path.resolve(HERE, '../..')
 export const BASE = process.env.JOURNEY_URL ?? 'http://localhost:8010'
+/** Regex matching BASE plus a path pattern source, with the host escaped. */
+export const baseRe = (pathSource = '', flags = '') =>
+  new RegExp(BASE.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&') + pathSource, flags)
 export const PASSWORD = 'password'
 /** Recordings, screenshots, cached sessions and state; storage/logs is gitignored. */
 export const OUT = path.join(REPO, 'storage/logs/journeys')
@@ -65,7 +68,7 @@ export const throttled = []
 
 /**
  * Logs in, reusing a cached session cookie when it is still valid. POST /login is
- * throttled at 6 per minute per IP, so a 429 waits out the window and retries.
+ * throttled at 6 per minute per email and IP (30 per minute per IP), so a 429 waits out the window and retries.
  */
 export async function login(page, email, password = PASSWORD, { fresh = false } = {}) {
   fs.mkdirSync(AUTH, { recursive: true })

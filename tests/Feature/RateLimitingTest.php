@@ -75,4 +75,61 @@ class RateLimitingTest extends TestCase
             'password_confirmation' => 'newpassword123',
         ])->assertStatus(429);
     }
+
+    public function test_ten_members_can_log_in_from_one_ip_within_a_minute(): void
+    {
+        foreach (Member::factory()->count(10)->create() as $member) {
+            $this->post('/login', ['email' => $member->email, 'password' => 'password'])
+                ->assertRedirect('/');
+            $this->assertAuthenticatedAs($member);
+            $this->post('/logout');
+            $this->flushSession();
+        }
+    }
+
+    public function test_seventh_failed_login_for_one_email_is_throttled(): void
+    {
+        $member = Member::factory()->create();
+
+        for ($i = 0; $i < 6; $i++) {
+            $this->post('/login', ['email' => $member->email, 'password' => 'wrong'])->assertStatus(302);
+        }
+
+        $this->post('/login', ['email' => strtoupper($member->email), 'password' => 'wrong'])->assertStatus(429);
+        $this->post('/login', ['email' => 'other@example.com', 'password' => 'wrong'])
+            ->assertRedirect()
+            ->assertSessionHasErrors('email');
+    }
+
+    public function test_thirty_first_login_from_one_ip_is_throttled_whatever_the_email(): void
+    {
+        for ($i = 0; $i < 30; $i++) {
+            $this->post('/login', ['email' => "user{$i}@example.com", 'password' => 'wrong'])->assertStatus(302);
+        }
+
+        $this->post('/login', ['email' => 'user31@example.com', 'password' => 'wrong'])->assertStatus(429);
+    }
+
+    public function test_login_attempts_do_not_count_toward_magic_link_request_or_reset_confirm_limits(): void
+    {
+        Notification::fake();
+        $member = Member::factory()->create();
+
+        for ($i = 0; $i < 6; $i++) {
+            $this->post('/login', ['email' => $member->email, 'password' => 'wrong']);
+        }
+
+        $this->post('/magic-link', ['email' => $member->email])->assertStatus(302);
+        $this->post(route('password.update'), [
+            'token' => 'invalid-token',
+            'email' => $member->email,
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ])->assertStatus(302);
+    }
+
+    public function test_login_with_array_email_does_not_error(): void
+    {
+        $this->post('/login', ['email' => ['x'], 'password' => 'wrong'])->assertStatus(302);
+    }
 }

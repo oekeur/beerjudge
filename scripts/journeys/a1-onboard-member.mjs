@@ -1,4 +1,4 @@
-import { journey, login, expect, logMark, logSince, tinker } from './lib.mjs'
+import { journey, login, expect, logMark, logSince, tinker, baseRe } from './lib.mjs'
 
 async function invite(page, timeBound) {
   await page.goto('/admin/members')
@@ -79,6 +79,6 @@ await journey('A1-onboard-member', async actor => {
   })
   await guest.step('approved member logs in', async () => {
     await login(guest.page, 'newbie1@beerjudge.local', 'Journey-Passw0rd!')
-    await expect(guest.page).toHaveURL(/localhost:8010\/$/)
+    await expect(guest.page).toHaveURL(baseRe('/$'))
   })
 })

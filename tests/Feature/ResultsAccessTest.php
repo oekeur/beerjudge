@@ -20,7 +20,7 @@ class ResultsAccessTest extends TestCase
         $admin = Member::factory()->create(['name' => 'Admin', 'email' => 'admin@t.com', 'is_admin' => true]);
         $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@t.com']);
         $other = Member::factory()->create(['name' => 'Other', 'email' => 'other@t.com']);
-        $comp = Competition::create(['name' => 'Spring Cup', 'year' => 2025, 'status' => 'closed']);
+        $comp = Competition::forceCreate(['name' => 'Spring Cup', 'year' => 2025, 'status' => 'closed']);
         $comp->styles()->attach($style->id);
         $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
         Scoresheet::create([
@@ -56,7 +56,7 @@ class ResultsAccessTest extends TestCase
     public function test_member_results_blocked_if_competition_not_closed(): void
     {
         $style = Style::create(['code' => '2A', 'category_name' => 'SA', 'name' => 'Intl Lager']);
-        $comp = Competition::create(['name' => 'Open Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Open Cup', 'year' => 2025, 'status' => 'judging']);
         $brewer = Member::factory()->create(['name' => 'B2', 'email' => 'b2@t.com']);
         $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results/{$brewer->id}");
         $response->assertForbidden();
@@ -66,7 +66,7 @@ class ResultsAccessTest extends TestCase
     {
         $style = Style::create(['code' => '2B', 'category_name' => 'SA', 'name' => 'Intl Pale Lager']);
         $admin = Member::factory()->create(['name' => 'Admin2', 'email' => 'a2@t.com', 'is_admin' => true]);
-        $comp = Competition::create(['name' => 'Judging Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Judging Cup', 'year' => 2025, 'status' => 'judging']);
         $comp->styles()->attach($style->id);
         $brewer = Member::factory()->create(['name' => 'B2', 'email' => 'b2@t.com']);
         $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
@@ -77,7 +77,7 @@ class ResultsAccessTest extends TestCase
     public function test_admin_can_view_index_before_competition_closes(): void
     {
         $admin = Member::factory()->create(['name' => 'Admin3', 'email' => 'a3@t.com', 'is_admin' => true]);
-        $comp = Competition::create(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'judging']);
         $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/results");
         $response->assertOk();
         $response->assertDontSee('Print all');
@@ -92,7 +92,7 @@ class ResultsAccessTest extends TestCase
 
     public function test_member_index_blocked_if_competition_not_closed(): void
     {
-        $comp = Competition::create(['name' => 'Open Cup 2', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Open Cup 2', 'year' => 2025, 'status' => 'judging']);
         $brewer = Member::factory()->create(['name' => 'B3', 'email' => 'b3@t.com']);
         $response = $this->actingAs($brewer)->get("/competitions/{$comp->id}/results");
         $response->assertForbidden();
@@ -166,7 +166,7 @@ class ResultsAccessTest extends TestCase
         $admin = Member::factory()->create(['name' => 'Admin3', 'email' => 'a3@t.com', 'is_admin' => true]);
         $b1 = Member::factory()->create(['name' => 'High', 'email' => 'high@t.com']);
         $b2 = Member::factory()->create(['name' => 'Low', 'email' => 'low@t.com']);
-        $comp = Competition::create(['name' => 'Rank Cup', 'year' => 2025, 'status' => 'closed']);
+        $comp = Competition::forceCreate(['name' => 'Rank Cup', 'year' => 2025, 'status' => 'closed']);
         $comp->styles()->attach($style->id);
         $e1 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b1->id, 'style_id' => $style->id, 'bottle_number' => 1]);
         $e2 = Entry::create(['competition_id' => $comp->id, 'member_id' => $b2->id, 'style_id' => $style->id, 'bottle_number' => 2]);

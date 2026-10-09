@@ -37,6 +37,7 @@ class StoreScoresheetRequest extends FormRequest
             'overall_notes' => ['nullable', 'string', 'max:2000'],
             'descriptors' => ['nullable', 'array'],
             'descriptors.*' => ['string', 'in:'.implode(',', DescriptorService::slugs())],
+            'client_revision' => ['nullable', 'integer:strict', 'min:0', 'max:2147483647'],
             'status' => ['required', Rule::enum(ScoresheetStatus::class)],
         ];
     }

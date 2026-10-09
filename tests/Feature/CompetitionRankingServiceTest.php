@@ -26,7 +26,7 @@ class CompetitionRankingServiceTest extends TestCase
         parent::setUp();
 
         $this->style = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
-        $this->competition = Competition::create(['name' => 'Test Cup', 'year' => 2025, 'status' => 'closed']);
+        $this->competition = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => 'closed']);
         $this->competition->styles()->attach($this->style->id);
         $this->judge = Member::factory()->create(['email' => 'judge@t.com']);
     }
@@ -125,9 +125,9 @@ class CompetitionRankingServiceTest extends TestCase
 
     public function test_competition_is_closed(): void
     {
-        $closed = Competition::create(['name' => 'Closed', 'year' => 2024, 'status' => 'closed']);
-        $open = Competition::create(['name' => 'Open', 'year' => 2024, 'status' => 'open']);
-        $judging = Competition::create(['name' => 'Judging', 'year' => 2024, 'status' => 'judging']);
+        $closed = Competition::forceCreate(['name' => 'Closed', 'year' => 2024, 'status' => 'closed']);
+        $open = Competition::forceCreate(['name' => 'Open', 'year' => 2024, 'status' => 'open']);
+        $judging = Competition::forceCreate(['name' => 'Judging', 'year' => 2024, 'status' => 'judging']);
 
         $this->assertTrue($closed->isClosed());
         $this->assertFalse($open->isClosed());

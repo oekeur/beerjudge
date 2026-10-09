@@ -1,10 +1,11 @@
 ---
 id: TASK-62
 title: 'Give login, magic-link request and password reset their own rate limiters'
-status: Backlog
-assignee: []
+status: Done
+assignee:
+  - '@agent'
 created_date: '2026-10-07 21:40'
-updated_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:49'
 labels:
   - security-hardening
   - auth
@@ -22,12 +23,20 @@ Numeric throttle:N,M keys guests on sha1(domain|ip) with no route component (ven
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Each throttled guest auth route uses a named limiter keyed by its own name plus IP, keeping its current numbers
-- [ ] #2 A test shows hits on one route do not count toward another route's limit
+- [x] #1 Each throttled guest auth route uses a named limiter keyed by its own name plus IP, keeping its current numbers
+- [x] #2 A test shows hits on one route do not count toward another route's limit
 <!-- AC:END -->
 
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-10-08 walkthrough: login, magic-link request and reset from one IP in quick succession produced a 429 on a later login. Separate task filed for keying login by more than the IP.
+
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 1.1)
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Login, magic-link request and password reset confirm each use their own named limiter (AppServiceProvider), keeping 6/min, 3 per 5 min and 5/min, keyed by name plus IP. Verified: RateLimitingTest (9 tests) incl. login attempts not counting toward the other routes; full suite 252 passed; gates Pass A (after a retry tightening test a) and Pass B CLEAN. Commit on fix/task-62-73-login-limiters (plan task 1.1).
+<!-- SECTION:FINAL_SUMMARY:END -->

@@ -12,5 +12,5 @@ scripts/journeys/run-all.sh m4-judge a5-close-and-publish   # subset, current da
 - Output goes to `storage/logs/journeys/<journey>/`: numbered screenshots, `video-<actor>/`, and `results.json` with each step and any console errors, failed requests or 5xx responses, and `serve.log` from the server.
 - Each line prints `PASS` or `FAIL` per step. Indented lines are measurements the journey logs (bottle numbers, mail recipients, sync counts).
 - Mail goes to the log driver; journeys read magic links, reset links and results mail from `storage/logs/laravel.log`.
-- `POST /login` allows 6 attempts per minute per IP. `login()` caches session cookies per member and waits out a 429, so a full run takes a few minutes longer when it hits the limit.
+- `POST /login` allows 6 attempts per minute per email and IP, and 30 per minute per IP. `login()` caches session cookies per member and waits out a 429, so a full run takes a few minutes longer when it hits the limit.
 - Journeys depend on each other in story order: A2 creates the competition that M3, A3, A4, M4, A5, M5 and A6 use (`storage/logs/journeys/state.json`). Run a subset only after a full run.

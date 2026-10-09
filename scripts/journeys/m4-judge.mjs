@@ -1,7 +1,13 @@
 import fs from 'node:fs'
 import { journey, login, expect, tinker, STATE } from './lib.mjs'
 const { competitionId } = JSON.parse(fs.readFileSync(STATE))
-const GROUPS = ['Aroma score, 0 to 12', 'Appearance score, 0 to 3', 'Flavour score, 0 to 20', 'Mouthfeel score, 0 to 5', 'Overall Impression score, 0 to 10']
+const GROUPS_BY_LOCALE = {
+  en: ['Aroma score, 0 to 12', 'Appearance score, 0 to 3', 'Flavour score, 0 to 20', 'Mouthfeel score, 0 to 5', 'Overall Impression score, 0 to 10'],
+  nl: ['Aroma score, 0 tot 12', 'Uiterlijk score, 0 tot 3', 'Smaak score, 0 tot 20', 'Mondgevoel score, 0 tot 5', 'Algehele Indruk score, 0 tot 10'],
+}
+const NOTES_LABEL = { en: 'Aroma notes', nl: 'Aroma notities' }
+const WAITING = { en: 'Waiting for connection', nl: 'Wacht op verbinding' }
+const RETRY = { en: 'Retry', nl: 'Opnieuw' }
 const sheets = who => tinker(`echo App\\Models\\Scoresheet::where("status","submitted")->whereHas("judge", fn($q)=>$q->where("email","${who}@beerjudge.local"))->whereHas("entry", fn($q)=>$q->where("competition_id",${competitionId}))->count();`)
 
 async function openScreen(page) {
@@ -9,14 +15,17 @@ async function openScreen(page) {
   await page.waitForSelector('[data-testid="entry-expand-button"]', { state: 'visible' })
   await page.waitForLoadState('networkidle')
 }
+// opts.lang: 'nl' for the members that run with locale nl-NL (member3, member4); default 'en'
 async function score(page, i, s, opts = {}) {
+  const lang = opts.lang ?? 'en'
+  const GROUPS = GROUPS_BY_LOCALE[lang]
   await page.getByTestId('entry-expand-button').nth(i).click()
   const aroma = page.locator(`[role="group"][aria-label="${GROUPS[0]}"]:visible`).first()
   await aroma.waitFor({ state: 'visible', timeout: 10000 })
   for (let g = 0; g < 5; g++) {
     await page.locator(`[role="group"][aria-label="${GROUPS[g]}"]:visible`).first().locator('button').filter({ hasText: new RegExp(`^${s[g]}$`) }).click()
   }
-  if (opts.notes) await page.locator('textarea[aria-label="Aroma notes"]:visible').first().fill(opts.notes)
+  if (opts.notes) await page.locator(`textarea[aria-label="${NOTES_LABEL[lang]}"]:visible`).first().fill(opts.notes)
   if (opts.descriptor) {
     await page.getByText(/Off-Flavou?r Descriptors/).locator('visible=true').first().click()
     await page.locator('input[type="checkbox"]:visible').first().check()
@@ -60,7 +69,7 @@ await journey('M4-judge', async actor => {
   await m7.step('reopen submitted sheet and resave', async () => {
     await m7.page.getByTestId('entry-expand-button').nth(0).click()
     await m7.page.getByRole('button', { name: /Reopen to edit/ }).locator('visible=true').first().click()
-    await m7.page.locator(`[role="group"][aria-label="${GROUPS[2]}"]:visible`).first().locator('button').filter({ hasText: /^15$/ }).click()
+    await m7.page.locator(`[role="group"][aria-label="${GROUPS_BY_LOCALE.en[2]}"]:visible`).first().locator('button').filter({ hasText: /^15$/ }).click()
     await m7.page.waitForLoadState('networkidle')
     await m7.page.getByRole('button', { name: /▶/ }).locator('visible=true').first().click()
     await expect(m7.page.getByTestId('scoresheet-submitted').locator('visible=true').first()).toBeVisible({ timeout: 15000 })
@@ -98,24 +107,20 @@ await journey('M4-judge', async actor => {
     await openScreen(m3.page)
     await expect(m3.page.getByTestId('entry-expand-button')).toHaveCount(5)
   })
-  await m3.step('score entry 1 online', async () => { await score(m3.page, 0, [9, 2, 15, 4, 8]) })
-  await m3.step('go offline, score and submit entry 2', async () => {
+  await m3.step('score entry 1 online', async () => { await score(m3.page, 0, [9, 2, 15, 4, 8], { lang: 'nl' }) })
+  await m3.step('go offline, score and submit entry 2: badge reads as waiting', async () => {
     await m3.context.setOffline(true)
-    await score(m3.page, 1, [6, 2, 11, 3, 6], { offline: true })
-    await m3.page.waitForTimeout(1500)
-    const n = sheets('member3'); console.log('  submitted in db while offline:', n)
+    await score(m3.page, 1, [6, 2, 11, 3, 6], { offline: true, lang: 'nl' })
+    await expect(m3.page.getByText(WAITING.nl).locator('visible=true').first()).toBeVisible()
+    await m3.page.waitForTimeout(7000)
+    await expect(m3.page.getByText(WAITING.nl).locator('visible=true').first()).toBeVisible()
+    await expect(m3.page.getByText(RETRY.nl).locator('visible=true')).toHaveCount(0)
+    const n = sheets('member3'); if (n !== '1') throw new Error('submitted in db while offline: ' + n)
   })
-  await m3.step('reload while offline keeps the sheet (IndexedDB)', async () => {
-    // a reload needs the service worker cache; record what the judge sees
-    await m3.page.reload().catch(e => console.log('  offline reload:', e.message.split('\n')[0]))
-    await m3.page.waitForTimeout(1500)
-  })
-  await m3.step('back online, queued sheet syncs', async () => {
+  await m3.step('back online without reloading, queued sheet syncs', async () => {
     await m3.context.setOffline(false)
-    await openScreen(m3.page)
-    await m3.page.waitForTimeout(8000)
-    const n = sheets('member3'); console.log('  submitted in db after reconnect:', n)
-    if (n !== '2') throw new Error('submitted ' + n)
+    await expect(m3.page.getByText(WAITING.nl).locator('visible=true')).toHaveCount(0, { timeout: 10000 })
+    const n = sheets('member3'); if (n !== '2') throw new Error('submitted ' + n)
   })
 
   // member4: Dutch, registers via the banner then leaves again

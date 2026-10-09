@@ -25,7 +25,7 @@ class JudgeReportAccessTest extends TestCase
         $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@t.com']);
         $admin = Member::factory()->create(['name' => 'Admin', 'email' => 'admin@t.com', 'is_admin' => true]);
 
-        $comp = Competition::create(['name' => 'Autumn Harvest', 'year' => 2026, 'status' => 'closed']);
+        $comp = Competition::forceCreate(['name' => 'Autumn Harvest', 'year' => 2026, 'status' => 'closed']);
         $comp->styles()->attach($style->id);
         $comp->judges()->attach([$judgeOne->id, $judgeTwo->id]);
 
@@ -58,7 +58,7 @@ class JudgeReportAccessTest extends TestCase
         $style = Style::create(['code' => '25B', 'category_name' => 'SA', 'name' => 'Saison']);
         $judge = Member::factory()->create(['name' => 'J', 'email' => 'j@t.com']);
         $admin = Member::factory()->create(['name' => 'A', 'email' => 'a@t.com', 'is_admin' => true]);
-        $comp = Competition::create(['name' => 'Open Cup', 'year' => 2026, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Open Cup', 'year' => 2026, 'status' => 'judging']);
         $comp->judges()->attach($judge->id);
 
         $response = $this->actingAs($admin)->get("/competitions/{$comp->id}/judge-report/{$judge->id}");
@@ -76,7 +76,7 @@ class JudgeReportAccessTest extends TestCase
     {
         $style = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
         $judge = Member::factory()->create(['name' => 'J2', 'email' => 'j2@t.com']);
-        $comp = Competition::create(['name' => 'Judging Cup', 'year' => 2026, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Judging Cup', 'year' => 2026, 'status' => 'judging']);
         $comp->judges()->attach($judge->id);
 
         $response = $this->actingAs($judge)->get("/competitions/{$comp->id}/judge-report/{$judge->id}");

@@ -16,8 +16,6 @@ class JudgeVarianceWidget extends BaseWidget
 
     protected static ?string $heading = null;
 
-    protected ?string $pollingInterval = '5s';
-
     public function getHeading(): string
     {
         return __('widget.variance.heading');
@@ -29,6 +27,7 @@ class JudgeVarianceWidget extends BaseWidget
         $sheetsTable = (new Scoresheet)->getTable();
 
         return $table
+            ->poll('5s')
             ->query(
                 Entry::query()
                     ->with('style')
@@ -63,7 +62,7 @@ class JudgeVarianceWidget extends BaseWidget
                     ->formatStateUsing(function (int|float|string|null $state): string {
                         $spread = (int) $state;
 
-                        return $spread > 7 ? "⚠ {$spread} pts" : "{$spread} pts";
+                        return $spread > 7 ? "⚠ {$spread} ".__('widget.variance.points') : "{$spread} ".__('widget.variance.points');
                     }),
             ]);
     }

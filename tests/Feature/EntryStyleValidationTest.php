@@ -16,7 +16,7 @@ class EntryStyleValidationTest extends TestCase
     public function test_entry_can_be_created_with_a_style_in_the_competition(): void
     {
         $style = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
-        $comp = Competition::create(['name' => 'Test Cup', 'year' => 2025, 'status' => 'open']);
+        $comp = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => 'open']);
         $comp->styles()->attach($style->id);
         $member = Member::factory()->create();
 
@@ -29,7 +29,7 @@ class EntryStyleValidationTest extends TestCase
     {
         $allowedStyle = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
         $otherStyle = Style::create(['code' => '2A', 'category_name' => 'PA', 'name' => 'German Pils']);
-        $comp = Competition::create(['name' => 'Test Cup', 'year' => 2025, 'status' => 'open']);
+        $comp = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => 'open']);
         $comp->styles()->attach($allowedStyle->id);
         $member = Member::factory()->create();
 
@@ -42,7 +42,7 @@ class EntryStyleValidationTest extends TestCase
     {
         $allowedStyle = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
         $otherStyle = Style::create(['code' => '2A', 'category_name' => 'PA', 'name' => 'German Pils']);
-        $comp = Competition::create(['name' => 'Test Cup', 'year' => 2025, 'status' => 'open']);
+        $comp = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => 'open']);
         $comp->styles()->attach($allowedStyle->id);
         $member = Member::factory()->create();
         $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $allowedStyle->id]);

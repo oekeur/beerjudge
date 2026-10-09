@@ -23,7 +23,7 @@ class EntrySortOrderTest extends TestCase
         parent::setUp();
 
         $this->style = Style::create(['code' => '1A', 'category_name' => 'SA', 'name' => 'Light Lager']);
-        $this->competition = Competition::create(['name' => 'Test Cup', 'year' => 2025, 'status' => CompetitionStatus::Open]);
+        $this->competition = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => CompetitionStatus::Open]);
         $this->competition->styles()->attach($this->style->id);
     }
 
@@ -62,7 +62,7 @@ class EntrySortOrderTest extends TestCase
 
     public function test_backfill_fills_null_rows_per_competition(): void
     {
-        $other = Competition::create(['name' => 'Other Cup', 'year' => 2025, 'status' => CompetitionStatus::Open]);
+        $other = Competition::forceCreate(['name' => 'Other Cup', 'year' => 2025, 'status' => CompetitionStatus::Open]);
         $other->styles()->attach($this->style->id);
 
         $make = fn (Competition $c, ?int $order): Entry => Entry::create([

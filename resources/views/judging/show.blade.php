@@ -1,8 +1,16 @@
+@php
+    $sections = ['aroma' => 'aroma', 'appearance' => 'appearance', 'flavor' => 'flavour', 'mouthfeel' => 'mouthfeel', 'overall_impression' => 'overall'];
+    $labels = [
+        'sections' => collect($sections)->map(fn ($lang) => __("judging.section.$lang"))->all(),
+        'guide' => collect($sections)->map(fn ($lang) => __('judging.aria.guide', ['section' => mb_strtolower(__("judging.section.$lang")), 'style' => ':style']))->all(),
+        'styleInfo' => __('judging.aria.style_info', ['style' => ':style']),
+    ];
+@endphp
 <x-page :title="'Judging · ' . $competition->name" :vite="['resources/css/app.css', 'resources/js/judging.js']">
     <x-slot:head>
         <meta name="csrf-token" content="{{ csrf_token() }}">
     </x-slot:head>
-<body class="bg-stone-100 dark:bg-gray-950 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server))" x-init="init()" data-server='@json($serverData)'>
+<body class="bg-stone-100 dark:bg-gray-950 min-h-screen" x-data="judgingApp(JSON.parse($el.dataset.server), @js($labels))" data-server='@json($serverData)'>
 
     {{-- Header --}}
     <header class="bg-amber-700 text-white sticky top-0 z-10 shadow">
@@ -97,8 +105,14 @@
         </div>
     @endif
 
+    {{-- Another tab of this browser holds the judging lock --}}
+    <div x-show="inactive" role="alert" data-testid="other-tab-banner" class="max-w-lg mx-auto px-4 py-6 space-y-3 text-center">
+        <p class="text-sm text-gray-700 dark:text-gray-300">{{ __('judging.open_in_other_tab') }}</p>
+        <button type="button" @click="takeOver()" class="px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700">{{ __('judging.use_this_tab') }}</button>
+    </div>
+
     {{-- Entry list --}}
-    <main class="max-w-lg mx-auto px-4 py-4 space-y-3">
+    <main x-show="ready && !inactive" class="max-w-lg mx-auto px-4 py-4 space-y-3">
 
         <div class="flex items-center justify-between">
             <span class="text-xs text-gray-400">{{ __('judging.sort_label') }}</span>
@@ -142,7 +156,7 @@
                             :tabindex="sheets[entry.id]?.expanded ? '0' : '-1'"
                             @click.stop="if (sheets[entry.id]?.expanded) openStyleInfo(entry.id)"
                             @keydown.enter.stop="if (sheets[entry.id]?.expanded) openStyleInfo(entry.id)"
-                            :aria-label="sheets[entry.id]?.expanded ? 'View style info for ' + entry.style_name : undefined"
+                            :aria-label="sheets[entry.id]?.expanded ? styleInfoLabel(entry.style_name) : undefined"
                         >
                             <span class="truncate" x-text="entry.style_name"></span>
                             <span x-show="sheets[entry.id]?.expanded" class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center flex-shrink-0">i</span>
@@ -166,6 +180,7 @@
                         <span x-show="sheets[entry.id]?.syncStatus === 'syncing' || sheets[entry.id]?.syncStatus === 'pending'" class="text-xs text-amber-500 animate-pulse">{{ __('judging.saving') }}</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'submitted'" class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">{{ __('judging.submitted') }}</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'synced' && sheets[entry.id]?.status === 'draft'" class="text-xs text-gray-400 dark:text-gray-500">{{ __('judging.saved') }}</span>
+                        <span x-show="sheets[entry.id]?.syncStatus === 'queued'" class="text-xs text-gray-500 dark:text-gray-400">{{ __('judging.waiting_for_connection') }}</span>
                         <span x-show="sheets[entry.id]?.syncStatus === 'error'" class="text-xs text-red-500 cursor-pointer" @click.stop="retryNow(entry.id)">{{ __('judging.retry') }}</span>
 
                         {{-- Expand chevron --}}
@@ -174,6 +189,8 @@
                         </svg>
                     </div>
                 </button>
+
+                <p x-show="sheets[entry.id]?.notice" role="status" data-testid="entry-updated-notice" class="px-4 pb-2 text-xs text-amber-700 dark:text-amber-400">{{ __('judging.updated_from_other_device') }}</p>
 
                 {{-- Scoresheet (expanded) --}}
                 <div x-show="sheets[entry.id]?.expanded" x-transition class="border-t border-gray-100 dark:border-gray-800 px-4 pb-4 pt-3">
@@ -219,13 +236,13 @@
                             {{-- Aroma --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'aroma')" :aria-label="'View BJCP aroma guideline for ' + entry.style_name">
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'aroma')" :aria-label="guideLabel('aroma', entry.style_name)">
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.aroma') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].aroma !== null ? sheets[entry.id].aroma : '—'"></span> / 12</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Aroma score, 0 to 12"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.aroma'), 'max' => 12]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].aroma === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 12; $n++)
                                     <button type="button"
@@ -236,19 +253,19 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.aroma') }}" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Aroma notes'"></textarea>
+                                <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.aroma') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.aroma')]) }}"></textarea>
                             </div>
 
                             {{-- Appearance --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'appearance')" :aria-label="'View BJCP appearance guideline for ' + entry.style_name">
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'appearance')" :aria-label="guideLabel('appearance', entry.style_name)">
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.appearance') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].appearance !== null ? sheets[entry.id].appearance : '—'"></span> / 3</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Appearance score, 0 to 3"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.appearance'), 'max' => 3]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].appearance === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 3; $n++)
                                     <button type="button"
@@ -259,19 +276,19 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.appearance') }}" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Appearance notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.appearance') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.appearance')]) }}"></textarea>
                             </div>
 
                             {{-- Flavour --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'flavor')" :aria-label="'View BJCP flavour guideline for ' + entry.style_name">
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'flavor')" :aria-label="guideLabel('flavor', entry.style_name)">
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.flavour') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].flavour !== null ? sheets[entry.id].flavour : '—'"></span> / 20</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Flavour score, 0 to 20"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.flavour'), 'max' => 20]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].flavour === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 20; $n++)
                                     <button type="button"
@@ -282,19 +299,19 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.flavour') }}" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Flavour notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.flavour') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.flavour')]) }}"></textarea>
                             </div>
 
                             {{-- Mouthfeel --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'mouthfeel')" :aria-label="'View BJCP mouthfeel guideline for ' + entry.style_name">
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'mouthfeel')" :aria-label="guideLabel('mouthfeel', entry.style_name)">
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.mouthfeel') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].mouthfeel !== null ? sheets[entry.id].mouthfeel : '—'"></span> / 5</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Mouthfeel score, 0 to 5"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.mouthfeel'), 'max' => 5]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].mouthfeel === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 5; $n++)
                                     <button type="button"
@@ -305,19 +322,19 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.mouthfeel') }}" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Mouthfeel notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.mouthfeel') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.mouthfeel')]) }}"></textarea>
                             </div>
 
                             {{-- Overall --}}
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-1">
-                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'overall_impression')" :aria-label="'View BJCP overall impression guideline for ' + entry.style_name">
+                                    <button type="button" class="flex items-center gap-1.5 hover:text-amber-700 dark:hover:text-amber-400 group" @click.stop="openGuide(entry.id, 'overall_impression')" :aria-label="guideLabel('overall_impression', entry.style_name)">
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.overall') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
                                     <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].overall !== null ? sheets[entry.id].overall : '—'"></span> / 10</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="Overall Impression score, 0 to 10"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.overall'), 'max' => 10]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].overall === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
                                     @for ($n = 0; $n <= 10; $n++)
                                     <button type="button"
@@ -328,7 +345,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.overall') }}" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" :aria-label="'Overall impression notes'"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.overall') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.overall')]) }}"></textarea>
                             </div>
 
                             {{-- Off-Flavor Descriptors --}}
@@ -385,6 +402,7 @@
                                 <div class="flex items-center gap-3" aria-live="polite">
                                     <span x-show="sheets[entry.id]?.syncStatus === 'pending' || sheets[entry.id]?.syncStatus === 'syncing'" class="text-xs text-amber-500 animate-pulse">{{ __('judging.saving') }}</span>
                                     <span x-show="sheets[entry.id]?.syncStatus === 'synced'" class="text-xs text-gray-400 dark:text-gray-500">{{ __('judging.saved') }}</span>
+                                    <span x-show="sheets[entry.id]?.syncStatus === 'queued'" class="text-xs text-gray-500 dark:text-gray-400">{{ __('judging.waiting_for_connection') }}</span>
                                     <span x-show="sheets[entry.id]?.syncStatus === 'error'" class="text-xs text-red-500 cursor-pointer" @click="retryNow(entry.id)">{{ __('judging.retry') }}</span>
                                     <button
                                         type="button"

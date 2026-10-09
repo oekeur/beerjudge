@@ -106,6 +106,42 @@ class InvitationTest extends TestCase
         $this->get('/join/doesnotexist')->assertNotFound();
     }
 
+    /**
+     * @return array<string, string>
+     */
+    private function registrationPayload(): array
+    {
+        return [
+            'name' => 'New Member',
+            'email' => 'newmember@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ];
+    }
+
+    public function test_login_page_shows_pending_approval_message_after_registration(): void
+    {
+        $invitation = $this->createInvitation();
+
+        $this->followingRedirects()
+            ->post('/join/'.$invitation->token, $this->registrationPayload())
+            ->assertOk()
+            ->assertSee(__('auth.register_success'))
+            ->assertSee('— '.__('auth.login').'</title>', false);
+    }
+
+    public function test_login_page_shows_pending_approval_message_in_dutch_for_dutch_browser(): void
+    {
+        $invitation = $this->createInvitation();
+
+        $this->withHeaders(['Accept-Language' => 'nl'])
+            ->followingRedirects()
+            ->post('/join/'.$invitation->token, $this->registrationPayload())
+            ->assertOk()
+            ->assertSee(__('auth.register_success', [], 'nl'))
+            ->assertSee('— '.__('auth.login', [], 'nl').'</title>', false);
+    }
+
     public function test_registration_creates_inactive_member(): void
     {
         $invitation = $this->createInvitation();

@@ -9,8 +9,6 @@ class ResultsSummaryWidget extends Widget
 {
     public ?int $competitionId = null;
 
-    protected ?string $pollingInterval = '5s';
-
     protected static bool $isLazy = false;
 
     protected string $view = 'filament.competition.results-summary';

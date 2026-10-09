@@ -32,7 +32,7 @@ class CompetitionResultsEmailTest extends TestCase
 
     private function competition(string $status = 'judging'): Competition
     {
-        $competition = Competition::create(['name' => 'Test Cup', 'year' => 2026, 'status' => $status]);
+        $competition = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2026, 'status' => $status]);
         $competition->styles()->attach($this->style->id);
 
         return $competition;
@@ -61,7 +61,7 @@ class CompetitionResultsEmailTest extends TestCase
         $this->enter($competition, $inactive, 3);
         Notification::fake();
 
-        $competition->update(['status' => CompetitionStatus::Closed]);
+        $competition->transitionTo(CompetitionStatus::Closed);
 
         Notification::assertSentToTimes($brewer, CompetitionResultsNotification::class, 1);
         Notification::assertSentTo(
@@ -83,9 +83,9 @@ class CompetitionResultsEmailTest extends TestCase
         $this->enter($competition, $brewer, 1);
         Notification::fake();
 
-        $competition->update(['status' => CompetitionStatus::Closed]);
-        $competition->update(['status' => CompetitionStatus::Judging]);
-        $competition->update(['status' => CompetitionStatus::Closed]);
+        $competition->transitionTo(CompetitionStatus::Closed);
+        $competition->transitionTo(CompetitionStatus::Judging);
+        $competition->transitionTo(CompetitionStatus::Closed);
 
         Notification::assertSentToTimes($brewer, CompetitionResultsNotification::class, 1);
     }
@@ -98,8 +98,8 @@ class CompetitionResultsEmailTest extends TestCase
         $this->enter($competition, $brewer, 1);
         Notification::fake();
 
-        $competition->update(['status' => CompetitionStatus::Judging]);
-        $competition->update(['status' => CompetitionStatus::Closed]);
+        $competition->transitionTo(CompetitionStatus::Judging);
+        $competition->transitionTo(CompetitionStatus::Closed);
 
         Notification::assertNothingSent();
     }

@@ -17,7 +17,7 @@ class ScoresheetUpsertTest extends TestCase
 
     private function makeJudgingCompetition(): Competition
     {
-        return Competition::create([
+        return Competition::forceCreate([
             'name' => 'Test Cup',
             'year' => 2025,
             'status' => 'judging',
@@ -138,7 +138,7 @@ class ScoresheetUpsertTest extends TestCase
 
     public function test_scoresheet_rejected_when_competition_not_in_judging(): void
     {
-        $comp = Competition::create(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'draft']);
+        $comp = Competition::forceCreate(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'draft']);
         $style = $this->makeStyle();
         $brewer = $this->makeMember(['email' => 'b3@test.com']);
         $judge = $this->makeMember(['email' => 'j3@test.com']);

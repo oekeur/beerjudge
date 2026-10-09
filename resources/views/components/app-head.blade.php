@@ -11,5 +11,6 @@
 @vite($vite)
 <x-theme-init />
 <meta name="sentry-dsn" content="{{ is_string(config('sentry.dsn')) ? config('sentry.dsn') : '' }}">
-<meta name="sentry-user" content='@json(["name" => auth()->user()?->name, "email" => auth()->user()?->email])'>
+<meta name="sentry-user" content='{!! \App\Support\SentryFeedbackLabels::attributeJson(["name" => auth()->user()?->name, "email" => auth()->user()?->email]) !!}'>
+<meta name="sentry-feedback-labels" content='{!! \App\Support\SentryFeedbackLabels::json() !!}'>
 {{ $slot }}

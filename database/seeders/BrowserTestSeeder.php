@@ -77,7 +77,7 @@ class BrowserTestSeeder extends Seeder
         ]);
 
         // Competition in judging status — used by judging screen and judge registration tests
-        $judgingComp = Competition::create([
+        $judgingComp = Competition::forceCreate([
             'name' => 'Browser Test Cup 2025',
             'year' => 2025,
             'judging_date' => now()->toDateString(),
@@ -111,7 +111,7 @@ class BrowserTestSeeder extends Seeder
         }
 
         // Competition in open status — used by entry submission test
-        $openComp = Competition::create([
+        $openComp = Competition::forceCreate([
             'name' => 'Browser Open Cup 2025',
             'year' => 2025,
             'judging_date' => null,

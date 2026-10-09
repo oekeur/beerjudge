@@ -1,9 +1,11 @@
 ---
 id: TASK-73
 title: Stop one shared IP from locking a club evening out of login
-status: Backlog
-assignee: []
+status: Done
+assignee:
+  - '@agent'
 created_date: '2026-10-08 11:39'
+updated_date: '2026-10-08 13:49'
 labels:
   - auth
   - security-hardening
@@ -23,6 +25,18 @@ POST /login uses throttle:6,1, which keys guests by IP alone. In the walkthrough
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The login limiter is keyed so that different members on one IP do not share an attempt budget (for example email plus IP), while brute force on one account stays limited
-- [ ] #2 A test logs in ten different members from one IP within a minute without a 429
+- [x] #1 The login limiter is keyed so that different members on one IP do not share an attempt budget (for example email plus IP), while brute force on one account stays limited
+- [x] #2 A test logs in ten different members from one IP within a minute without a 429
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Plan: planning/2026-10-08-journey-walkthrough-fixes.md (task 1.1)
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Login limiter keyed 6/min per lowercased email+IP plus 30/min per IP; non-string email falls back to IP. Verified: tests prove ten members log in from one IP within a minute (assertAuthenticatedAs), 7th failed attempt per email gets 429, 31st per IP gets 429, email[]=x gives 302; full suite 252 passed; Pass A and Pass B CLEAN. Pre-existing, not changed: trustProxies('*') lets a client rotating X-Forwarded-For escape IP-keyed limits. Plan task 1.1.
+<!-- SECTION:FINAL_SUMMARY:END -->

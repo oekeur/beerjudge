@@ -30,6 +30,7 @@ The screen is only accessible when the competition has `status = judging`. Any o
 ```json
 {
   "client_uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "client_revision": 7,
   "entry_id": 42,
   "status": "draft",
   "aroma": 8,
@@ -48,6 +49,8 @@ The screen is only accessible when the competition has `status = judging`. Any o
 
 All five score fields are nullable when `status = draft`. When `status = submitted`, all five are required.
 
+`client_revision` is optional. The judging screen increases it on every save of a sheet and keeps it in IndexedDB. If it is not above the revision stored for the sheet, the server ignores the payload and answers with the stored sheet. Payloads without it always apply.
+
 Notes fields accept up to 2000 characters each. `descriptors` is an array of slug strings from the available descriptor set; it may be empty or omitted.
 
 ## `POST /scoresheets` response
@@ -56,11 +59,16 @@ Notes fields accept up to 2000 characters each. `descriptors` is an array of slu
 {
   "id": 123,
   "client_uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "client_revision": 7,
   "total": 35,
   "status": "submitted",
-  "saved_at": "2026-06-25T14:30:00Z"
+  "saved_at": "2026-06-25T14:30:00Z",
+  "ignored": false,
+  "sheet": { "entry_id": 42, "client_revision": 7, "status": "submitted", "aroma": 8, "...": "..." }
 }
 ```
+
+`ignored` is `true` when the payload's `client_revision` was not above the stored one. Nothing was written; `sheet` holds the stored sheet (scores, notes, descriptors, status, revision), and the judging screen adopts it.
 
 ## Idempotency
 
@@ -82,6 +90,7 @@ A submitted sheet can be reopened (status set back to `draft` by the client) and
 | Field | Rules |
 |-------|-------|
 | `client_uuid` | required, UUID |
+| `client_revision` | nullable, integer, minimum 0 |
 | `entry_id` | required, integer, must exist in `entries` table |
 | `aroma` | nullable (draft) / required (submitted); integer, 0–12 |
 | `appearance` | nullable / required; integer, 0–3 |
@@ -121,7 +130,10 @@ Each sheet cycles through these sync states in the browser:
 | `pending` | Written to IndexedDB; awaiting server sync |
 | `syncing` | POST in flight |
 | `synced` | Server confirmed |
-| `error` | Last POST failed; retry scheduled in 5 seconds |
+| `queued` | The POST never got an answer (no connection); waits in IndexedDB until the browser is back online |
+| `error` | The server answered with an HTTP error; retry scheduled in 5 seconds |
+
+Saves of one sheet run one after the other, so a slow draft save cannot reach the server after the submit. A sheet is only marked `synced` when no newer save is waiting.
 
 ## Admin progress panel
 

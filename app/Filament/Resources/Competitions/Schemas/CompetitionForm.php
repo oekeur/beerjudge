@@ -4,11 +4,9 @@ namespace App\Filament\Resources\Competitions\Schemas;
 
 use App\Enums\CompetitionStatus;
 use App\Filament\Forms\Components\StyleMultiSelect;
-use App\Filament\Resources\Competitions\CompetitionResource;
 use App\Filament\Resources\Competitions\Widgets\JudgeVarianceWidget;
 use App\Filament\Resources\Competitions\Widgets\ResultsSummaryWidget;
 use App\Models\Competition;
-use App\Models\Entry;
 use App\Models\Member;
 use App\Models\Style;
 use Filament\Actions\Action;
@@ -17,7 +15,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Html;
@@ -25,6 +22,7 @@ use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 
@@ -71,25 +69,18 @@ class CompetitionForm
                                         ),
                                         Actions::make([
                                             Action::make('sortByAbv')
-                                                ->label('Sort by ABV ↑')
+                                                ->label(__('competition.entry.sort_by_abv'))
                                                 ->color('gray')
-                                                ->action(function (EditRecord $livewire): void {
-                                                    /** @var Competition $competition */
-                                                    $competition = $livewire->getRecord();
-                                                    $ids = $competition->entries()
-                                                        ->orderByRaw('abv IS NULL')
-                                                        ->orderBy('abv')
-                                                        ->pluck('id');
+                                                ->action(function (Get $get, Set $set): void {
+                                                    $state = $get('entries');
+                                                    $entries = is_array($state) ? $state : [];
+                                                    // uasort is stable (PHP 8+) and keeps the item keys, so saved rows stay bound.
+                                                    $abv = fn (mixed $entry): ?float => is_array($entry) && is_numeric($entry['abv'] ?? null) ? (float) $entry['abv'] : null;
+                                                    uasort($entries, fn (mixed $a, mixed $b): int => [$abv($a) === null, $abv($a)] <=> [$abv($b) === null, $abv($b)]);
 
-                                                    foreach ($ids as $i => $id) {
-                                                        Entry::whereKey($id)->update(['sort_order' => (int) $i + 1]);
-                                                    }
-
-                                                    $livewire->redirect(
-                                                        CompetitionResource::getUrl('edit', ['record' => $competition])
-                                                    );
+                                                    $set('entries', $entries);
                                                 }),
-                                        ]),
+                                        ])->key('entriesActions'),
                                     ])
                                     ->columnSpanFull()
                                     ->visibleOn('edit'),
@@ -98,11 +89,13 @@ class CompetitionForm
                                     ->relationship()
                                     ->schema([
                                         Select::make('member_id')
+                                            ->label(__('competition.entry.member'))
                                             ->relationship('member', 'name')
                                             ->searchable()
                                             ->required()
                                             ->columnSpan(2),
                                         Select::make('style_id')
+                                            ->label(__('competition.entry.style'))
                                             ->searchable()
                                             ->required()
                                             ->options(function (Get $get): array {
@@ -119,6 +112,7 @@ class CompetitionForm
                                             ->live()
                                             ->columnSpan(2),
                                         TextInput::make('abv')
+                                            ->label(__('competition.entry.abv'))
                                             ->numeric()
                                             ->step(0.1)
                                             ->minValue(0)
@@ -127,6 +121,7 @@ class CompetitionForm
                                             ->suffix('%')
                                             ->columnSpan(1),
                                         Textarea::make('brewer_notes')
+                                            ->label(__('competition.entry.brewer_notes'))
                                             ->nullable()
                                             ->columnSpanFull(),
                                     ])

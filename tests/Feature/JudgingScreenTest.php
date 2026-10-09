@@ -15,7 +15,7 @@ class JudgingScreenTest extends TestCase
 
     private function makeFixtures(): array
     {
-        $comp = Competition::create(['name' => 'Test Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => 'judging']);
         $style = Style::create(['code' => '1A', 'category_name' => 'Standard American', 'name' => 'Light Lager']);
         $comp->styles()->attach($style->id);
         $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@test.com']);
@@ -45,7 +45,7 @@ class JudgingScreenTest extends TestCase
 
     public function test_judging_screen_returns_403_when_not_judging(): void
     {
-        $comp = Competition::create(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'draft']);
+        $comp = Competition::forceCreate(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'draft']);
         $judge = Member::factory()->create(['email' => 'j@test.com']);
         $response = $this->actingAs($judge)->get("/judging/{$comp->id}");
         $response->assertForbidden();
@@ -53,7 +53,7 @@ class JudgingScreenTest extends TestCase
 
     public function test_unauthenticated_user_redirected(): void
     {
-        $comp = Competition::create(['name' => 'Open Cup', 'year' => 2025, 'status' => 'judging']);
+        $comp = Competition::forceCreate(['name' => 'Open Cup', 'year' => 2025, 'status' => 'judging']);
         $response = $this->get("/judging/{$comp->id}");
         $response->assertRedirect('/login');
     }
