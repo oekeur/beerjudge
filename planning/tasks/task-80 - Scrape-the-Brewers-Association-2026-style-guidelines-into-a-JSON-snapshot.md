@@ -45,7 +45,7 @@ Open (non-blocking): none
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
-Landed in 1fc1969 (feat(styles): add styles:scrape-ba command and BA 2026 style snapshot #80).
+Landed in b38f115 (feat(styles): add styles:scrape-ba command and BA 2026 style snapshot #80).
 AC1: tests/Feature/ScrapeBaStylesCommandTest.php fakes the page with tests/Fixtures/ba-style-guidelines.html (5 styles, 2 h2 groups, all five shapes) and assertSame on the JSON per style; 4 tests pass on the branch and all 4 error at the merge base (command missing).
 AC2: zero-style and missing-label tests assert failure, message and assertFileDoesNotExist on a temp --output; an HTTP-error test also asserts failure and no file (it does not assert the message).
 AC3: after the test file ran in the task worktree, git status --short was empty.
