@@ -138,6 +138,7 @@ Styles have a `source` column that identifies where the style came from. Known s
 
 - `bjcp_beer` — seeded by `BjcpStyleSeeder` from a JSON file of BJCP 2021 beer styles
 - `bjcp_mead`, `bjcp_cider` — reserved; no seeders yet
+- `ba_beer` — seeded by `BaStyleSeeder` from `ba_styleguide-2026.json` (Brewers Association 2026, 168 styles, codes `BA-001`...). Its text carries a licence attribution (`Style::SOURCE_ATTRIBUTIONS`) that the judging screen shows once at the top of the expanded entry and on the style-info sheet.
 - `custom` — created by admins through the Filament UI
 
 **Adding a new official guide:** create a seeder class + JSON data file, add a `SOURCE_LABELS` entry to `Style::SOURCE_LABELS`, and register the seeder in `DatabaseSeeder`. The upsert key is always `['code', 'source']`. Never include `source` in the update columns list — it is part of the identity key, not a value to overwrite.

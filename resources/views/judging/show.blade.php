@@ -195,6 +195,8 @@
                 {{-- Scoresheet (expanded) --}}
                 <div x-show="sheets[entry.id]?.expanded" x-transition class="border-t border-gray-100 dark:border-gray-800 px-4 pb-4 pt-3">
 
+                    <p x-show="entry.style_attribution" data-testid="entry-attribution" class="mb-3 text-xs text-gray-400 dark:text-gray-500" x-text="entry.style_attribution"></p>
+
                     {{-- Submitted read-only view --}}
                     <template x-if="sheets[entry.id]?.status === 'submitted' && sheets[entry.id]?.syncStatus === 'synced'">
                         <div>
@@ -422,7 +424,7 @@
     {{-- Style guide bottom sheet --}}
     <div x-show="styleGuide.open" class="fixed inset-0 z-50 flex items-end" @keydown.escape.window="closeGuide()" style="display: none;">
         <div class="absolute inset-0 bg-black/40" @click="closeGuide()"></div>
-        <div class="relative w-full max-w-lg mx-auto bg-white dark:bg-gray-900 rounded-t-2xl shadow-xl px-5 pt-4 pb-8"
+        <div data-testid="style-guide-panel" class="relative flex flex-col w-full max-w-lg max-h-[85dvh] mx-auto bg-white dark:bg-gray-900 rounded-t-2xl shadow-xl"
             x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="translate-y-full opacity-0"
             x-transition:enter-end="translate-y-0 opacity-100"
@@ -430,11 +432,12 @@
             x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="translate-y-full opacity-0"
         >
-            <div class="flex items-center justify-between mb-3">
+            <div class="flex shrink-0 items-center justify-between px-5 pt-4 pb-3">
                 <span class="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400" x-text="styleGuide.section"></span>
                 <button type="button" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none" @click="closeGuide()">×</button>
             </div>
-            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" x-text="styleGuide.text"></p>
+            <div x-ref="styleGuideScroll" data-testid="style-guide-scroll" class="min-h-0 overflow-y-auto px-5 pb-8">
+            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line" x-text="styleGuide.text"></p>
             {{-- SRM color visualization (appearance section only) --}}
             <div x-show="styleGuide.srm !== null" class="mt-4">
                 <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Color (SRM)</div>
@@ -467,13 +470,14 @@
                     </div>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 
     {{-- Style info bottom sheet (category description, history, style comparison) --}}
     <div x-show="styleInfo.open" class="fixed inset-0 z-50 flex items-end" @keydown.escape.window="closeStyleInfo()" style="display: none;">
         <div class="absolute inset-0 bg-black/40" @click="closeStyleInfo()"></div>
-        <div class="relative w-full max-w-lg mx-auto bg-white dark:bg-gray-900 rounded-t-2xl shadow-xl"
+        <div data-testid="style-info-panel" class="relative flex flex-col w-full max-w-lg max-h-[85dvh] mx-auto bg-white dark:bg-gray-900 rounded-t-2xl shadow-xl"
             x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="translate-y-full opacity-0"
             x-transition:enter-end="translate-y-0 opacity-100"
@@ -481,17 +485,18 @@
             x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="translate-y-full opacity-0"
         >
-            <div class="flex justify-center pt-3 pb-1">
+            <div class="flex shrink-0 justify-center pt-3 pb-1">
                 <div class="w-8 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
             </div>
-            <div class="flex items-start justify-between px-5 pt-2 pb-3 border-b border-gray-100 dark:border-gray-800">
+            <div class="flex shrink-0 items-start justify-between px-5 pt-2 pb-3 border-b border-gray-100 dark:border-gray-800">
                 <div>
                     <div class="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400" x-text="styleInfo.styleCode + ' · ' + styleInfo.styleName"></div>
                     <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5" x-text="styleInfo.categoryName"></div>
                 </div>
                 <button type="button" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none ml-4 mt-0.5" @click="closeStyleInfo()">×</button>
             </div>
-            <div class="overflow-y-auto px-5 pt-4 pb-8 space-y-5" style="max-height: 60vh">
+            {{-- pb-24 keeps the licence line clear of the floating Sentry feedback button --}}
+            <div x-ref="styleInfoScroll" data-testid="style-info-scroll" class="min-h-0 overflow-y-auto px-5 pt-4 pb-8 space-y-5" :class="{ 'pb-24': styleInfo.attribution }">
                 <template x-if="styleInfo.categoryDescription">
                     <div>
                         <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Category</div>
@@ -510,6 +515,7 @@
                         <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" x-text="styleInfo.styleComparison"></p>
                     </div>
                 </template>
+                <p x-show="styleInfo.attribution" data-testid="style-info-attribution" class="text-xs text-gray-400 dark:text-gray-500" x-text="styleInfo.attribution"></p>
             </div>
         </div>
     </div>

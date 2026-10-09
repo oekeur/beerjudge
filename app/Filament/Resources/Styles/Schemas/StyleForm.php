@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\Styles\Schemas;
 
 use App\Models\Style;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class StyleForm
@@ -38,6 +40,12 @@ class StyleForm
                         TextInput::make('name')
                             ->required()
                             ->columnSpan(1),
+                        Placeholder::make('attribution')
+                            ->hiddenLabel()
+                            ->content(fn (Get $get): ?string => Style::attributionFor($get('source')))
+                            ->visible(fn (Get $get): bool => Style::attributionFor($get('source')) !== null)
+                            ->extraAttributes(['data-testid' => 'style-attribution'])
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make(__('style.section.vital_statistics'))

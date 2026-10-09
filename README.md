@@ -34,12 +34,14 @@ No Postgres or Redis needed. Uses SQLite and database-backed sessions/cache/queu
 cp .env.example .env
 php artisan key:generate
 composer install
-php artisan migrate --seed     # seeds the full BJCP 2021 style set
+php artisan migrate --seed     # seeds the BJCP 2021 and Brewers Association 2026 style sets
 npm install
 composer run dev:lite          # artisan serve + queue:listen + pail + vite, SQLite mode
 ```
 
 `dev:lite` overrides the database/session/cache drivers at runtime, so your `.env` stays unchanged. The SQLite file is created automatically.
+
+An existing database that predates the Brewers Association styles gets them with `php artisan db:seed --class=BaStyleSeeder --force` (safe to repeat; it upserts by code and source).
 
 ### Local dev with Postgres + Redis (production parity)
 

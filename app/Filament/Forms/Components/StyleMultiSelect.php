@@ -25,7 +25,12 @@ class StyleMultiSelect extends CheckboxList
     {
         $sources = [];
 
-        foreach (Style::orderBy('source')->orderBy('code')->get() as $style) {
+        $sourceOrder = array_flip(array_keys(Style::SOURCE_LABELS));
+        $styles = Style::orderBy('code')->get()
+            ->sortBy(fn (Style $style): int => $sourceOrder[$style->source] ?? count($sourceOrder))
+            ->values();
+
+        foreach ($styles as $style) {
             $sourceKey = $style->source;
             $sourceLabel = Style::SOURCE_LABELS[$sourceKey] ?? $sourceKey;
             $fullLabel = $style->version ? $sourceLabel.' '.$style->version : $sourceLabel;

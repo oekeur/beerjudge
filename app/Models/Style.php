@@ -20,7 +20,17 @@ class Style extends Model
         'bjcp_beer' => 'BJCP Beer',
         'bjcp_mead' => 'BJCP Mead',
         'bjcp_cider' => 'BJCP Cider',
+        'ba_beer' => 'Brewers Association',
         'custom' => 'Custom',
+    ];
+
+    /**
+     * Licence text, kept in English. Shown wherever the guideline text of the source is displayed.
+     *
+     * @var array<string, string>
+     */
+    public const SOURCE_ATTRIBUTIONS = [
+        'ba_beer' => 'Based on Brewers Association 2026 Beer Style Guidelines with changes. Used with permission of Brewers Association.',
     ];
 
     /** @var array<string, string> */
@@ -39,6 +49,11 @@ class Style extends Model
         'og_min', 'og_max', 'fg_min', 'fg_max',
         'abv_min', 'abv_max', 'ibu_min', 'ibu_max', 'srm_min', 'srm_max',
     ];
+
+    public static function attributionFor(mixed $source): ?string
+    {
+        return is_string($source) ? (self::SOURCE_ATTRIBUTIONS[$source] ?? null) : null;
+    }
 
     /**
      * @return BelongsToMany<Competition, $this>

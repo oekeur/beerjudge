@@ -141,7 +141,7 @@ When an admin views the judging screen, a collapsible panel shows per-entry subm
 
 ## Style guide and style info modals
 
-Each scoring section has an info button that opens the style guide modal, showing the BJCP guideline text for that section. The appearance section also shows an SRM colour gradient across the style's declared range.
+Each scoring section has an info button that opens the style guide modal, showing the style guideline text (BJCP or Brewers Association, depending on the style) for that section. The appearance section also shows an SRM colour gradient across the style's declared range. For Brewers Association styles the licence attribution line shows once at the top of the expanded entry and at the end of the style info sheet, not on these guide sheets.
 
 Clicking an entry's style name opens the style info modal with the style code, category description, history, and style comparison text.
 

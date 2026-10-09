@@ -53,7 +53,7 @@ await journey('M4-judge', async actor => {
   })
   await m7.step('style guide sheet opens from a section', async () => {
     await m7.page.getByTestId('entry-expand-button').first().click()
-    await m7.page.locator('button[aria-label^="View BJCP aroma guideline"]:visible').first().click()
+    await m7.page.locator('button[aria-label^="View aroma guideline"]:visible').first().click()
     await m7.page.waitForTimeout(600)
     const n = await m7.page.getByText(/^aroma$/i).locator('visible=true').count()
     if (n < 2) throw new Error('guide panel not shown (' + n + ' aroma labels visible)')
