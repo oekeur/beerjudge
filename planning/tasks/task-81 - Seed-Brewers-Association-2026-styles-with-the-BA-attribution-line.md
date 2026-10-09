@@ -1,11 +1,11 @@
 ---
 id: TASK-81
 title: Seed Brewers Association 2026 styles with the BA attribution line
-status: In Progress
+status: Review
 assignee:
   - '@agent'
 created_date: '2026-10-09 11:57'
-updated_date: '2026-10-09 19:07'
+updated_date: '2026-10-09 19:21'
 labels:
   - multi-source-styles
   - style-guidelines
@@ -34,8 +34,8 @@ Seed the BA 2026 snapshot as source ba_beer next to BJCP, show the BA attributio
 - [x] #5 A test asserts StyleMultiSelect lists the BJCP Beer group before the Brewers Association group
 - [x] #6 npx playwright test tests/Browser/judging-style-guide-srm.spec.ts passes, and scripts/journeys/run-all.sh fails no step that passes on main (several runs at branch head and on main for any intermittent step)
 - [ ] #7 Oscar has checked the guide modal and style-info sheet for a BA entry in a browser
-- [ ] #8 At a 390x844 viewport, a BA entry with a 3000+ character guide text opens the guide sheet and the style-info sheet with their top and close button inside the viewport, the text scrollable within the sheet, and the style-info sheet's attribution line not covered by the floating button (Playwright)
-- [ ] #9 For a BA entry the attribution shows once, as the first row of the expanded entry body, and in the style-info sheet, and not in the per-aspect guide sheets; a BJCP entry shows it nowhere (Playwright)
+- [x] #8 At a 390x844 viewport, a BA entry with a 3000+ character guide text opens the guide sheet and the style-info sheet with their top and close button inside the viewport, the text scrollable within the sheet, and the style-info sheet's attribution line not covered by the floating button (Playwright)
+- [x] #9 For a BA entry the attribution shows once, as the first row of the expanded entry body, and in the style-info sheet, and not in the per-aspect guide sheets; a BJCP entry shows it nowhere (Playwright)
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -65,4 +65,6 @@ Gate round 4 (938d80c): close functions reset scroll while the sheet is visible.
 Review: worktree /home/oscar/projects/beerjudge/.claude/worktrees/feat+ba-style-seeder; review DB database/ba-review.sqlite (DatabaseSeeder + DemoSeeder + BA-161/BA-159 entries in Spring Cup 2025). Command: cd <worktree> && DB_CONNECTION=sqlite DB_DATABASE=$PWD/database/ba-review.sqlite php artisan serve --host=localhost --port=8090; log in as member2@beerjudge.local / password; /judging/2 entries 11 (BA-161) and 12 (BA-159); /admin/styles for a BA style's edit page. Check at 390px and on a phone if possible.
 
 Oscar's review (2026-10-09): the attribution on every aspect's guide sheet is too much. Decided: one small muted line as the first row of the expanded entry body (BA only), kept in the style-info sheet, removed from the guide sheets (AC 9; AC 8 narrowed to the style-info attribution).
+
+Placement change (587bd32, rebased onto main 868217b, no conflicts): attribution moved to the first row of the expanded entry body (data-testid entry-attribution), kept in the style-info sheet, removed from guide sheets. Implementer at 587bd32: PHPUnit 302/302, PHPStan 0, Pint, full Playwright 46 passed 1 skipped, journeys 100 PASS. Orchestrator re-ran judging-style-guide-srm.spec.ts in a fresh tree at 587bd32: 10 passed. Pass B skipped for this round: ~10 lines of markup that move an existing payload field, no new logic; runtime covered by the spec run. Review server: same command as before (restart it).
 <!-- SECTION:NOTES:END -->
