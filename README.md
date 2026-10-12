@@ -2,7 +2,19 @@
 
 Competition management for a small homebrew club. Members register beers, judges score them on the BJCP 50-point scale, and each competition produces a ranked result list.
 
-Deliberately narrow in scope: no payments, no shipping, no BJCP report generation, no multi-club support. Built for roughly ten people running four competitions a year.
+## Who it is for
+
+- A club running its own in-house competitions: a handful to a few dozen members, a few competitions a year.
+- Judging at one table on phones or tablets. The scoresheet keeps working offline and syncs when the connection returns.
+- One instance per club. Run a second container for a second club.
+
+## What it does not do
+
+- No payments, shipping or entry fees.
+- No per-style flights, medals or best-of-show rounds. Rankings are competition-wide.
+- No BJCP report generation or sanctioned-competition paperwork.
+
+Larger or sanctioned competitions are better served by a dedicated competition manager such as [BCOE&M](https://github.com/geoffhumphrey/brewcompetitiononlineentry).
 
 ## Screenshots
 
@@ -26,20 +38,24 @@ No Livewire on the judging screen. Livewire re-renders from the server on every 
 
 ## Getting started
 
-### Simple local setup (SQLite, no external services)
+### Quick start (SQLite, no external services)
 
-No Postgres or Redis needed. Uses SQLite and database-backed sessions/cache/queue. Good for quick feature work and frontend changes.
+Needs PHP 8.5 (CI runs 8.5; `composer.json` allows 8.3+), Composer and Node 24. `composer install` checks for the `bcmath`, `intl`, `pdo_pgsql` and `redis` extensions even in SQLite mode, and SQLite needs `pdo_sqlite`.
 
 ```bash
+git clone https://github.com/oekeur/beerjudge.git && cd beerjudge
+composer install
 cp .env.example .env
 php artisan key:generate
-composer install
-php artisan migrate --seed     # seeds the BJCP 2021 and Brewers Association 2026 style sets
+php artisan migrate --seed          # creates database/database.sqlite; loads the BJCP 2021 and Brewers Association 2026 styles
+php artisan member:create --admin   # asks for name, email and password
 npm install
-composer run dev:lite          # artisan serve + queue:listen + pail + vite, SQLite mode
+composer run dev:lite               # artisan serve + queue:listen + pail + vite
 ```
 
-`dev:lite` overrides the database/session/cache drivers at runtime, so your `.env` stays unchanged. The SQLite file is created automatically.
+Open http://localhost:8000 (or the port `artisan serve` prints, if 8000 is taken) and log in with the admin you created. For sample data (eight members, three competitions, scored entries), run `php artisan db:seed --class=DemoSeeder` after `migrate --seed`; the demo members are `member1@beerjudge.local` to `member8@beerjudge.local` with password `password`.
+
+`dev:lite` overrides the database, session, cache and queue drivers at runtime, so the same `.env` also works for the Postgres setup below.
 
 An existing database that predates the Brewers Association styles gets them with `php artisan db:seed --class=BaStyleSeeder --force` (safe to repeat; it upserts by code and source).
 
@@ -49,26 +65,24 @@ Starts only the backing services so Vite HMR and fast PHP iteration still work n
 
 ```bash
 cp .env.docker.example .env
-# edit .env: set APP_KEY (php artisan key:generate) and adjust credentials if needed
 composer install
+php artisan key:generate
 npm install
 docker compose up postgres redis   # starts postgres:16 and redis:7, exposed on localhost
 php artisan migrate --seed
 composer run dev                   # artisan serve + queue:listen + pail + vite
 ```
 
-### Full Docker stack
+### Full Docker stack (development)
 
-Builds and runs the entire app in a container (nginx + php-fpm + queue worker via supervisord):
+Builds and runs the entire app in a container, with the source bind-mounted and Vite in its own container:
 
 ```bash
-cp .env.docker.example .env
-# edit .env: set APP_KEY, CLUB_NAME, APP_URL, and any credentials you want to change
-docker compose up --build
-# app at http://localhost:8080
+cp .env.docker.example .env        # then set APP_KEY and CLUB_NAME
+docker compose up --build          # app at http://localhost:8000
 ```
 
-On first run the container runs `php artisan migrate --force` automatically.
+On every start the container runs `php artisan migrate --force`.
 
 ### Running tests
 
@@ -76,6 +90,8 @@ On first run the container runs `php artisan migrate --force` automatically.
 php artisan test
 ./vendor/bin/phpstan analyse
 ```
+
+CONTRIBUTING.md covers the Postgres test run, Playwright browser tests and the commit conventions.
 
 ## Architecture
 
@@ -140,41 +156,18 @@ Admins see results at any status; members see them once the competition is `clos
 
 ## Self-hosting
 
-The app ships as a Docker image (nginx + php-fpm + queue worker in one container). Postgres and Redis run as separate containers via Docker Compose.
+The app ships as a Docker image, `ghcr.io/oekeur/beerjudge`, with nginx, php-fpm and a queue worker in one container; Postgres and Redis run beside it. [How to self-host with Docker](docs/docker-howto.md) goes from an empty server to a first admin login with one Compose file and one `.env`.
 
-The image is built on a development machine and pushed to the private package `ghcr.io/oekeur/beerjudge:latest`. The server holds no checkout: only `docker-compose.yaml`, `docker-compose.prod.yaml` and `.env.production`, and it pulls the image. CI does not build or push images. Full steps, verification and rollback are in [How to deploy with Docker](docs/docker-howto.md).
+## Contributing
 
-### Prerequisites
+See [CONTRIBUTING.md](CONTRIBUTING.md). To report a security issue, see [SECURITY.md](SECURITY.md).
 
-- Docker + Docker Compose on the server and the development machine
-- An [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) setup on the server handling TLS termination, on an external Docker network named `proxy`
-- `docker login ghcr.io` on both machines
+## License
 
-### Deploy
+BeerJudge is released under the [MIT License](LICENSE).
 
-1. On the development machine, from a clean checkout of `main`:
+The bundled style data has its own terms: the BJCP 2021 styles come from [beerjson/bjcp-json](https://github.com/beerjson/bjcp-json) (MIT, modified), and the Brewers Association 2026 styles are used with the BA's permission and attribution. Details in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-   ```bash
-   docker compose build app
-   docker push ghcr.io/oekeur/beerjudge:latest
-   ```
+## Credits
 
-2. First time only: copy `docker-compose.yaml` and `docker-compose.prod.yaml` to the server and create `.env.production` from `.env.docker.example`. Set at minimum:
-   - `APP_KEY`: generate with `php artisan key:generate --show`
-   - `APP_ENV=production`, `APP_DEBUG=false`
-   - `APP_URL=https://yourdomain.com`
-   - `CLUB_NAME`, `DB_PASSWORD`, `MAIL_*`
-   - `VIRTUAL_HOST` (and `LETSENCRYPT_HOST` if acme-companion issues the certificate); nginx-proxy reads them from the app container's environment
-
-   Compose passes `${DB_PASSWORD}` to Postgres from the shell or a `.env` file next to the Compose files, not from `.env.production`, so put the same value in `.env` too.
-
-3. On the server:
-
-   ```bash
-   docker compose -f docker-compose.yaml -f docker-compose.prod.yaml pull app
-   docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
-   ```
-
-Watchtower on the server cannot pull the private image, so it does not deploy BeerJudge.
-
-The container runs `php artisan migrate --force` on every start, so deploys are zero-touch. Data persists in named Docker volumes (`postgres_data`, `redis_data`).
+Built by Oscar Keur for the Foebar Amsterdam Homebrew Group, with contributions from [rob518183](https://github.com/rob518183).
