@@ -5,6 +5,7 @@
         'guide' => collect($sections)->map(fn ($lang) => __('judging.aria.guide', ['section' => mb_strtolower(__("judging.section.$lang")), 'style' => ':style']))->all(),
         'styleInfo' => __('judging.aria.style_info', ['style' => ':style']),
     ];
+    $sectionMax = \App\Models\Scoresheet::SECTION_MAX;
 @endphp
 <x-page :title="'Judging · ' . $competition->name" :vite="['resources/css/app.css', 'resources/js/judging.js']">
     <x-slot:head>
@@ -168,11 +169,11 @@
                         <span class="text-sm font-semibold tabular-nums"
                             :style="{ color: scoreColor(sheetTotal(entry.id)) }"
                             x-show="sheets[entry.id]?.status === 'submitted'"
-                            x-text="sheetTotal(entry.id) + ' / 50'">
+                            x-text="sheetTotal(entry.id) + ' / {{ array_sum($sectionMax) }}'">
                         </span>
                         <span class="text-sm tabular-nums text-gray-400 dark:text-gray-500"
                             x-show="sheets[entry.id]?.status === 'draft' && sheetTotal(entry.id) > 0"
-                            x-text="sheetTotal(entry.id) + ' / 50'">
+                            x-text="sheetTotal(entry.id) + ' / {{ array_sum($sectionMax) }}'">
                         </span>
 
                         {{-- Sync badge --}}
@@ -204,14 +205,14 @@
                                 <span class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm" data-testid="scoresheet-submitted">{{ __('judging.submitted') }}</span>
                             </div>
                             <table class="text-sm text-gray-600 dark:text-gray-400 mb-3" style="border-spacing: 0" aria-live="polite">
-                                <tr><td class="pr-6">{{ __('judging.section.aroma') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].aroma"></strong></span>/12</td></tr>
-                                <tr><td class="pr-6">{{ __('judging.section.appearance') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].appearance"></strong></span>/3</td></tr>
-                                <tr><td class="pr-6">{{ __('judging.section.flavour') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].flavour"></strong></span>/20</td></tr>
-                                <tr><td class="pr-6">{{ __('judging.section.mouthfeel') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].mouthfeel"></strong></span>/5</td></tr>
-                                <tr><td class="pr-6">{{ __('judging.section.overall') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].overall"></strong></span>/10</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.aroma') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].aroma"></strong></span>/{{ $sectionMax['aroma'] }}</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.appearance') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].appearance"></strong></span>/{{ $sectionMax['appearance'] }}</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.flavour') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].flavour"></strong></span>/{{ $sectionMax['flavour'] }}</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.mouthfeel') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].mouthfeel"></strong></span>/{{ $sectionMax['mouthfeel'] }}</td></tr>
+                                <tr><td class="pr-6">{{ __('judging.section.overall') }}</td><td><span class="inline-block text-right tabular-nums" style="min-width: 1.5em"><strong x-text="sheets[entry.id].overall"></strong></span>/{{ $sectionMax['overall'] }}</td></tr>
                             </table>
                             <div class="mb-4">
-                                <div class="text-base font-bold text-gray-900 dark:text-white">{{ __('judging.total') }} <span x-text="sheetTotal(entry.id)"></span> / 50</div>
+                                <div class="text-base font-bold text-gray-900 dark:text-white">{{ __('judging.total') }} <span x-text="sheetTotal(entry.id)"></span> / {{ array_sum($sectionMax) }}</div>
                                 <div class="mt-0.5">
                                     <span class="text-sm font-semibold"
                                         :class="{
@@ -242,11 +243,11 @@
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.aroma') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].aroma !== null ? sheets[entry.id].aroma : '—'"></span> / 12</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].aroma !== null ? sheets[entry.id].aroma : '—'"></span> / {{ $sectionMax['aroma'] }}</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.aroma'), 'max' => 12]) }}"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.aroma'), 'max' => $sectionMax['aroma']]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].aroma === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
-                                    @for ($n = 0; $n <= 12; $n++)
+                                    @for ($n = 0; $n <= $sectionMax['aroma']; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].aroma === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
@@ -265,11 +266,11 @@
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.appearance') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].appearance !== null ? sheets[entry.id].appearance : '—'"></span> / 3</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].appearance !== null ? sheets[entry.id].appearance : '—'"></span> / {{ $sectionMax['appearance'] }}</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.appearance'), 'max' => 3]) }}"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.appearance'), 'max' => $sectionMax['appearance']]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].appearance === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
-                                    @for ($n = 0; $n <= 3; $n++)
+                                    @for ($n = 0; $n <= $sectionMax['appearance']; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].appearance === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
@@ -288,11 +289,11 @@
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.flavour') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].flavour !== null ? sheets[entry.id].flavour : '—'"></span> / 20</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].flavour !== null ? sheets[entry.id].flavour : '—'"></span> / {{ $sectionMax['flavour'] }}</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.flavour'), 'max' => 20]) }}"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.flavour'), 'max' => $sectionMax['flavour']]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].flavour === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
-                                    @for ($n = 0; $n <= 20; $n++)
+                                    @for ($n = 0; $n <= $sectionMax['flavour']; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].flavour === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
@@ -311,11 +312,11 @@
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.mouthfeel') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].mouthfeel !== null ? sheets[entry.id].mouthfeel : '—'"></span> / 5</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].mouthfeel !== null ? sheets[entry.id].mouthfeel : '—'"></span> / {{ $sectionMax['mouthfeel'] }}</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.mouthfeel'), 'max' => 5]) }}"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.mouthfeel'), 'max' => $sectionMax['mouthfeel']]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].mouthfeel === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
-                                    @for ($n = 0; $n <= 5; $n++)
+                                    @for ($n = 0; $n <= $sectionMax['mouthfeel']; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].mouthfeel === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
@@ -334,11 +335,11 @@
                                         <span class="font-medium text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 dark:group-hover:text-amber-400">{{ __('judging.section.overall') }}</span>
                                         <span class="w-4 h-4 rounded-full border border-amber-300 dark:border-amber-600 text-amber-600 dark:text-amber-400 text-[10px] font-bold leading-none flex items-center justify-center group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30 flex-shrink-0">i</span>
                                     </button>
-                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].overall !== null ? sheets[entry.id].overall : '—'"></span> / 10</span>
+                                    <span class="text-sm tabular-nums font-semibold text-amber-700 dark:text-amber-400"><span x-text="sheets[entry.id].overall !== null ? sheets[entry.id].overall : '—'"></span> / {{ $sectionMax['overall'] }}</span>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.overall'), 'max' => 10]) }}"
+                                <div class="flex flex-wrap gap-1.5 mt-1.5 mb-2" role="group" aria-label="{{ __('judging.aria.score', ['section' => __('judging.section.overall'), 'max' => $sectionMax['overall']]) }}"
                                     :class="sheets[entry.id].submitAttempted && sheets[entry.id].overall === null ? 'ring-2 ring-red-400 rounded-lg p-1' : ''">
-                                    @for ($n = 0; $n <= 10; $n++)
+                                    @for ($n = 0; $n <= $sectionMax['overall']; $n++)
                                     <button type="button"
                                         class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors"
                                         :class="sheets[entry.id].overall === {{ $n }} ? 'bg-amber-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
@@ -387,7 +388,7 @@
                             <div class="border-t border-gray-100 dark:border-gray-800 pt-3 flex items-center justify-between gap-3" data-testid="scoresheet-footer">
                                 <div>
                                     <div class="text-lg font-bold text-gray-900 dark:text-white">
-                                        <span x-text="sheetTotal(entry.id)"></span> / 50
+                                        <span x-text="sheetTotal(entry.id)"></span> / {{ array_sum($sectionMax) }}
                                     </div>
                                     <div>
                                         <span class="text-xs font-semibold"
