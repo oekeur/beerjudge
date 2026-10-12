@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JudgeRegistrationController;
@@ -12,6 +13,11 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\ScoresheetController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/manifest.json', [BrandingController::class, 'manifest'])->name('branding.manifest');
+Route::get('/branding/{file}', [BrandingController::class, 'icon'])
+    ->whereIn('file', array_keys(BrandingController::ICONS))
+    ->name('branding.icon');
 
 Route::get('/sw.js', function () {
     $path = public_path('build/sw.js');

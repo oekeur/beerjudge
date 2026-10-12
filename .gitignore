@@ -38,3 +38,6 @@ Homestead.yaml
 Thumbs.db
 /docs/.vitepress/dist
 /docs/.vitepress/cache
+
+# Operator-only deployment notes, kept out of the public repository
+/docs/private/
