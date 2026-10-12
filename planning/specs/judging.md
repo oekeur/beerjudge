@@ -110,7 +110,7 @@ Each entry on the judging screen has a collapsible panel showing the BJCP style 
 
 The judging screen is the primary target for PWA install — judges add it to their home screen and use it as a standalone app on their phone or tablet.
 
-**Manifest:** `public/manifest.json` — name "Foebar BeerJudge", short name "BeerJudge", `start_url: /judge`, display `standalone`, theme `#b45309`, background `#1c1917`.
+**Manifest:** `GET /manifest.json` (`BrandingController`) — name "{CLUB_NAME} BeerJudge", short name "BeerJudge", `start_url: /`, display `standalone`, theme `#b45309`, background `#1c1917`. Icons come from `CLUB_ICON_DIR` when set, else the neutral defaults (see docs/pwa-reference.md).
 
 **Icons:** `public/icons/icon-192.png` and `public/icons/icon-512.png` — Amsterdam coat of arms (three St Andrew's X marks) inside an amber pint glass on a dark background. Source SVG at `resources/images/icon.svg`.
 

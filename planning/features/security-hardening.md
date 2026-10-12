@@ -14,7 +14,7 @@ A security review was completed ahead of the app going public. Most critical fin
 
 **File:** `bootstrap/app.php`
 
-Without trusted proxy config, `Request::ip()` returns the proxy IP, which breaks rate limiting. The docker setup confirms the app runs behind nginx (`VIRTUAL_HOST=competition.foebar.com`, `NETWORK=proxy`).
+Without trusted proxy config, `Request::ip()` returns the proxy IP, which breaks rate limiting. The docker setup confirms the app runs behind nginx (`VIRTUAL_HOST=<club-host>`, `NETWORK=proxy`).
 
 Fix — add `->withMiddleware()` trust config:
 

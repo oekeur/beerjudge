@@ -37,7 +37,7 @@ Trigger is the transition to closed (published_at was dropped in 2e9013e). Open 
 <!-- SECTION:NOTES:BEGIN -->
 Plan: planning/2026-10-07-launch-email-bugfix-batch.md (Phase 2: Results email on close)
 
-Landed on feat/launch-email-bugfix-batch (03460ab). Gates: Pass A + Pass B; retry fixed two CONFIRMED findings (resend offered/mailed inactive members; backfill left closed rows with NULL updated_at unguarded). Evidence: tests/Feature/CompetitionResultsEmailTest.php (7 tests), Pass B probes (form-save close path sends once, sync queue mail in member locale, COALESCE on Postgres 16). Review for Oscar: resend modal and the email body have not been seen in a browser. Worktree: /home/oscar/projects/beerjudge/.claude/worktrees/feat+task-29-results-email
+Landed on feat/launch-email-bugfix-batch (03460ab). Gates: Pass A + Pass B; retry fixed two CONFIRMED findings (resend offered/mailed inactive members; backfill left closed rows with NULL updated_at unguarded). Evidence: tests/Feature/CompetitionResultsEmailTest.php (7 tests), Pass B probes (form-save close path sends once, sync queue mail in member locale, COALESCE on Postgres 16). Review for Oscar: resend modal and the email body have not been seen in a browser. Worktree: <dev-checkout>/.claude/worktrees/feat+task-29-results-email
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
