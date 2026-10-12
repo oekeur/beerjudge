@@ -1,9 +1,10 @@
 ---
 id: TASK-103
 title: Update dependencies to clear the composer audit advisories before going public
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-10-12 18:36'
+updated_date: '2026-10-12 19:02'
 labels:
   - public-launch
   - security-hardening
@@ -26,3 +27,19 @@ composer audit on 2026-10-12 (main 5fa5ee2) reports 31 advisories in 8 packages:
 - [ ] #3 CI is green on all jobs (static-analysis, tests, tests-postgres, browser-tests)
 - [ ] #4 The judging screen and the Filament admin are checked in a browser after the Filament and Livewire bumps
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Inline (Oscar, 2026-10-12), no plan file.
+1. composer update -W limited to the 8 flagged packages, so no unrelated majors land [AC 1]
+2. npm audit fix; list what stays and why [AC 2]
+3. phpstan, full suite on SQLite and Postgres, CI incl. browser-tests [AC 3]
+4. Oscar checks judging screen and Filament admin in a browser [AC 4]
+<!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+A full composer update also bumped phpstan 2.2.2 -> 2.3.1, after which phpstan exits 1 with no output on analyse and list (--version and --help work; reproduced with -c /dev/null). Not needed for any advisory, so the update was limited to the flagged packages. npm: 11 of 14 fixed by npm audit fix; esbuild/vite/vitepress remain, all from vitepress 1.6.4 (latest stable; 2.0 is alpha), used only by the docs dev server and not shipped in the image.
+<!-- SECTION:NOTES:END -->
