@@ -12,6 +12,7 @@ See [README.md](../README.md) for which env file to copy in each setup scenario.
 |---|---|---|---|---|
 | `APP_NAME` | string | `BeerJudge` | no | Appears in page titles and mail footer. |
 | `CLUB_NAME` | string | _(empty)_ | yes | Prefixed to the app name (`<club> BeerJudge`) in the navigation, page headings and titles of the auth pages, the 500 error page, and the admin panel brand. Set it before inviting members. |
+| `CLUB_ICON_DIR` | path | _(empty)_ | no | Absolute path of a directory holding the club's `icon-192.png`, `icon-512.png` and `favicon.svg`. Each file present replaces the neutral default in the manifest and page head; missing files fall back. See `docs/pwa-reference.md`. |
 | `APP_ENV` | string | `local` | yes | Set to `production`. Controls error detail, caching defaults, and log verbosity. |
 | `APP_KEY` | string | _(empty)_ | yes | Laravel encryption key. Generate with `php artisan key:generate --show`. Never leave blank. |
 | `APP_DEBUG` | bool | `true` | yes | Set to `false` in production. When `true`, full stack traces are sent to the browser. |

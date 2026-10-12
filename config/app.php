@@ -17,6 +17,8 @@ return [
 
     'club_name' => env('CLUB_NAME', ''),
 
+    'club_icon_dir' => env('CLUB_ICON_DIR'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

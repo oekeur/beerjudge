@@ -5,6 +5,8 @@ export default defineConfig({
   description: 'Competition management for a small homebrew club.',
   base: '/beerjudge/',
   ignoreDeadLinks: [/README/],
+  // Operator notes kept outside git (see .gitignore); never part of the site.
+  srcExclude: ['private/**'],
 
   themeConfig: {
     nav: [
