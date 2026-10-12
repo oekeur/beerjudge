@@ -1,7 +1,7 @@
 project_name: "beerjudge"
 default_status: "To Do"
 statuses: ["Backlog", "To Do", "Planned", "In Progress", "Review", "Done"]
-labels: ["abv-tasting-order", "admin-guard", "auth", "backfill", "blind-guess", "clipboard-links", "dark-mode", "dashboard-widgets", "descriptors", "docs", "docs-site", "e2e-testing", "email-on-publish", "history-stats", "i18n", "judge-drift", "judge-variance", "judging-progress", "launch-ops", "multi-source-styles", "pwa", "results", "security-hardening", "sentry", "srm-visualization", "style-guidelines", "v1"]
+labels: ["abv-tasting-order", "admin-guard", "auth", "backfill", "blind-guess", "clipboard-links", "dark-mode", "dashboard-widgets", "descriptors", "docs", "docs-site", "e2e-testing", "email-on-publish", "history-stats", "i18n", "judge-drift", "judge-variance", "judging-progress", "launch-ops", "multi-source-styles", "public-launch", "pwa", "results", "security-hardening", "sentry", "srm-visualization", "style-guidelines", "v1"]
 date_format: yyyy-mm-dd
 max_column_width: 20
 auto_open_browser: true
