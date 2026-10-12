@@ -1,10 +1,11 @@
 ---
 id: TASK-98
 title: 'Add GitHub metadata, SECURITY.md and a v1.0.0 release tag'
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-12 12:37'
-updated_date: '2026-10-12 13:32'
+updated_date: '2026-10-12 14:05'
 labels:
   - public-launch
 dependencies: []
@@ -21,8 +22,8 @@ Audit item 10. Repo has no description, topics, tags or SECURITY.md.
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 SECURITY.md points to GitHub private vulnerability reporting and names 1.x as supported
-- [ ] #2 CHANGELOG.md has a 1.0.0 section
+- [x] #1 SECURITY.md points to GitHub private vulnerability reporting and names 1.x as supported
+- [x] #2 CHANGELOG.md has a 1.0.0 section
 - [ ] #3 gh repo view shows the description and the topics homebrew, bjcp, laravel, filament, pwa
 - [ ] #4 Tag v1.0.0 sits on merged main, gh release view v1.0.0 succeeds, and the tag's image workflow outcome is reported (a code fix ships as v1.0.1; the tag is never moved)
 <!-- AC:END -->

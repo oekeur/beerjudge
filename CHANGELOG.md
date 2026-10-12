@@ -2,6 +2,43 @@
 
 Reconstructed from the git history on 2026-10-07. Each version covers one ISO week of commits; weeks without commits have no version. The date is the last commit of that week. Styling iterations, static-analysis passes, CI and test plumbing, and tracker housekeeping are summarised rather than listed.
 
+## [1.0.0] - 2026-10-12
+
+First public release.
+
+### Added
+- MIT licence (`LICENSE`) and `THIRD_PARTY_NOTICES.md` crediting the BJCP data from beerjson/bjcp-json and the Brewers Association guidelines.
+- Brewers Association 2026 styles: `php artisan styles:scrape-ba` builds `ba_styleguide-2026.json`, and `BaStyleSeeder` seeds the 168 styles as source `ba_beer`. The BA attribution line shows on the judging screen, the style-info sheet and the style edit page.
+- Club branding through configuration: the web manifest is generated from `CLUB_NAME`, the default icon is a neutral pint glass, and `CLUB_ICON_DIR` supplies a club's own icons.
+- `APP_TIMEZONE` sets the application timezone.
+- Self-hosting from a published image: a GitHub Actions workflow pushes `ghcr.io/oekeur/beerjudge` on version tags, and `docker-compose.selfhost.yaml` runs the app, Postgres and Redis from one `.env`.
+- CI runs the test suite against Postgres 16 as well as SQLite.
+- Closed competitions get a Reopen judging action; the status field is read-only on the form.
+- One active judging tab per browser, with take-over, and a server-side ordering guard (`scoresheets.client_revision`) so a stale save never overwrites a newer one.
+- Playwright journey walkthrough scripts and documented admin and member journeys.
+
+### Changed
+- Magic links show a confirm page; only the POST consumes the token.
+- Login is rate-limited per email and IP with a separate per-IP cap, so a club on shared Wi-Fi is not locked out.
+- Guests get their locale from `Accept-Language`; magic-link emails follow the member's locale.
+- Offline scoresheets read "Waiting for connection" instead of a red Retry.
+- The admin panel loads the self-hosted Sentry bundle, and the feedback widget is translated.
+- Scoresheet section maxima come from one constant.
+
+### Fixed
+- Deactivated admins are logged out of the admin panel, also from an open tab.
+- `member:delete` refuses to remove the last active admin.
+- The Dashboard and Variance widgets poll; lifecycle buttons update the header in place.
+- The demo seeder assigns the styles it names (it used zero-padded codes that never matched) and no longer picks a Brewers Association style on Postgres.
+- A self-XSS in the `sentry-user` meta tag.
+- The member navigation fits on one line at phone width; remaining raw labels are translated.
+
+### Removed
+- The bundled third-party scoresheet PDF.
+
+### Docs
+- README with a working quick start, scope, licence and credits; a generic self-hosting guide; `SECURITY.md`.
+
 ## [0.8.0] - 2026-10-07
 
 ### Added
