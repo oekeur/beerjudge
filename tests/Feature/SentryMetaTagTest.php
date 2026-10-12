@@ -78,7 +78,7 @@ class SentryMetaTagTest extends TestCase
     {
         config(['sentry.dsn' => 'https://abc123@sentry.io/456']);
 
-        $admin = Member::factory()->create(['is_admin' => true]);
+        $admin = Member::factory()->create(['name' => 'Admin Ada', 'email' => 'ada@example.com', 'is_admin' => true]);
 
         $response = $this->actingAs($admin)->get('/admin/competitions');
 
