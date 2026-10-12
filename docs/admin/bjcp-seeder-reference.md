@@ -16,6 +16,8 @@ Registered in `Database\Seeders\DatabaseSeeder::run()`.
 
 Reads from `bjcp_styleguide-2021.json` in the project root (`base_path('bjcp_styleguide-2021.json')`). The file is committed to the repository and must be present at that path before the seeder runs.
 
+The file comes from [beerjson/bjcp-json](https://github.com/beerjson/bjcp-json) (`styles/bjcp_styleguide-2021.json`, MIT), with text fixes applied. `THIRD_PARTY_NOTICES.md` holds the licence and describes the changes.
+
 **Expected JSON structure:**
 
 ```json
