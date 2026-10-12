@@ -4,6 +4,7 @@ title: Add an MIT LICENSE and give composer.json a real package name
 status: To Do
 assignee: []
 created_date: '2026-10-12 12:37'
+updated_date: '2026-10-12 13:02'
 labels:
   - public-launch
 dependencies: []
@@ -24,3 +25,9 @@ Open-source readiness audit, item 1 (decided 2026-10-12: MIT). The repo has no L
 - [ ] #2 composer.json name is oekeur/beerjudge with a one-line project description
 - [ ] #3 README links the license and credits contributor rob518183
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-12: Rob (rob518183, 10 commits) agreed to publishing their contributions under MIT.
+<!-- SECTION:NOTES:END -->
