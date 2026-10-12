@@ -1,12 +1,23 @@
 # Docker Setup Reference
 
-The Docker setup runs nginx, php-fpm, and a queue worker inside a single container. Postgres and Redis run as separate containers via Docker Compose. Everything is coordinated through three Compose files.
+The Docker setup runs nginx, php-fpm, and a queue worker inside a single container. Postgres and Redis run as separate containers via Docker Compose. Four Compose files cover the setups: a standalone file for self-hosting, and a base file with a development and a reverse-proxy overlay.
 
-See [docs/docker-howto.md](docker-howto.md) for step-by-step deployment instructions.
+See [docs/docker-howto.md](docker-howto.md) for step-by-step self-hosting instructions.
+
+## Published image
+
+`.github/workflows/release-image.yml` builds the `Dockerfile` and pushes `ghcr.io/oekeur/beerjudge` when a `v*` tag is pushed, tagged with the full version (`1.0.0`), the minor line (`1.0`) and `latest`. On pull requests that touch the Dockerfile, `docker/`, the dependency manifests or the Vite configs it only builds, so a broken image is caught before a release.
 
 ---
 
 ## Compose files
+
+### `docker-compose.selfhost.yaml` (standalone)
+
+Use on its own: `docker compose -f docker-compose.selfhost.yaml up -d`. It is the file the self-hosting guide uses and needs nothing else from the repository.
+
+- `app`: pulls `ghcr.io/oekeur/beerjudge:${BEERJUDGE_VERSION:-latest}`, reads `.env` through `env_file`, and publishes container port 80 on `${BEERJUDGE_PORT:-8080}`. Like the base file, it hardcodes `DB_HOST=postgres` and `REDIS_HOST=redis`.
+- `postgres` and `redis`: same images, healthchecks and volumes as the base file. `POSTGRES_PASSWORD` comes from `${DB_PASSWORD}` in the same `.env`, and Compose stops with an error when it is empty.
 
 ### `docker-compose.yaml` (base)
 
@@ -46,10 +57,10 @@ Changes from the base:
 
 | Property | Dev | Prod |
 |---|---|---|
-| Image | Built locally from `Dockerfile` | `ghcr.io/oekeur/beerjudge:latest` or built locally |
+| Image | Built locally from `Dockerfile` | `ghcr.io/oekeur/beerjudge` (published) or built locally |
 | PHP | 8.5-fpm-alpine | same |
 | Web server | `artisan serve` (via supervisord) | nginx (via supervisord) |
-| Port | 8000 (host) → 80 (container) | none (reverse proxy) |
+| Port | 8000 (host) -> 80 (container) | `BEERJUDGE_PORT` (selfhost file) or none (proxy overlay) |
 | Entrypoint | `entrypoint.dev.sh` | `entrypoint.sh` |
 | Source mount | Host bind mount at `/var/www` | No mount; code baked into image |
 

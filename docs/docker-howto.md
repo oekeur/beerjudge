@@ -1,150 +1,104 @@
-# How to deploy with Docker
+# How to self-host with Docker
 
-Step-by-step instructions for deploying BeerJudge on a Linux server using Docker Compose. For a reference of what each Compose file and service does, see [docs/docker-reference.md](docker-reference.md).
-
-The image is built on a development machine and pushed to a private GitHub Container Registry package, `ghcr.io/oekeur/beerjudge:latest`. The server has no checkout of the repository and never builds: it holds two Compose files and `.env.production`, and pulls the image. CI does not build or push images.
+Run BeerJudge on a Linux server from the published image, `ghcr.io/oekeur/beerjudge`. You need no checkout of the repository and no PHP or Node on the server: one Compose file and one `.env` file are enough. For what each service and Compose file does, see [docs/docker-reference.md](docker-reference.md).
 
 ---
 
 ## Prerequisites
 
-- Docker Engine 24+ and Docker Compose v2 on both machines
-- An nginx-proxy setup on the server (see [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy)), and the external Docker network it uses, named `proxy`
-- `docker login ghcr.io` on the development machine with a token that has `write:packages`, and on the server with a token that has `read:packages`
+- Docker Engine 24+ with Docker Compose v2
+- A domain and a TLS-terminating reverse proxy (Caddy, Traefik, nginx) if members will reach it over the internet. The stack itself serves plain HTTP on one port.
+- SMTP credentials if you want invitation, magic-link and results emails delivered
 
 ---
 
 ## First deployment
 
-### 1. Build and push the image
-
-On the development machine, from a clean checkout of `main`:
+### 1. Fetch the Compose file and the environment template
 
 ```bash
-docker compose build app
-docker push ghcr.io/oekeur/beerjudge:latest
+mkdir beerjudge && cd beerjudge
+curl -fsSLO https://raw.githubusercontent.com/oekeur/beerjudge/main/docker-compose.selfhost.yaml
+curl -fsSL https://raw.githubusercontent.com/oekeur/beerjudge/main/.env.docker.example -o .env
 ```
 
-`docker-compose.yaml` names the build output `ghcr.io/oekeur/beerjudge:latest`, so the build tags it for the registry.
+### 2. Fill in `.env`
 
-### 2. Copy the Compose files to the server
-
-```bash
-ssh <server> 'mkdir -p ~/git/beerjudge'
-scp docker-compose.yaml docker-compose.prod.yaml <server>:git/beerjudge/
-```
-
-### 3. Create the environment file
-
-On the server, create `~/git/beerjudge/.env.production` from `.env.docker.example` and set at minimum:
+Set at least these values:
 
 ```dotenv
 APP_ENV=production
 APP_DEBUG=false
-APP_KEY=           # generate with: php artisan key:generate --show
-APP_URL=https://yourdomain.com
-CLUB_NAME=Your Club Name
+APP_KEY=base64:...        # generate with: echo "base64:$(openssl rand -base64 32)"
+APP_URL=https://beerjudge.example.org
+APP_TIMEZONE=Europe/Amsterdam   # set before the first competition; see env-reference
+CLUB_NAME=Your Club
 
-DB_PASSWORD=changeme
+DB_PASSWORD=a-long-random-password
 
 MAIL_MAILER=smtp
-MAIL_HOST=your-smtp-host
+MAIL_HOST=smtp.example.org
 MAIL_PORT=587
-MAIL_USERNAME=your-smtp-user
-MAIL_PASSWORD=your-smtp-password
-MAIL_FROM_ADDRESS=beerjudge@yourdomain.com
-
-SENTRY_LARAVEL_DSN=   # optional; leave empty to disable error tracking
-
-VIRTUAL_HOST=yourdomain.com
-LETSENCRYPT_HOST=yourdomain.com   # only if acme-companion should issue the certificate
+MAIL_USERNAME=...
+MAIL_PASSWORD=...
+MAIL_FROM_ADDRESS=beerjudge@example.org
 ```
 
-`docker-compose.prod.yaml` loads this file as the app container's environment through `env_file`. nginx-proxy reads `VIRTUAL_HOST` and `LETSENCRYPT_HOST` from that environment, so no host-specific Compose overlay is needed.
+The same `.env` file feeds both the app container (`env_file`) and the Postgres container's initial password (`${DB_PASSWORD}`), so the two always match. Compose refuses to start when `DB_PASSWORD` is empty.
 
-`DB_PASSWORD` has to be set in a second place. The Postgres service gets `POSTGRES_PASSWORD` from `${DB_PASSWORD}`, which Compose resolves from the shell or a `.env` file next to the Compose files, not from `.env.production`. Without either, Postgres falls back to the default `secret`. Put the same value in `~/git/beerjudge/.env`:
+Two optional values only affect Compose itself:
 
-```dotenv
-DB_PASSWORD=changeme
-```
+| Variable | Default | Effect |
+|---|---|---|
+| `BEERJUDGE_VERSION` | `latest` | Image tag to run, e.g. `1.0.0` to pin a release. |
+| `BEERJUDGE_PORT` | `8080` | Host port the app listens on. Point your reverse proxy here. |
 
-The password only takes effect on a fresh `postgres_data` volume; see Troubleshooting for changing it later.
+To show your club's own icon, see "Club icons" in [docs/pwa-reference.md](pwa-reference.md). [docs/env-reference.md](env-reference.md) lists every variable.
 
-See [docs/env-reference.md](env-reference.md) for the full variable list.
-
-### 4. Create the proxy network (if it does not exist)
+### 3. Start the stack
 
 ```bash
-docker network create proxy
+docker compose -f docker-compose.selfhost.yaml up -d
 ```
 
-### 5. Start the stack
+On every start the app container runs `php artisan migrate --force`, then caches config, routes and views.
+
+### 4. Load the style guides
 
 ```bash
-cd ~/git/beerjudge
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml pull app
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
+docker compose -f docker-compose.selfhost.yaml exec app php artisan db:seed --force
 ```
 
-Do not pass `--build` on the server: there is no source to build from. On first start, the entrypoint runs `php artisan migrate --force` automatically.
+This loads the BJCP 2021 and Brewers Association 2026 beer styles. It is safe to run again: rows are upserted on code and source.
+
+### 5. Create the first admin
+
+```bash
+docker compose -f docker-compose.selfhost.yaml exec app php artisan member:create --admin
+```
+
+The command asks for a name, an email address and a password. Then open `APP_URL` (or `http://<server>:8080` before the proxy is set up) and log in. Further members register themselves or get an invitation from the admin panel.
 
 ---
 
 ## Verify the deployment
 
 ```bash
-# Check all three containers are running
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml ps
-
-# Tail the app logs
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml logs -f app
-
-# Check the migrate output in the startup logs
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml logs app | grep -i migrat
-
-# Confirm the server runs the image you pushed: compare this digest with the one docker push printed
-docker image inspect -f '{{index .RepoDigests 0}} {{.Created}}' ghcr.io/oekeur/beerjudge:latest
-
-# Confirm the service responds
-curl -I https://yourdomain.com
+docker compose -f docker-compose.selfhost.yaml ps                  # app, postgres and redis running, the last two healthy
+docker compose -f docker-compose.selfhost.yaml logs app | grep -i migrat
+curl -I http://localhost:8080/login                                 # HTTP 200
 ```
-
-The app is ready when you see an HTTP 200 or 302 response and the startup logs show migration output without errors. A container showing "Up 2 hours" only means it restarted then; check the image digest to see which build is live.
 
 ---
 
-## Updating / redeploying
-
-On the development machine, from a clean checkout of `main`:
+## Updating
 
 ```bash
-docker compose build app
-docker push ghcr.io/oekeur/beerjudge:latest
+docker compose -f docker-compose.selfhost.yaml pull app
+docker compose -f docker-compose.selfhost.yaml up -d app
 ```
 
-On the server:
-
-```bash
-cd ~/git/beerjudge
-docker tag ghcr.io/oekeur/beerjudge:latest beerjudge:previous   # rollback point
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml pull app
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d app
-```
-
-If `docker-compose.yaml` or `docker-compose.prod.yaml` changed on `main`, copy them to the server again (step 2) before `up`.
-
-The entrypoint runs `migrate --force` on each start, so new migrations apply automatically during the restart. Config, route, and view caches are also rebuilt. There is a brief period (typically a few seconds) while the new container starts where the app returns 502.
-
-Watchtower runs on the server but does not deploy BeerJudge. Its container has no ghcr credentials, so its daily check fails with `unauthorized` on this private image. Pull by hand as above.
-
-### Rolling back
-
-```bash
-docker tag beerjudge:previous ghcr.io/oekeur/beerjudge:latest
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d app
-```
-
-Migrations already applied by the newer image stay applied. Roll back the schema by hand if the older code cannot run against it.
+Migrations run on start. Read the [CHANGELOG](https://github.com/oekeur/beerjudge/blob/main/CHANGELOG.md) before a major version. To roll back, set `BEERJUDGE_VERSION` to the previous release and run the same two commands; a rollback across a migration that changed data may need a database restore.
 
 ---
 
@@ -152,61 +106,34 @@ Migrations already applied by the newer image stay applied. Roll back the schema
 
 ### "No application encryption key has been specified"
 
-`APP_KEY` is empty in `.env.production`. Generate one:
+`APP_KEY` is empty in `.env`. Generate one with `echo "base64:$(openssl rand -base64 32)"`, put it in `.env`, then recreate the container. `env_file` is read only when the container is created, so `restart` keeps the old values:
 
 ```bash
-php artisan key:generate --show
+docker compose -f docker-compose.selfhost.yaml up -d --force-recreate app
 ```
 
-Copy the output into `.env.production`, then recreate the container. `env_file` is read only when the container is created, so `restart` keeps the old values:
-
-```bash
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d --force-recreate app
-```
+Never change `APP_KEY` once members exist: it signs sessions and invitation links.
 
 ### Login redirects to `/login` in an infinite loop
 
-Most likely the `SESSION_DOMAIN` is wrong, `APP_URL` does not match the actual URL, or `SESSION_DRIVER` is misconfigured. Check:
+1. `APP_URL` matches the address in the browser exactly (scheme, domain, no trailing slash).
+2. Behind an HTTPS proxy, the proxy forwards `X-Forwarded-Proto`; otherwise Laravel builds `http://` URLs and secure cookies are dropped.
+3. Redis is healthy: `docker compose -f docker-compose.selfhost.yaml logs redis`. This stack runs Redis without a password, so leave `REDIS_PASSWORD` as it is in the template.
+4. `SESSION_SAME_SITE` is `lax` (the default). With `strict`, email magic links arrive without the session cookie.
 
-1. `APP_URL` matches the domain in the browser exactly (scheme, domain, no trailing slash).
-2. `SESSION_DRIVER=redis` and Redis is reachable (`docker compose logs redis`).
-3. `REDIS_PASSWORD` is `null` (the string, not an empty value) if the Redis container has no auth.
+### App returns 502 right after start
 
-Also check: if `SESSION_SAME_SITE` is `strict`, email magic links will not carry the cookie. Use `lax` (the default).
-
-### App returns 502 after deploy
-
-The container is still starting. Wait 10–20 seconds for the entrypoint to finish, then check logs:
-
-```bash
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml logs app
-```
-
-If migrations are running against a large dataset, startup can take longer than the reverse proxy's upstream timeout.
+The entrypoint is still running migrations and caching. Wait 10 to 20 seconds, then check `docker compose -f docker-compose.selfhost.yaml logs app`.
 
 ### Postgres password change does not take effect
 
-`POSTGRES_PASSWORD` in the Compose environment only applies when the `postgres_data` volume is created for the first time. On an existing volume, change the password inside the running container:
+`POSTGRES_PASSWORD` only applies when the `postgres_data` volume is first created. On an existing volume, change it inside Postgres:
 
 ```bash
-docker compose exec postgres psql -U beerjudge -c "ALTER USER beerjudge PASSWORD 'newpassword';"
+docker compose -f docker-compose.selfhost.yaml exec postgres psql -U beerjudge
 ```
 
-Then update `DB_PASSWORD` in `.env.production` (and wherever Compose reads it, see above) to match, and recreate the app container with `up -d --force-recreate app`.
-
-### "network proxy declared as external, but could not be found"
-
-The external Docker network does not exist. Create it:
-
-```bash
-docker network create proxy
-```
-
-If your nginx-proxy uses a different name, add `name: <network>` under `networks.proxy` in `docker-compose.prod.yaml` on the server.
-
-### Vite manifest missing / assets 404
-
-The image bakes `public/build/` in at build time. A 404 means the pushed image was built without assets or the server still runs an older image. Rebuild and push on the development machine, then pull and `up -d app` on the server (see Updating).
+Run `ALTER USER beerjudge WITH PASSWORD '...';` at the `psql` prompt, update `DB_PASSWORD` in `.env`, and recreate the app container with `up -d --force-recreate app`.
 
 ---
 
@@ -215,22 +142,33 @@ The image bakes `public/build/` in at build time. A 404 means the pushed image w
 ### Backing up Postgres
 
 ```bash
-docker compose exec postgres pg_dump -U beerjudge beerjudge > backup-$(date +%F).sql
+docker compose -f docker-compose.selfhost.yaml exec -T postgres pg_dump -U beerjudge beerjudge > backup-$(date +%F).sql
 ```
 
 ### Restoring Postgres
 
 ```bash
-docker compose exec -T postgres psql -U beerjudge beerjudge < backup-2025-01-01.sql
+docker compose -f docker-compose.selfhost.yaml exec -T postgres psql -U beerjudge beerjudge < backup-2026-01-01.sql
 ```
 
 ### Deleting all data (destructive)
 
 ```bash
-docker compose down -v
+docker compose -f docker-compose.selfhost.yaml down -v
 ```
 
-`-v` removes named volumes including `postgres_data` and `redis_data`. All competition data is lost.
+`-v` removes the named volumes `postgres_data` and `redis_data`. All competition data is lost.
+
+---
+
+## Building the image yourself
+
+From a checkout of the repository:
+
+```bash
+docker build -t ghcr.io/oekeur/beerjudge:local .
+BEERJUDGE_VERSION=local docker compose -f docker-compose.selfhost.yaml up -d
+```
 
 ---
 
