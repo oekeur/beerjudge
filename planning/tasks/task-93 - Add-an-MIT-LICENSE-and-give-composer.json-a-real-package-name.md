@@ -4,7 +4,7 @@ title: Add an MIT LICENSE and give composer.json a real package name
 status: To Do
 assignee: []
 created_date: '2026-10-12 12:37'
-updated_date: '2026-10-12 13:02'
+updated_date: '2026-10-12 13:32'
 labels:
   - public-launch
 dependencies: []
@@ -21,10 +21,19 @@ Open-source readiness audit, item 1 (decided 2026-10-12: MIT). The repo has no L
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 LICENSE at the repo root holds the MIT text with Oscar Keur as copyright holder
-- [ ] #2 composer.json name is oekeur/beerjudge with a one-line project description
-- [ ] #3 README links the license and credits contributor rob518183
+- [ ] #1 LICENSE at the repo root holds the MIT text, copyright 2026 Oscar Keur
+- [ ] #2 composer.json name is oekeur/beerjudge with a one-line description, and composer validate --no-check-publish passes
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Full plan: planning/2026-10-12-public-launch.md (Phase 1: License and credits)
+Goal: make the repo publishable (license, credits, generic branding, self-host image, working README, v1.0.0).
+Phase 1 - License and credits: MIT LICENSE, composer name and description [AC 1,2]
+README license link and Rob credit moved to TASK-97 AC 3.
+Open (non-blocking): none
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
