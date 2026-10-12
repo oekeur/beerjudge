@@ -16,6 +16,7 @@ See [README.md](../README.md) for which env file to copy in each setup scenario.
 | `APP_KEY` | string | _(empty)_ | yes | Laravel encryption key. Generate with `php artisan key:generate --show`. Never leave blank. |
 | `APP_DEBUG` | bool | `true` | yes | Set to `false` in production. When `true`, full stack traces are sent to the browser. |
 | `APP_URL` | string | `http://localhost` | yes | The canonical URL, including scheme. Used for route generation and mail links. |
+| `APP_TIMEZONE` | string | `UTC` | no | PHP timezone identifier (e.g. `Europe/Amsterdam`) used for displayed dates and stored timestamps. Set it before the first competition: timestamps are stored without an offset, so changing it later shifts every existing time by the difference. |
 | `APP_LOCALE` | string | `en` | no | Application locale for translations. |
 | `APP_FALLBACK_LOCALE` | string | `en` | no | Fallback when a translation key is missing in `APP_LOCALE`. |
 | `APP_FAKER_LOCALE` | string | `en_US` | no | Locale used by Faker in seeders and factories. |
