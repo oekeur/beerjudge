@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "oekeur/beerjudge",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Competition management and offline-first BJCP judging for small homebrew clubs.",
+    "keywords": ["homebrew", "bjcp", "beer", "competition", "judging", "laravel", "filament"],
     "license": "MIT",
     "require": {
         "php": "^8.3",
