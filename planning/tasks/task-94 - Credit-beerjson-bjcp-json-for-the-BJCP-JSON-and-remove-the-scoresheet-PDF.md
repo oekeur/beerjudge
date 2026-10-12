@@ -4,7 +4,7 @@ title: Credit beerjson/bjcp-json for the BJCP JSON and remove the scoresheet PDF
 status: To Do
 assignee: []
 created_date: '2026-10-12 12:37'
-updated_date: '2026-10-12 12:38'
+updated_date: '2026-10-12 13:32'
 labels:
   - public-launch
 dependencies: []
@@ -26,3 +26,12 @@ Audit item 3 (decided 2026-10-12). bjcp_styleguide-2021.json is beerjson/bjcp-js
 - [ ] #3 The same notice lists the Brewers Association 2026 guidelines with the Style::SOURCE_ATTRIBUTIONS line
 - [ ] #4 docs/admin/bjcp-seeder-reference.md names the data source
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Full plan: planning/2026-10-12-public-launch.md (Phase 1: License and credits)
+Goal: make the repo publishable (license, credits, generic branding, self-host image, working README, v1.0.0).
+Phase 1 - License and credits: delete the PDF; THIRD_PARTY_NOTICES.md with beerjson MIT notice (modified) and the BA attribution string; source named in bjcp-seeder-reference.md [AC 1,2,3,4]
+Open (non-blocking): none
+<!-- SECTION:PLAN:END -->

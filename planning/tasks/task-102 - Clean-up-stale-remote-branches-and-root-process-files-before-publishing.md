@@ -4,7 +4,7 @@ title: Clean up stale remote branches and root process files before publishing
 status: To Do
 assignee: []
 created_date: '2026-10-12 12:37'
-updated_date: '2026-10-12 13:10'
+updated_date: '2026-10-12 13:32'
 labels:
   - public-launch
 dependencies: []
@@ -23,9 +23,20 @@ Audit items 4 and 8. Remote has stale branches (claude/*, worktree-*, feat/ba-st
 <!-- AC:BEGIN -->
 - [x] #1 Stale remote branches are deleted after Oscar confirms the list
 - [ ] #2 PLAN.md is removed
-- [ ] #3 CLAUDE.md has no personal absolute paths or stale sections
-- [ ] #4 planning/ has been read through for server details, and gitleaks detect reports no findings
+- [ ] #3 CLAUDE.md has no home-directory path, no stale scaffolding text and no MySQL claim, and its PWA lines match TASK-95
+- [ ] #4 planning/ contains no hostname, IP address or credential, and home and server paths in tracker files are redacted to <dev-checkout> / <server-checkout> (Oscar's OK 2026-10-12)
+- [ ] #5 gitleaks detect over the full history reports 0 leaks, or each finding is shown to be a placeholder
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Full plan: planning/2026-10-12-public-launch.md (Phase 4: Cleanup and release)
+Goal: make the repo publishable (license, credits, generic branding, self-host image, working README, v1.0.0).
+Done 2026-10-12: stale remote branches [AC 1]
+Phase 4 - Cleanup: delete PLAN.md [AC 2]; CLAUDE.md cleanup [AC 3]; planning/ scan and tracker path redaction [AC 4]; gitleaks over history [AC 5]
+Open (non-blocking): none
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
