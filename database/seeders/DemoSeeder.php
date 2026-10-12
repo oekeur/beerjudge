@@ -26,11 +26,11 @@ class DemoSeeder extends Seeder
 
         $byCode = Style::where('source', 'bjcp_beer')
             ->whereIn('code', [
-                '01A', '04A', '04B', '04C', '10A', '10B', '12A', '12C',
+                '1A', '4A', '4B', '4C', '10A', '10B', '12A', '12C',
                 '13A', '13B', '13C', '15A', '15B', '15C', '20B', '21A', '22B', '23A', '25A', '25B',
             ])->get()->keyBy('code');
 
-        $s = fn (string $code): Style => $byCode[$code] ?? Style::first();
+        $s = fn (string $code): Style => $byCode[$code] ?? Style::where('source', 'bjcp_beer')->orderBy('code')->firstOrFail();
 
         // ---------------------------------------------------------------
         // Competition 1 — Autumn Harvest 2024 (closed, all styles, 5 entries)
@@ -45,8 +45,8 @@ class DemoSeeder extends Seeder
         $comp1->judges()->attach([$m1->id, $m2->id, $m4->id]);
 
         $c1 = [
-            Entry::create(['competition_id' => $comp1->id, 'member_id' => $m3->id, 'style_id' => $s('01A')->id, 'bottle_number' => 1]),
-            Entry::create(['competition_id' => $comp1->id, 'member_id' => $m5->id, 'style_id' => $s('04A')->id, 'bottle_number' => 2]),
+            Entry::create(['competition_id' => $comp1->id, 'member_id' => $m3->id, 'style_id' => $s('1A')->id, 'bottle_number' => 1]),
+            Entry::create(['competition_id' => $comp1->id, 'member_id' => $m5->id, 'style_id' => $s('4A')->id, 'bottle_number' => 2]),
             Entry::create(['competition_id' => $comp1->id, 'member_id' => $m6->id, 'style_id' => $s('13C')->id, 'bottle_number' => 3]),
             Entry::create(['competition_id' => $comp1->id, 'member_id' => $m7->id, 'style_id' => $s('21A')->id, 'bottle_number' => 4]),
             Entry::create(['competition_id' => $comp1->id, 'member_id' => $m8->id, 'style_id' => $s('20B')->id, 'bottle_number' => 5]),
@@ -77,9 +77,9 @@ class DemoSeeder extends Seeder
             'status' => 'judging',
         ]);
 
-        $subsetA = Style::where('source', 'bjcp_beer')->whereIn('code', ['01A', '04A', '04C', '10A', '12C', '13C', '15A', '15B', '21A', '23A', '25A', '25B'])->pluck('id');
+        $subsetA = Style::where('source', 'bjcp_beer')->whereIn('code', ['1A', '4A', '4C', '10A', '12C', '13C', '15A', '15B', '21A', '23A', '25A', '25B'])->pluck('id');
         if ($subsetA->isEmpty()) {
-            $subsetA = Style::inRandomOrder()->limit(12)->pluck('id');
+            $subsetA = Style::where('source', 'bjcp_beer')->inRandomOrder()->limit(12)->pluck('id');
         }
         $comp2->styles()->attach($subsetA);
         $comp2->judges()->attach([$m1->id, $m2->id, $m5->id, $m6->id]);
@@ -94,7 +94,7 @@ class DemoSeeder extends Seeder
             // 3: partially judged (only m1 submitted)
             Entry::create(['competition_id' => $comp2->id, 'member_id' => $m6->id, 'style_id' => $inA($s('10A'))->id, 'bottle_number' => 4]),
             // 4-9: untouched
-            Entry::create(['competition_id' => $comp2->id, 'member_id' => $m7->id, 'style_id' => $inA($s('04A'))->id, 'bottle_number' => 5]),
+            Entry::create(['competition_id' => $comp2->id, 'member_id' => $m7->id, 'style_id' => $inA($s('4A'))->id, 'bottle_number' => 5]),
             Entry::create(['competition_id' => $comp2->id, 'member_id' => $m8->id, 'style_id' => $inA($s('13C'))->id, 'bottle_number' => 6]),
             Entry::create(['competition_id' => $comp2->id, 'member_id' => $m1->id, 'style_id' => $inA($s('23A'))->id, 'bottle_number' => 7]),
             Entry::create(['competition_id' => $comp2->id, 'member_id' => $m2->id, 'style_id' => $inA($s('15A'))->id, 'bottle_number' => 8]),
@@ -127,9 +127,9 @@ class DemoSeeder extends Seeder
             'status' => 'open',
         ]);
 
-        $subsetB = Style::where('source', 'bjcp_beer')->whereIn('code', ['04B', '10B', '12A', '13A', '13B', '15C', '20B', '22B'])->pluck('id');
+        $subsetB = Style::where('source', 'bjcp_beer')->whereIn('code', ['4B', '10B', '12A', '13A', '13B', '15C', '20B', '22B'])->pluck('id');
         if ($subsetB->isEmpty()) {
-            $subsetB = Style::inRandomOrder()->limit(8)->pluck('id');
+            $subsetB = Style::where('source', 'bjcp_beer')->inRandomOrder()->limit(8)->pluck('id');
         }
         $comp3->styles()->attach($subsetB);
 
@@ -137,7 +137,7 @@ class DemoSeeder extends Seeder
 
         Entry::create(['competition_id' => $comp3->id, 'member_id' => $m4->id, 'style_id' => $inB($s('13A'))->id, 'bottle_number' => 1]);
         Entry::create(['competition_id' => $comp3->id, 'member_id' => $m6->id, 'style_id' => $inB($s('20B'))->id, 'bottle_number' => 2]);
-        Entry::create(['competition_id' => $comp3->id, 'member_id' => $m8->id, 'style_id' => $inB($s('04B'))->id, 'bottle_number' => 3]);
+        Entry::create(['competition_id' => $comp3->id, 'member_id' => $m8->id, 'style_id' => $inB($s('4B'))->id, 'bottle_number' => 3]);
     }
 
     private function sheet(

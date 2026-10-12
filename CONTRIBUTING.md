@@ -101,4 +101,11 @@ The description names the behavior, not the file. "add offline sync retry" not "
 
 ## CI
 
-GitHub Actions runs three jobs on every push and pull request: formatting (Pint), static analysis (PHPStan), and tests against in-memory SQLite. All three must pass before a PR can merge.
+GitHub Actions runs these jobs on every push and pull request: formatting and static analysis (Pint, PHPStan), the PHPUnit suite against in-memory SQLite, the same suite against Postgres 16 (the production database), and the Playwright browser tests. All must pass before a PR can merge.
+
+To run the suite against Postgres locally, start a Postgres container and override the database variables; `phpunit.xml` does not force SQLite, so they win:
+
+```bash
+docker run -d --rm --name bj-pg-test -e POSTGRES_DB=beerjudge_test -e POSTGRES_USER=beerjudge -e POSTGRES_PASSWORD=secret -p 55433:5432 postgres:16
+DB_CONNECTION=pgsql DB_HOST=127.0.0.1 DB_PORT=55433 DB_DATABASE=beerjudge_test DB_USERNAME=beerjudge DB_PASSWORD=secret DB_URL= php artisan test
+```

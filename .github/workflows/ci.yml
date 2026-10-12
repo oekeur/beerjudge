@@ -44,6 +44,51 @@ jobs:
       - run: php artisan migrate --force
       - run: php artisan test --compact
 
+  tests-postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: beerjudge_test
+          POSTGRES_USER: beerjudge
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U beerjudge -d beerjudge_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    # phpunit.xml sets DB_CONNECTION=sqlite and DB_DATABASE=:memory: without
+    # force, so these job-level values win over it.
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: beerjudge_test
+      DB_USERNAME: beerjudge
+      DB_PASSWORD: secret
+      DB_URL: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: pdo_pgsql
+          coverage: none
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - run: composer install --no-interaction --prefer-dist
+      - run: cp .env.example .env
+      - run: php artisan key:generate
+      - run: php artisan migrate --force
+      - run: php artisan db:show --json | grep -q '"pgsql"'
+      - run: php artisan test --compact
+
   browser-tests:
     runs-on: ubuntu-latest
     # A stalled step (apt mirrors have hung for 12+ minutes) fails fast instead of
