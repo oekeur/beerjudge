@@ -1,10 +1,11 @@
 ---
 id: TASK-93
 title: Add an MIT LICENSE and give composer.json a real package name
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - '@claude'
 created_date: '2026-10-12 12:37'
-updated_date: '2026-10-12 13:32'
+updated_date: '2026-10-12 13:38'
 labels:
   - public-launch
 dependencies: []
@@ -21,8 +22,8 @@ Open-source readiness audit, item 1 (decided 2026-10-12: MIT). The repo has no L
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 LICENSE at the repo root holds the MIT text, copyright 2026 Oscar Keur
-- [ ] #2 composer.json name is oekeur/beerjudge with a one-line description, and composer validate --no-check-publish passes
+- [x] #1 LICENSE at the repo root holds the MIT text, copyright 2026 Oscar Keur
+- [x] #2 composer.json name is oekeur/beerjudge with a one-line description, and composer validate --no-check-publish passes
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -40,3 +41,9 @@ Open (non-blocking): none
 <!-- SECTION:NOTES:BEGIN -->
 2026-10-12: Rob (rob518183, 10 commits) agreed to publishing their contributions under MIT.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+AC 1: LICENSE added with the MIT text, copyright 2026 Oscar Keur. AC 2: composer.json name oekeur/beerjudge, project description and keywords; composer validate --no-check-publish reports valid after composer update --lock (lock diff: content-hash plus a phpdotenv source-URL metadata refresh, same commit reference). As planned.
+<!-- SECTION:FINAL_SUMMARY:END -->
