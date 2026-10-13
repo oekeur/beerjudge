@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\CompetitionStatus;
+use App\Http\Requests\StoreEntryRequest;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Member;
@@ -60,13 +61,11 @@ class EntryFormTest extends TestCase
         $comp = $this->makeOpenCompetition();
         $style = $comp->styles->first();
 
-        // Lets the request pass validation, then saves the same entry first, as a second tap would.
-        $raced = false;
-        Entry::creating(function () use (&$raced, $comp, $member, $style): void {
-            if (! $raced) {
-                $raced = true;
-                DB::table('entries')->insert(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'sort_order' => 99]);
-            }
+        // Runs after the form request has validated (the framework's own afterResolving hook
+        // is registered first), so the duplicate-style check passes and the insert then hits
+        // the unique key, as when a second tap lands between the check and the insert.
+        $this->app->afterResolving(StoreEntryRequest::class, function () use ($comp, $member, $style): void {
+            DB::table('entries')->insert(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'sort_order' => 99]);
         });
 
         $this->actingAs($member)
