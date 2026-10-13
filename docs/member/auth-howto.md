@@ -99,7 +99,7 @@ The link has either expired (15-minute window) or was already used. Request a ne
 The account may be inactive. Inactive accounts do not receive reset emails. Contact an admin to confirm your account status.
 
 **Rate limit error (429)**
-Login: 6 attempts per minute. Magic link requests: 3 per 5 minutes. Magic link verification: 5 per minute. Password reset confirmation: 5 per minute. Wait before retrying.
+Limits count per email address (or per link), so members on the same Wi-Fi do not use up each other's attempts. Login: 6 attempts per minute. Magic link requests: 3 per 5 minutes. Opening one magic link: 5 times per minute. Password reset confirmation: 5 per minute. Wait before retrying.
 
 ---
 

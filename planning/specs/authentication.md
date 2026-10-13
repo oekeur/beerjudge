@@ -11,12 +11,12 @@ Session-based auth for a closed group of known members. Three ways in: password,
 ## Password login
 
 `GET /login` — login form.
-`POST /login` — authenticates with email + password. On success, admins redirect to `/admin`; members redirect to `/`. Rate-limited to 6 attempts per minute per IP.
+`POST /login` — authenticates with email + password. On success, admins redirect to `/admin`; members redirect to `/`. Rate-limited to 6 attempts per minute per email and IP, and 30 per minute per IP.
 
 ## Magic link (passwordless)
 
 `GET /magic-link` — request form.
-`POST /magic-link` — generates a 64-char token, stores it in `magic_links` with a 15-minute expiry, dispatches `MagicLinkNotification` email. Rate-limited to 3 requests per 5 minutes per IP.
+`POST /magic-link` — generates a 64-char token, stores it in `magic_links` with a 15-minute expiry, dispatches `MagicLinkNotification` email. Rate-limited to 3 requests per 5 minutes per email and IP, and 45 per 5 minutes per IP.
 `GET /magic-link/{token}` — validates the token (not expired, not used) and renders a page with a Log in button; it does not consume the token, so mail scanners that prefetch links cannot burn it.
 `POST /magic-link/{token}` — consumes the token atomically (sets `used_at`), logs the member in (remember-me on), regenerates the session and redirects to the intended URL. Invalid, expired or used tokens on either verb redirect to `/login` with an error.
 
