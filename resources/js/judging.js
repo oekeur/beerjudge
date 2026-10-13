@@ -1,4 +1,5 @@
 import './sentry.js';
+import { captureMessage } from '@sentry/browser';
 import Alpine from 'alpinejs';
 
 if ('serviceWorker' in navigator) {
@@ -108,6 +109,8 @@ window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, st
         // Per-activation save bookkeeping (chains of in-flight saves, saves waiting per entry).
         _sync: { chains: {}, waiting: {} },
         _saveVersion: {},
+        // Rejected saves already sent to Sentry this page load, keyed "entryId:status", so a retry loop reports once.
+        _reportedFailures: {},
         styleGuide: { open: false, section: '', text: '', srm: null },
         styleInfo: { open: false, styleName: '', styleCode: '', categoryName: '', categoryDescription: '', history: '', styleComparison: '', attribution: null },
         progress: {},
@@ -433,7 +436,12 @@ window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, st
                 return;
             }
             try {
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                if (!res.ok) {
+                    const error = new Error(`HTTP ${res.status}`);
+                    error.status = res.status;
+                    error.detail = (await res.text().catch(() => '')).slice(0, 500);
+                    throw error;
+                }
                 const json = await res.json();
                 clearTimeout(timeout);
                 if (!this.isCurrent(epoch)) return;
@@ -468,8 +476,31 @@ window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, st
                     return;
                 }
                 console.error('syncToServer failed', entryId, String(err));
+                this.reportSyncFailure(entryId, err);
                 await this.markUnsynced(entryId, 'error');
             }
+        },
+
+        // The server answered but did not save the sheet, so it sits on "Retry" on this phone only.
+        // Without a report nobody but the judge would know. No-op when Sentry has no DSN.
+        reportSyncFailure(entryId, err) {
+            const status = err?.status ?? 'exception';
+            const key = `${entryId}:${status}`;
+            if (this._reportedFailures[key]) return;
+            this._reportedFailures[key] = true;
+
+            const sheet = this.sheets[entryId];
+            captureMessage(`Scoresheet save rejected (${status})`, {
+                level: 'warning',
+                tags: { area: 'judging-sync', http_status: String(status), entry_id: String(entryId) },
+                extra: {
+                    detail: err?.detail ?? String(err),
+                    sheet_status: sheet?.status,
+                    revision: sheet?.saved?.revision,
+                    client_uuid: sheet?.client_uuid,
+                    online: navigator.onLine,
+                },
+            });
         },
 
         // The server did not apply the request: it already holds this revision or a newer one, saved by
