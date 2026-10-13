@@ -23,9 +23,9 @@ class PasswordResetController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        $email = $request->input('email');
+        $email = Member::normalizeEmail($request->string('email')->toString());
 
-        $member = Member::where('email', $email)->first();
+        $member = Member::findByEmail($email);
 
         if ($member !== null && $member->is_active) {
             Password::broker()->sendResetLink(['email' => $email]);
@@ -65,7 +65,7 @@ class PasswordResetController extends Controller
         );
 
         if ($status === Password::PasswordReset) {
-            Auth::login(Member::where('email', $request->input('email'))->firstOrFail());
+            Auth::login(Member::query()->where('email', Member::normalizeEmail($request->string('email')->toString()))->firstOrFail());
 
             return redirect('/');
         }

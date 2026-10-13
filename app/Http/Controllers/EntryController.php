@@ -30,10 +30,14 @@ class EntryController extends Controller
     {
         abort_unless($competition->isOpen(), 403);
 
-        Entry::create([
+        // A double tap can race past the duplicate-style check in StoreEntryRequest::after().
+        // createOrFirst inserts inside a savepoint and, on the unique key, returns the entry
+        // the other request saved, so both requests report success.
+        Entry::createOrFirst([
             'competition_id' => $competition->id,
             'member_id' => $this->member($request)->id,
             'style_id' => $request->validated('style_id'),
+        ], [
             'brewer_notes' => $request->validated('brewer_notes'),
             'abv' => $request->validated('abv'),
         ]);

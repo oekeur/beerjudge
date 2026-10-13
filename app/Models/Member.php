@@ -8,6 +8,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -39,6 +40,28 @@ class Member extends Authenticatable implements CanResetPasswordContract, Filame
             'is_admin' => 'boolean',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Lowercases and trims an address. Emails are stored this way, so every lookup
+     * normalises its input the same way before comparing.
+     */
+    public static function normalizeEmail(string $email): string
+    {
+        return mb_strtolower(trim($email));
+    }
+
+    public static function findByEmail(string $email): ?self
+    {
+        return static::query()->where('email', self::normalizeEmail($email))->first();
+    }
+
+    /**
+     * @return Attribute<string, string>
+     */
+    protected function email(): Attribute
+    {
+        return Attribute::make(set: fn (string $value): string => self::normalizeEmail($value));
     }
 
     /**

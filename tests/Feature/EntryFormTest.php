@@ -3,11 +3,13 @@
 namespace Tests\Feature;
 
 use App\Enums\CompetitionStatus;
+use App\Http\Requests\StoreEntryRequest;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Member;
 use App\Models\Style;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class EntryFormTest extends TestCase
@@ -51,6 +53,27 @@ class EntryFormTest extends TestCase
             'member_id' => $member->id,
             'style_id' => $style->id,
         ]);
+    }
+
+    public function test_a_submit_that_loses_the_race_to_an_identical_one_reports_success(): void
+    {
+        $member = Member::factory()->create();
+        $comp = $this->makeOpenCompetition();
+        $style = $comp->styles->first();
+
+        // Runs after the form request has validated (the framework's own afterResolving hook
+        // is registered first), so the duplicate-style check passes and the insert then hits
+        // the unique key, as when a second tap lands between the check and the insert.
+        $this->app->afterResolving(StoreEntryRequest::class, function () use ($comp, $member, $style): void {
+            DB::table('entries')->insert(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'sort_order' => 99]);
+        });
+
+        $this->actingAs($member)
+            ->post(route('competitions.entries.store', $comp), ['style_id' => $style->id])
+            ->assertRedirect(route('competitions.entries.create', $comp))
+            ->assertSessionHas('success');
+
+        $this->assertSame(1, Entry::where('member_id', $member->id)->count());
     }
 
     public function test_abv_is_stored_when_provided(): void

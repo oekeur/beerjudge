@@ -87,6 +87,7 @@
     "auth.invite_used_body": "This was a one-time link and the account it was meant for has been created. It cannot be used a second time.",
     "auth.invite_expired_at": "Expired on :date",
     "auth.invite_next_step": "Ask a club admin for a new invite link and you can pick up where you left off.",
+    "auth.invite_already_logged_in": "You're already logged in, so you don't need this invite link. To register someone else, open the link in a private window or log out first.",
     "auth.invite_have_account": "Already registered?",
     "auth.magic_link_login": "Email me a login link",
     "auth.magic_link_title": "Email login link",

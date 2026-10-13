@@ -51,7 +51,7 @@ class AuthController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        $member = Member::where('email', $request->input('email'))->first();
+        $member = Member::findByEmail($request->string('email')->toString());
 
         if ($member !== null) {
             $plain = MagicLink::createForMember($member);

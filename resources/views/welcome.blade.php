@@ -9,6 +9,12 @@
     <main class="max-w-3xl mx-auto px-6 py-10">
         <h1 class="text-2xl font-semibold text-amber-900 dark:text-amber-300 mb-6">Competitions</h1>
 
+        @if (session('success'))
+            <p class="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg px-3 py-2 text-sm mb-6" data-testid="flash-success">
+                {{ is_string(session('success')) ? session('success') : '' }}
+            </p>
+        @endif
+
         @php
             $sections = [
                 'judging' => 'Judging',

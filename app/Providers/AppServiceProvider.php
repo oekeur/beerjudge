@@ -2,9 +2,14 @@
 
 namespace App\Providers;
 
+use App\Auth\MemberUserProvider;
+use App\Models\Member;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -18,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventLazyLoading(! app()->isProduction());
         Model::preventSilentlyDiscardingAttributes(! app()->isProduction());
+
+        // The provider is Member-specific (it calls Member::normalizeEmail), so it pins the model.
+        Auth::provider('members', fn (Application $app): MemberUserProvider => new MemberUserProvider($app->make(Hasher::class), Member::class));
 
         // Numeric throttle:N,M keys guests on IP alone, so those routes share one counter.
         // Named limiters give each route its own. Login also keys on email, so members

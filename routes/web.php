@@ -30,6 +30,9 @@ Route::get('/sw.js', function () {
     ]);
 });
 
+// Outside the guest group so a logged-in member gets an explanation instead of a silent redirect.
+Route::get('/join/{token}', [RegistrationController::class, 'show'])->name('register');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
@@ -37,7 +40,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/magic-link', [AuthController::class, 'sendMagicLink'])->middleware('throttle:magic-link-request');
     Route::get('/magic-link/{token}', [AuthController::class, 'showMagicLinkConfirm'])->name('auth.magic-link.verify')->middleware('throttle:magic-link-token');
     Route::post('/magic-link/{token}', [AuthController::class, 'consumeMagicLink'])->name('auth.magic-link.consume')->middleware('throttle:magic-link-token');
-    Route::get('/join/{token}', [RegistrationController::class, 'show'])->name('register');
     Route::post('/join/{token}', [RegistrationController::class, 'store']);
 
     Route::get('/password/reset', [PasswordResetController::class, 'showRequestForm'])->name('password.request');

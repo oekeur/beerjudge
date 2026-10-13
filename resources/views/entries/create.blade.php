@@ -14,7 +14,7 @@
 
         <div class="bg-white dark:bg-gray-900 rounded-xl shadow dark:shadow-black/20 p-6 mb-8">
             <h2 class="text-base font-semibold text-gray-800 dark:text-gray-200 mb-4">{{ __('entry.add_entry') }}</h2>
-            <form method="POST" action="{{ route('competitions.entries.store', $competition) }}">
+            <form method="POST" action="{{ route('competitions.entries.store', $competition) }}" x-data="{ submitting: false }" @submit="submitting = true" @pageshow.window="submitting = false">
                 @csrf
                 @if ($errors->any())
                     <p class="text-red-600 dark:text-red-400 text-sm mb-4" data-testid="form-error">{{ $errors->first() }}</p>
@@ -92,8 +92,8 @@
                         class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">{{ is_string(old('brewer_notes')) ? old('brewer_notes') : '' }}</textarea>
                     <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ __('entry.brewer_notes_hint') }}</p>
                 </div>
-                <button type="submit"
-                    class="w-full bg-amber-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-amber-700">
+                <button type="submit" :disabled="submitting"
+                    class="w-full bg-amber-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-amber-700 disabled:opacity-60 disabled:cursor-wait">
                     {{ __('entry.submit') }}
                 </button>
             </form>
