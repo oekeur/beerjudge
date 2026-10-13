@@ -8,6 +8,7 @@ use App\Models\Entry;
 use App\Models\Member;
 use App\Models\Style;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class EntryFormTest extends TestCase
@@ -51,6 +52,29 @@ class EntryFormTest extends TestCase
             'member_id' => $member->id,
             'style_id' => $style->id,
         ]);
+    }
+
+    public function test_a_submit_that_loses_the_race_to_an_identical_one_reports_success(): void
+    {
+        $member = Member::factory()->create();
+        $comp = $this->makeOpenCompetition();
+        $style = $comp->styles->first();
+
+        // Lets the request pass validation, then saves the same entry first, as a second tap would.
+        $raced = false;
+        Entry::creating(function () use (&$raced, $comp, $member, $style): void {
+            if (! $raced) {
+                $raced = true;
+                DB::table('entries')->insert(['competition_id' => $comp->id, 'member_id' => $member->id, 'style_id' => $style->id, 'sort_order' => 99]);
+            }
+        });
+
+        $this->actingAs($member)
+            ->post(route('competitions.entries.store', $comp), ['style_id' => $style->id])
+            ->assertRedirect(route('competitions.entries.create', $comp))
+            ->assertSessionHas('success');
+
+        $this->assertSame(1, Entry::where('member_id', $member->id)->count());
     }
 
     public function test_abv_is_stored_when_provided(): void
