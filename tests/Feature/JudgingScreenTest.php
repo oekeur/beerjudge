@@ -43,6 +43,42 @@ class JudgingScreenTest extends TestCase
         $response->assertDontSee('"brewer_name":"Judge"', false);
     }
 
+    public function test_tasting_numbers_are_the_same_for_every_judge(): void
+    {
+        $comp = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => 'judging']);
+        $style = Style::create(['code' => '1A', 'category_name' => 'Standard American', 'name' => 'Light Lager']);
+        $comp->styles()->attach($style->id);
+        $brewers = Member::factory()->count(3)->create();
+        $outsider = Member::factory()->create();
+        $entries = $brewers->values()->map(fn (Member $m, int $i) => Entry::create([
+            'competition_id' => $comp->id, 'member_id' => $m->id, 'style_id' => $style->id, 'bottle_number' => $i + 1, 'sort_order' => $i + 1,
+        ]));
+
+        $numbersFor = function (Member $judge) use ($comp): array {
+            $data = $this->actingAs($judge)->get("/judging/{$comp->id}")->viewData('serverData');
+
+            return collect($data['entries'])->concat($data['ownEntries'])->pluck('tasting_number', 'id')->sortKeys()->all();
+        };
+
+        $expected = [$entries[0]->id => 1, $entries[1]->id => 2, $entries[2]->id => 3];
+        $this->assertSame($expected, $numbersFor($outsider));
+        $this->assertSame($expected, $numbersFor($brewers[1]));
+    }
+
+    public function test_own_entry_is_sent_as_a_locked_row_without_brewer_or_style_guide(): void
+    {
+        [$comp, $brewer, $judge, $entry, $ownEntry] = $this->makeFixtures();
+        $data = $this->actingAs($judge)->get("/judging/{$comp->id}")->viewData('serverData');
+
+        $this->assertSame([$entry->id], collect($data['entries'])->pluck('id')->all());
+        $this->assertSame([[
+            'id' => $ownEntry->id,
+            'tasting_number' => 2,
+            'style_name' => 'Light Lager',
+            'is_own' => true,
+        ]], collect($data['ownEntries'])->all());
+    }
+
     public function test_judging_screen_returns_403_when_not_judging(): void
     {
         $comp = Competition::forceCreate(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'draft']);

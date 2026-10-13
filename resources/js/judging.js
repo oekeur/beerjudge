@@ -90,6 +90,7 @@ function emptySheet(entryId) {
 window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, styleInfo: '' }) {
     return {
         entries: serverData.entries,
+        ownEntries: serverData.ownEntries ?? [],
         bands: serverData.bands,
         sheets: {},
         sortMode: 'judging',
@@ -113,7 +114,11 @@ window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, st
         progressOpen: false,
 
         get sortedEntries() {
-            if (this.sortMode === 'judging') return this.entries;
+            // The judge's own entries hold their place in the tasting order as locked rows,
+            // so the numbers match what every other judge sees. They have no sheet and no rank.
+            if (this.sortMode === 'judging') {
+                return [...this.entries, ...this.ownEntries].sort((a, b) => a.tasting_number - b.tasting_number);
+            }
             return [...this.entries].sort((a, b) => {
                 const ta = this.sheetTotal(a.id);
                 const tb = this.sheetTotal(b.id);
