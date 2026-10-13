@@ -151,6 +151,15 @@ docker compose -f docker-compose.selfhost.yaml exec -T postgres pg_dump -U beerj
 docker compose -f docker-compose.selfhost.yaml exec -T postgres psql -U beerjudge beerjudge < backup-2026-01-01.sql
 ```
 
+### Retrying failed background jobs
+
+The results email goes through the queue worker. A job that fails three times is stored in the `failed_jobs` table:
+
+```bash
+docker compose -f docker-compose.selfhost.yaml exec app php artisan queue:failed
+docker compose -f docker-compose.selfhost.yaml exec app php artisan queue:retry all
+```
+
 ### Deleting all data (destructive)
 
 ```bash
