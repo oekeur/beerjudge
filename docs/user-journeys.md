@@ -171,6 +171,34 @@ Open observations, not decided:
 
 ## Walkthrough log
 
+### 2026-10-13
+
+Pre-launch run on main (`2f3483e`) before the first club evening. `scripts/journeys/run-all.sh`: 100 of 100 steps passed. On top of that, unhappy paths were probed with Playwright scripts against a separate seeded SQLite server at 390 px, and two code reviews (judging evening; sign-in and entries) probed the rest with PHPUnit. Each finding says how it was confirmed.
+
+**Fixed the same day**
+
+1. **Tasting numbers differed per judge.** The list was numbered after removing the judge's own entries, so Munich Helles was #4 for one judge and #5 for another. Own entries now stay in the list as locked rows and the numbers come from the full tasting order. Browser probe. PR #56.
+2. **Magic-link limits were per IP.** On one shared IP, six link requests gave `302,302,302,429,429,429`, and the third member opening a link within a minute got a 429. The limiters now key on email or link plus IP, with per-IP caps sized for about 15 members. PHPUnit probe. PR #57.
+
+**Decided not a problem**
+
+- A shared phone posts one judge's unsent sheet as the next judge's score: IndexedDB rows carry no judge id and survive logout. Browser probe: member 5's offline sheet was stored as member 1's after member 1 logged in on the same browser. Oscar, 2026-10-13: "people use their own device".
+- If outbound mail fails, `POST /magic-link` and `POST /password/reset` answer 500 and bulk approve stops after the first failure (PHPUnit with a dead SMTP port). Oscar, 2026-10-13: production mail works; he logs in with magic links.
+
+**Open, not filed**
+
+- Closing a competition while a judge has an unsent sheet: the POST gets 422 and the sheet shows "Retry" forever; reloading the judging page answers 403. Reopen judging recovers it (the queued sheet keeps its uuid). Browser probe. Related to TASK-84.
+- Email addresses are case-sensitive: an account registered as `Jan@Example.com` cannot log in as `jan@example.com`, a magic link for the lowercase address silently sends nothing, and a second account with the lowercase address is accepted. PHPUnit probe.
+- Entry form: typing a style without tapping a suggestion submits an empty `style_id` and shows "The style id field is required."; the typed text is gone. Browser probe.
+- A member waiting for approval is told "Your account is not active.", in English (registration stores locale `en`, TASK-87).
+- Only `errors/500.blade.php` exists; 403 and 429 are Laravel's bare pages (TASK-88 covers 429).
+- Opening an invite link while logged in redirects to `/` without a message. PHPUnit probe.
+- Not probed, read from code: a double tap on "Submit entry" can hit the unique key and 500 (`StoreEntryRequest::after()` is not atomic); a CSRF token made stale by logging out in another tab makes saves retry on 419 until a reload; notes over 2000 characters retry on 422.
+
+**Checked and fine**: a session wiped mid-judging (remember-me logs the judge back in and the next save answers 200), password login for 10 members on one IP, two tabs of one judge (Web Locks), out-of-range scores (buttons only), the ABV decimal comma on a phone keyboard.
+
+**Not covered**: real iOS and Android devices, the installed PWA, Postgres behind the production proxy.
+
 ### 2026-10-09
 
 Re-run of all thirteen journeys with `JOURNEY_PORT=8022 scripts/journeys/run-all.sh` on the integration branch after the fixes for findings 1 to 10 landed, on a fresh SQLite database seeded as on 2026-10-08 (headless Chromium, Playwright 1.61, `npm run build` first).
