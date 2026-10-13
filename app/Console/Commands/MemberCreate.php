@@ -19,7 +19,7 @@ class MemberCreate extends Command
         $name = is_string($nameOpt) ? $nameOpt : (is_string($nameAsked) ? $nameAsked : '');
         $emailOpt = $this->option('email');
         $emailAsked = $this->ask('Email');
-        $email = is_string($emailOpt) ? $emailOpt : (is_string($emailAsked) ? $emailAsked : '');
+        $email = Member::normalizeEmail(is_string($emailOpt) ? $emailOpt : (is_string($emailAsked) ? $emailAsked : ''));
 
         $validator = Validator::make(
             ['name' => $name, 'email' => $email],

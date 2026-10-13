@@ -17,7 +17,7 @@ class MemberDelete extends Command
         $emailAsked = $this->ask('Email');
         $email = is_string($emailArg) ? $emailArg : (is_string($emailAsked) ? $emailAsked : '');
 
-        $member = Member::where('email', $email)->first();
+        $member = Member::findByEmail($email);
 
         if (! $member) {
             $this->error("No member found with email: {$email}");

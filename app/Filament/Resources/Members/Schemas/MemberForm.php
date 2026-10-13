@@ -20,7 +20,8 @@ class MemberForm
                 TextInput::make('email')
                     ->email()
                     ->required()
-                    ->unique(ignoreRecord: true),
+                    ->unique(ignoreRecord: true)
+                    ->rules([fn (?Member $record): Closure => self::uniqueIgnoringCase($record)]),
                 TextInput::make('password')
                     ->password()
                     ->visibleOn('create')
@@ -36,6 +37,24 @@ class MemberForm
                     ->default(true)
                     ->rules([fn (?Member $record): Closure => self::keepLastActiveAdmin($record, 'members.last_admin_deactivate')]),
             ]);
+    }
+
+    /**
+     * Member stores emails lowercased, so the plain unique rule misses "Jan@x" against "jan@x"
+     * and the save would hit the database's unique index instead.
+     */
+    private static function uniqueIgnoringCase(?Member $record): Closure
+    {
+        return function (string $attribute, mixed $value, Closure $fail) use ($record): void {
+            $taken = is_string($value) && Member::query()
+                ->where('email', Member::normalizeEmail($value))
+                ->when($record !== null, fn ($query) => $query->whereKeyNot($record?->getKey()))
+                ->exists();
+
+            if ($taken) {
+                $fail(__('validation.unique'));
+            }
+        };
     }
 
     /**

@@ -21,6 +21,10 @@ class ProfileController extends Controller
         /** @var Member $member */
         $member = auth()->user();
 
+        if (is_string($email = $request->input('email'))) {
+            $request->merge(['email' => Member::normalizeEmail($email)]);
+        }
+
         /** @var array{name: string, email: string, locale: string, current_password: string|null, password: string|null} $data */
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
