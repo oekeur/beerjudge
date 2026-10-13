@@ -19,24 +19,74 @@ class RateLimitingTest extends TestCase
         Cache::flush();
     }
 
-    public function test_magic_link_verify_throttled_after_five_attempts(): void
+    public function test_one_magic_link_is_throttled_after_five_attempts(): void
     {
         for ($i = 0; $i < 5; $i++) {
-            $this->get('/magic-link/bogustoken'.$i);
+            $this->get('/magic-link/sametoken');
         }
 
-        $this->get('/magic-link/bogustoken5')->assertStatus(429);
+        $this->get('/magic-link/sametoken')->assertStatus(429);
+        $this->assertNotSame(429, $this->get('/magic-link/othertoken')->status());
     }
 
-    public function test_magic_link_token_routes_share_a_limit_of_five_across_get_and_post(): void
+    public function test_one_magic_link_shares_its_limit_of_five_across_get_and_post(): void
     {
-        $this->get('/magic-link/bogus1');
-        $this->post('/magic-link/bogus2');
-        $this->get('/magic-link/bogus3');
-        $this->post('/magic-link/bogus4');
-        $this->get('/magic-link/bogus5');
+        $this->get('/magic-link/sametoken');
+        $this->post('/magic-link/sametoken');
+        $this->get('/magic-link/sametoken');
+        $this->post('/magic-link/sametoken');
+        $this->get('/magic-link/sametoken');
 
-        $this->post('/magic-link/bogus6')->assertStatus(429);
+        $this->post('/magic-link/sametoken')->assertStatus(429);
+    }
+
+    public function test_sixty_first_magic_link_attempt_from_one_ip_is_throttled_whatever_the_token(): void
+    {
+        for ($i = 0; $i < 60; $i++) {
+            $this->assertNotSame(429, $this->get('/magic-link/guess'.$i)->status());
+        }
+
+        $this->get('/magic-link/guess60')->assertStatus(429);
+    }
+
+    public function test_fifteen_members_on_one_ip_can_each_request_and_open_a_magic_link(): void
+    {
+        Notification::fake();
+
+        foreach (Member::factory()->count(15)->create(['is_active' => true]) as $member) {
+            $this->post('/magic-link', ['email' => $member->email])->assertRedirect();
+
+            $plain = MagicLink::createForMember($member);
+            $this->get('/magic-link/'.$plain)->assertOk();
+            $this->post('/magic-link/'.$plain)->assertRedirect('/');
+
+            $this->post('/logout');
+            $this->flushSession();
+        }
+    }
+
+    public function test_fourth_magic_link_request_for_one_email_within_five_minutes_is_throttled(): void
+    {
+        Notification::fake();
+        $member = Member::factory()->create(['is_active' => true]);
+
+        for ($i = 0; $i < 3; $i++) {
+            $this->post('/magic-link', ['email' => $member->email])->assertRedirect();
+        }
+
+        $this->post('/magic-link', ['email' => strtoupper($member->email)])->assertStatus(429);
+        $this->post('/magic-link', ['email' => 'someone-else@example.com'])->assertRedirect();
+    }
+
+    public function test_forty_sixth_magic_link_request_from_one_ip_is_throttled_whatever_the_email(): void
+    {
+        Notification::fake();
+
+        for ($i = 0; $i < 45; $i++) {
+            $this->post('/magic-link', ['email' => "user{$i}@example.com"])->assertRedirect();
+        }
+
+        $this->post('/magic-link', ['email' => 'user45@example.com'])->assertStatus(429);
     }
 
     public function test_full_magic_link_login_does_not_use_up_the_link_request_limit_for_the_next_member(): void
@@ -55,7 +105,7 @@ class RateLimitingTest extends TestCase
         }
     }
 
-    public function test_password_reset_confirm_throttled_after_five_attempts(): void
+    public function test_password_reset_confirm_for_one_email_throttled_after_five_attempts(): void
     {
         $member = Member::factory()->create(['is_active' => true]);
 
@@ -74,6 +124,14 @@ class RateLimitingTest extends TestCase
             'password' => 'newpassword123',
             'password_confirmation' => 'newpassword123',
         ])->assertStatus(429);
+
+        $other = Member::factory()->create(['is_active' => true]);
+        $this->post(route('password.update'), [
+            'token' => 'invalid-token',
+            'email' => $other->email,
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ])->assertStatus(302);
     }
 
     public function test_ten_members_can_log_in_from_one_ip_within_a_minute(): void

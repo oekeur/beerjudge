@@ -21,7 +21,7 @@ Displays the login form.
 Attempts credential-based login.
 
 - **Controller:** `AuthController@login`
-- **Middleware:** `guest`, `throttle:6,1` (6 attempts per minute per IP)
+- **Middleware:** `guest`, `throttle:login` (6 attempts per minute per email and IP, 30 per minute per IP)
 
 #### Request body
 
@@ -82,7 +82,7 @@ Displays the magic link request form.
 Sends a magic link email.
 
 - **Controller:** `AuthController@sendMagicLink`
-- **Middleware:** `guest`, `throttle:3,5` (3 attempts per 5 minutes per IP)
+- **Middleware:** `guest`, `throttle:magic-link-request` (3 requests per 5 minutes per email and IP, 45 per 5 minutes per IP)
 
 #### Request body
 
@@ -100,7 +100,7 @@ Shows a confirmation page with a Log in button. Does not consume the token, so m
 
 - **Controller:** `AuthController@showMagicLinkConfirm`
 - **Route name:** `auth.magic-link.verify`
-- **Middleware:** `guest`, `throttle:magic-link-token` (5 attempts per minute per IP, shared by GET and POST on the token path)
+- **Middleware:** `guest`, `throttle:magic-link-token` (5 attempts per minute per link and IP, shared by GET and POST on the token path; 60 per minute per IP across all links)
 - **Path parameter:** `token` — the plaintext 64-character token from the email link
 
 #### Behaviour
@@ -194,7 +194,7 @@ Applies the new password.
 
 - **Controller:** `PasswordResetController@resetPassword`
 - **Route name:** `password.update`
-- **Middleware:** `guest`, `throttle:5,1` (5 attempts per minute per IP)
+- **Middleware:** `guest`, `throttle:password-reset-confirm` (5 attempts per minute per email and IP, 30 per minute per IP)
 
 #### Request body
 
