@@ -79,6 +79,15 @@ class JudgingScreenTest extends TestCase
         ]], collect($data['ownEntries'])->all());
     }
 
+    public function test_every_notes_field_caps_input_at_the_server_limit(): void
+    {
+        [$comp, $brewer, $judge] = $this->makeFixtures();
+        $html = $this->actingAs($judge)->get("/judging/{$comp->id}")->assertOk()->getContent();
+
+        $this->assertSame(5, substr_count($html, '<textarea'));
+        $this->assertSame(5, substr_count($html, 'maxlength="2000"'));
+    }
+
     public function test_judging_screen_returns_403_when_not_judging(): void
     {
         $comp = Competition::forceCreate(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'draft']);

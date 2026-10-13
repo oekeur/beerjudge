@@ -271,7 +271,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.aroma') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.aroma')]) }}"></textarea>
+                                <textarea :id="'aroma-notes-' + entry.id" class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" maxlength="2000" placeholder="{{ __('judging.placeholder.aroma') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].aroma_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.aroma')]) }}"></textarea>
                             </div>
 
                             {{-- Appearance --}}
@@ -294,7 +294,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.appearance') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.appearance')]) }}"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" maxlength="2000" placeholder="{{ __('judging.placeholder.appearance') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].appearance_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.appearance')]) }}"></textarea>
                             </div>
 
                             {{-- Flavour --}}
@@ -317,7 +317,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.flavour') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.flavour')]) }}"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" maxlength="2000" placeholder="{{ __('judging.placeholder.flavour') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].flavour_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.flavour')]) }}"></textarea>
                             </div>
 
                             {{-- Mouthfeel --}}
@@ -340,7 +340,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.mouthfeel') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.mouthfeel')]) }}"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" maxlength="2000" placeholder="{{ __('judging.placeholder.mouthfeel') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].mouthfeel_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.mouthfeel')]) }}"></textarea>
                             </div>
 
                             {{-- Overall --}}
@@ -363,7 +363,7 @@
                                     >{{ $n }}</button>
                                     @endfor
                                 </div>
-                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" placeholder="{{ __('judging.placeholder.overall') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.overall')]) }}"></textarea>
+                                <textarea class="w-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 resize-none" rows="2" maxlength="2000" placeholder="{{ __('judging.placeholder.overall') }}" :data-entry-id="entry.id" x-model="sheets[entry.id].overall_notes" @input.debounce.500ms="onInput(entry.id)" aria-label="{{ __('judging.aria.notes', ['section' => __('judging.section.overall')]) }}"></textarea>
                             </div>
 
                             {{-- Off-Flavor Descriptors --}}
