@@ -136,6 +136,21 @@
         </template>
 
         <template x-for="(entry, index) in sortedEntries" :key="entry.id">
+            <div>
+            {{-- The judge's own entry keeps its tasting number but cannot be opened or scored --}}
+            <template x-if="entry.is_own">
+                <div data-testid="own-entry-row" class="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-3 text-gray-400 dark:text-gray-500">
+                    <div class="w-6 text-right flex-shrink-0">
+                        <span class="text-xs tabular-nums" x-text="'#' + entry.tasting_number"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold">{{ __('judging.own_entry') }}</div>
+                        <div class="text-xs mt-0.5 truncate" x-text="entry.style_name"></div>
+                    </div>
+                    <span class="text-xs flex-shrink-0">{{ __('judging.own_entry_not_scored') }}</span>
+                </div>
+            </template>
+            <template x-if="!entry.is_own">
             <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
                 {{-- Entry row header --}}
@@ -418,6 +433,8 @@
                     </template>
 
                 </div>
+            </div>
+            </template>
             </div>
         </template>
     </main>

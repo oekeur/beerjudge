@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Competition;
+use App\Models\Entry;
 use App\Models\Scoresheet;
 use App\Models\Style;
 use App\Services\CompetitionRankingService;
@@ -19,13 +20,18 @@ class JudgingController extends Controller
 
         $judge = $this->member($request);
 
-        $entries = $competition->entries()
+        // Number the whole tasting order before removing the judge's own entries, so every
+        // judge sees the same number for the same beer. Own entries stay visible as locked rows.
+        $tastingOrder = $competition->entries()
             ->with(['style', 'member'])
-            ->where('member_id', '!=', $judge->id)
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get()
             ->values();
+        $tastingNumbers = $tastingOrder->mapWithKeys(fn ($e, $i) => [$e->id => $i + 1]);
+        $isOwn = fn (Entry $e): bool => $e->member_id === $judge->id;
+        $ownEntries = $tastingOrder->filter($isOwn)->values();
+        $entries = $tastingOrder->reject($isOwn)->values();
 
         $existingSheets = Scoresheet::where('judge_id', $judge->id)
             ->whereIn('entry_id', $entries->pluck('id'))
@@ -36,9 +42,9 @@ class JudgingController extends Controller
             'competitionId' => $competition->id,
             'isAdmin' => $judge->is_admin,
             'progressUrl' => route('judging.progress', $competition),
-            'entries' => $entries->map(fn ($e, $i) => [
+            'entries' => $entries->map(fn ($e) => [
                 'id' => $e->id,
-                'tasting_number' => $i + 1,
+                'tasting_number' => $tastingNumbers[$e->id],
                 'style_code' => $e->style?->code,
                 'style_name' => $e->style?->name,
                 'style_source' => $e->style?->source,
@@ -59,6 +65,12 @@ class JudgingController extends Controller
                     'history' => $e->style?->history,
                     'style_comparison' => $e->style?->style_comparison,
                 ],
+            ])->values(),
+            'ownEntries' => $ownEntries->map(fn ($e) => [
+                'id' => $e->id,
+                'tasting_number' => $tastingNumbers[$e->id],
+                'style_name' => $e->style?->name,
+                'is_own' => true,
             ])->values(),
             'bands' => array_map(fn (array $band) => [
                 'min' => $band['min'],

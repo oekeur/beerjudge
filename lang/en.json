@@ -120,6 +120,8 @@
     "judging.logout": "Log out",
     "judging.progress": "Progress",
     "judging.no_entries": "No entries to judge. Either all entries are yours, or none have been registered.",
+    "judging.own_entry": "Your entry",
+    "judging.own_entry_not_scored": "You don't score your own beer",
     "judging.saving": "Saving…",
     "judging.submitted": "Submitted ✓",
     "judging.saved": "Saved ✓",

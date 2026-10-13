@@ -120,6 +120,8 @@
     "judging.logout": "Uitloggen",
     "judging.progress": "Voortgang",
     "judging.no_entries": "Geen inzendingen te keuren. Alle inzendingen zijn van jou, of er zijn geen inzendingen geregistreerd.",
+    "judging.own_entry": "Jouw inzending",
+    "judging.own_entry_not_scored": "Je eigen bier keur je niet",
     "judging.saving": "Opslaan…",
     "judging.submitted": "Ingediend ✓",
     "judging.saved": "Opgeslagen ✓",
