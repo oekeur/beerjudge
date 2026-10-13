@@ -179,6 +179,7 @@ Pre-launch run on main (`2f3483e`) before the first club evening. `scripts/journ
 
 1. **Tasting numbers differed per judge.** The list was numbered after removing the judge's own entries, so Munich Helles was #4 for one judge and #5 for another. Own entries now stay in the list as locked rows and the numbers come from the full tasting order. Browser probe. PR #56.
 2. **Magic-link limits were per IP.** On one shared IP, six link requests gave `302,302,302,429,429,429`, and the third member opening a link within a minute got a 429. The limiters now key on email or link plus IP, with per-IP caps sized for about 15 members. PHPUnit probe. PR #57.
+3. **403 and 429 were Laravel's bare English pages.** A judge reloading after close saw "403 Forbidden" with no way back. Both now have a translated page in the standalone error-view style, with a link home. Checked in a browser at 390 px. PR #PRNUM.
 
 **Decided not a problem**
 
@@ -191,7 +192,6 @@ Pre-launch run on main (`2f3483e`) before the first club evening. `scripts/journ
 - Email addresses are case-sensitive: an account registered as `Jan@Example.com` cannot log in as `jan@example.com`, a magic link for the lowercase address silently sends nothing, and a second account with the lowercase address is accepted. PHPUnit probe.
 - Entry form: typing a style without tapping a suggestion submits an empty `style_id` and shows "The style id field is required."; the typed text is gone. Browser probe.
 - A member waiting for approval is told "Your account is not active.", in English (registration stores locale `en`, TASK-87).
-- Only `errors/500.blade.php` exists; 403 and 429 are Laravel's bare pages (TASK-88 covers 429).
 - Opening an invite link while logged in redirects to `/` without a message. PHPUnit probe.
 - Not probed, read from code: a double tap on "Submit entry" can hit the unique key and 500 (`StoreEntryRequest::after()` is not atomic); a CSRF token made stale by logging out in another tab makes saves retry on 419 until a reload; notes over 2000 characters retry on 422.
 
