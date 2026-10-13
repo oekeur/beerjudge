@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { journey, login, expect, logMark, logSince, tinker, STATE } from './lib.mjs'
+import { journey, login, expect, modal, emptySelects, logMark, logSince, tinker, STATE } from './lib.mjs'
 const { competitionId } = JSON.parse(fs.readFileSync(STATE))
 const mailsTo = text => [...text.matchAll(/To: [^\n]*?([\w.+-]+@beerjudge\.local)/g)].map(m => m[1])
 
@@ -18,10 +18,10 @@ await journey('A5-close-and-publish', async actor => {
   await step('move to closed asks for confirmation', async () => {
     globalThis.mark = logMark()
     await page.getByRole('button', { name: 'Move to Closed' }).click()
-    await expect(page.getByRole('dialog').getByRole('button', { name: /Confirm/ })).toBeVisible({ timeout: 10000 })
+    await expect(modal(page).getByRole('button', { name: /Confirm/ })).toBeVisible({ timeout: 10000 })
   })
   await step('confirm closes and mails each participant once', async () => {
-    await page.getByRole('dialog').getByRole('button', { name: /Confirm/ }).click()
+    await modal(page).getByRole('button', { name: /Confirm/ }).click()
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(1500)
     const to = mailsTo(logSince(globalThis.mark))
@@ -46,8 +46,8 @@ await journey('A5-close-and-publish', async actor => {
     await page.waitForLoadState('networkidle')
     globalThis.mark = logMark()
     await page.getByRole('button', { name: 'Resend results email' }).click()
-    const d = page.getByRole('dialog')
-    await d.getByRole('button', { name: /Select an option/ }).click()
+    const d = modal(page)
+    await emptySelects(d).click()
     await page.getByRole('option', { name: 'Member 5' }).first().click()
     await page.waitForTimeout(400)
     console.log('  resend modal buttons:', (await d.getByRole('button').allInnerTexts()).filter(Boolean).join(' | '))

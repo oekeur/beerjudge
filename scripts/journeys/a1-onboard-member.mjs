@@ -1,4 +1,4 @@
-import { journey, login, expect, logMark, logSince, tinker, baseRe } from './lib.mjs'
+import { journey, login, expect, modal, logMark, logSince, tinker, baseRe } from './lib.mjs'
 
 async function invite(page, timeBound) {
   await page.goto('/admin/members')
@@ -9,7 +9,7 @@ async function invite(page, timeBound) {
     await page.waitForTimeout(500)
     await page.locator('[id$="expires_at"]').fill('2030-01-01T12:00')
   }
-  await page.getByRole('dialog').getByRole('button', { name: /Submit|Generate|Confirm/ }).click()
+  await modal(page).getByRole('button', { name: /Submit|Generate|Confirm/ }).click()
   const body = await page.getByText(/\/join\//).first().innerText()
   return body.match(/http\S+\/join\/\S+/)[0]
 }
@@ -61,7 +61,7 @@ await journey('A1-onboard-member', async actor => {
     await admin.page.getByRole('row', { name: /Newbie One/ }).getByRole('button', { name: 'Approve' }).click()
     await admin.page.waitForLoadState('networkidle')
     await admin.page.waitForTimeout(800)
-    if (admin.page.getByRole('dialog').isVisible) { const d = admin.page.getByRole('dialog'); if (await d.isVisible()) await d.getByRole('button', { name: /Confirm|Approve/ }).click() }
+    if (modal(admin.page).isVisible) { const d = modal(admin.page); if (await d.isVisible()) await d.getByRole('button', { name: /Confirm|Approve/ }).click() }
     await admin.page.waitForTimeout(800)
     if (!/newbie1@beerjudge\.local/.test(logSince(globalThis.mark))) throw new Error('no activation mail logged')
   })
@@ -71,7 +71,7 @@ await journey('A1-onboard-member', async actor => {
     for (const n of ['Newbie Two', 'Newbie Three']) await admin.page.getByRole('row', { name: new RegExp(n) }).getByRole('checkbox').check()
     await admin.page.getByRole('button', { name: /Bulk actions|Open actions/ }).first().click().catch(() => {})
     await admin.page.getByRole('button', { name: 'Approve selected' }).click()
-    const d = admin.page.getByRole('dialog'); await admin.page.waitForTimeout(500)
+    const d = modal(admin.page); await admin.page.waitForTimeout(500)
     if (await d.isVisible()) await d.getByRole('button', { name: /Confirm|Approve/ }).click()
     await admin.page.waitForTimeout(1000)
     const n = tinker('echo App\\Models\\Member::where("email","like","newbie%")->where("is_active",true)->count();')

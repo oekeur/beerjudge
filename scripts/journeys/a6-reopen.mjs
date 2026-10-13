@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { journey, login, expect, logMark, logSince, tinker, STATE } from './lib.mjs'
+import { journey, login, expect, modal, logMark, logSince, tinker, STATE } from './lib.mjs'
 const { competitionId } = JSON.parse(fs.readFileSync(STATE))
 
 await journey('A6-reopen-and-reclose', async actor => {
@@ -12,8 +12,8 @@ await journey('A6-reopen-and-reclose', async actor => {
     await page.goto(`/admin/competitions/${competitionId}/edit`)
     await page.waitForLoadState('networkidle')
     await page.getByRole('button', { name: 'Reopen judging' }).click()
-    await expect(page.getByRole('dialog')).toContainText('no new results email')
-    await page.getByRole('dialog').getByRole('button', { name: /Confirm/ }).click()
+    await expect(modal(page)).toContainText('no new results email')
+    await modal(page).getByRole('button', { name: /Confirm/ }).click()
     await page.waitForLoadState('networkidle')
     await expect(page.getByRole('button', { name: 'Move to Closed' })).toBeVisible()
   })
@@ -23,7 +23,7 @@ await journey('A6-reopen-and-reclose', async actor => {
   })
   await step('close again sends no second results mail', async () => {
     await page.getByRole('button', { name: 'Move to Closed' }).click()
-    await page.getByRole('dialog').getByRole('button', { name: /Confirm/ }).click()
+    await modal(page).getByRole('button', { name: /Confirm/ }).click()
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(1500)
     const mails = (logSince(globalThis.mark).match(/To: /g) ?? []).length

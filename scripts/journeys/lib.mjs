@@ -4,6 +4,12 @@ import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 
 export { expect }
+
+// Filament renders confirmation modals as alertdialog and form modals as dialog (4.15+); hidden modals stay in the DOM.
+export const modal = page => page.getByRole('dialog').or(page.getByRole('alertdialog'))
+
+// Filament select triggers are comboboxes named after their field label; an empty one shows "Select an option".
+export const emptySelects = scope => scope.getByRole('combobox').filter({ hasText: 'Select an option' })
 const HERE = path.dirname(new URL(import.meta.url).pathname)
 const REPO = path.resolve(HERE, '../..')
 export const BASE = process.env.JOURNEY_URL ?? 'http://localhost:8010'

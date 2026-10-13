@@ -202,6 +202,14 @@ Pre-launch run on main (`2f3483e`) before the first club evening. `scripts/journ
 
 **Not covered**: real iOS and Android devices, the installed PWA, Postgres behind the production proxy.
 
+**Dependency update run**
+
+Re-run of all thirteen journeys with `JOURNEY_PORT=8023 scripts/journeys/run-all.sh` on the TASK-103 dependency update (Filament 4.11.7 -> 4.15.1, Livewire 3.8.1 -> 3.8.10, Laravel 13.15 -> 13.35), same setup as 2026-10-09.
+
+Result: 100 of 100 steps passed. The first run on the update failed 38 steps, all in the scripts: Filament 4.15 gives confirmation modals `role="alertdialog"` (form modals keep `role="dialog"`), and select triggers became `role="combobox"`, named after the field label instead of "Select an option". `lib.mjs` now has `modal()` and `emptySelects()` for both. The failures in M4 and M5 followed from A4 never moving the competition to Judging.
+
+The `results.json` files hold 108 entries: the 100 steps, the same 6 expected 4xx console notes as on 2026-10-09, and 2 aborted `livewire/update` requests, one each right after Move to Open (A2) and the close confirmation (A5). The steps after them passed and read the expected state from the database. Screenshots reviewed by hand: A3 entries repeater, A4 confirmation modal and dashboard, A5 resend, M4 submitted sheet.
+
 ### 2026-10-09
 
 Re-run of all thirteen journeys with `JOURNEY_PORT=8022 scripts/journeys/run-all.sh` on the integration branch after the fixes for findings 1 to 10 landed, on a fresh SQLite database seeded as on 2026-10-08 (headless Chromium, Playwright 1.61, `npm run build` first).

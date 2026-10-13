@@ -1,9 +1,9 @@
 import fs from 'node:fs'
-import { journey, login, expect, tinker, STATE } from './lib.mjs'
+import { journey, login, expect, emptySelects, tinker, STATE } from './lib.mjs'
 const { competitionId } = JSON.parse(fs.readFileSync(STATE))
 
 async function pick(page, nth, typed, text) {
-  await page.getByRole('button', { name: 'Select an option' }).nth(nth).click()
+  await emptySelects(page).nth(nth).click()
   if (typed) await page.keyboard.type(typed, { delay: 50 })
   await page.getByRole('option', { name: new RegExp(text) }).first().click()
   await page.waitForTimeout(500)
@@ -20,7 +20,7 @@ await journey('A3-manage-entries', async actor => {
   await step('add entry on behalf of member7', async () => {
     await page.getByRole('button', { name: 'Add to entries' }).click()
     await page.waitForTimeout(800)
-    const before = await page.getByRole('button', { name: 'Select an option' }).count()
+    const before = await emptySelects(page).count()
     await pick(page, before - 2, 'Member', 'Member 7|Member Seven')
     await pick(page, 0, null, 'Stout|IPA')
     await page.locator('[id$=".abv"]').last().fill('8.1')
@@ -44,7 +44,7 @@ await journey('A3-manage-entries', async actor => {
   await step('Sort by ABV keeps an unsaved complete row and the Entries tab', async () => {
     await page.getByRole('button', { name: 'Add to entries' }).click()
     await page.waitForTimeout(800)
-    const before = await page.getByRole('button', { name: 'Select an option' }).count()
+    const before = await emptySelects(page).count()
     await pick(page, before - 2, 'Member', 'Member 8|Member Eight')
     await pick(page, 0, null, 'Stout|IPA')
     await page.locator('[id$=".abv"]').last().fill('3.3')
