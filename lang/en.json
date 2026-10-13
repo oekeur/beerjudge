@@ -273,5 +273,11 @@
     "feedback.errorNoClientText": "No client set up, cannot send feedback.",
     "feedback.errorTimeoutText": "Unable to determine whether the feedback was sent.",
     "feedback.errorForbiddenText": "Unable to send feedback. This domain may not be on the list of allowed domains.",
-    "feedback.errorGenericText": "Unable to send feedback. This may be a network problem, or an ad-blocker is blocking it."
+    "feedback.errorGenericText": "Unable to send feedback. This may be a network problem, or an ad-blocker is blocking it.",
+
+    "errors.403.title": "No access to this page",
+    "errors.403.body": "You can't open this page right now. If you were judging, judging for this competition has probably been closed.",
+    "errors.429.title": "Too many attempts",
+    "errors.429.body": "You tried this too often in a short time. Wait a few minutes and try again.",
+    "errors.back_home": "Back to home"
 }
