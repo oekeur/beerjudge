@@ -1,5 +1,17 @@
+import { execFileSync } from 'child_process'
+import * as path from 'path'
+import { fileURLToPath } from 'url'
 import { test, expect } from '@playwright/test'
-import { login, loadFixtures, clearIndexedDB } from './helpers'
+import { login, loadFixtures, clearIndexedDB, JUDGE_EMAIL } from './helpers'
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
+
+// Other specs leave submitted sheets behind; a submitted entry opens as a read-only summary.
+test.beforeEach(() => {
+    execFileSync('php', ['artisan', 'tinker', '--env=browser-test',
+        `--execute=\\App\\Models\\Scoresheet::whereHas('judge', fn ($q) => $q->where('email', '${JUDGE_EMAIL}'))->delete();`,
+    ], { cwd: root })
+})
 
 // A well-formed fake DSN injected into the judging page only, so Sentry initialises there and
 // its ingest requests can be caught below. No network is needed; nothing reaches sentry.io.
@@ -34,6 +46,7 @@ test('a rejected save is reported to Sentry once, with the server reason', async
     await clearIndexedDB(page)
     await page.goto(`/judging/${judgingCompetitionId}`)
     await page.waitForSelector('[data-testid="entry-expand-button"]', { state: 'visible' })
+    await page.waitForLoadState('networkidle')
     await page.getByTestId('entry-expand-button').first().click()
     await page.locator('[role="group"][aria-label="Aroma score, 0 to 12"]:visible').first()
         .locator('button').filter({ hasText: /^9$/ }).click()
