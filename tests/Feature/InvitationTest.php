@@ -101,6 +101,20 @@ class InvitationTest extends TestCase
         $this->assertDatabaseMissing('members', ['email' => 'toolate@example.com']);
     }
 
+    public function test_logged_in_member_opening_an_invite_is_told_why_they_land_on_home(): void
+    {
+        $invitation = $this->createInvitation();
+        $member = Member::factory()->create(['locale' => 'nl']);
+
+        $this->actingAs($member)->get('/join/'.$invitation->token)
+            ->assertRedirect(route('home'));
+
+        $this->actingAs($member)->followingRedirects()->get('/join/'.$invitation->token)
+            ->assertOk()
+            ->assertSee('Je bent al ingelogd, dus deze uitnodigingslink heb je niet nodig.');
+        $this->assertNull($invitation->fresh()->used_at);
+    }
+
     public function test_unknown_token_returns_404(): void
     {
         $this->get('/join/doesnotexist')->assertNotFound();

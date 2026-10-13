@@ -87,6 +87,7 @@
     "auth.invite_used_body": "Dit was een eenmalige link en het account waarvoor hij bedoeld was, is aangemaakt. Hij kan geen tweede keer gebruikt worden.",
     "auth.invite_expired_at": "Verlopen op :date",
     "auth.invite_next_step": "Vraag een clubbeheerder om een nieuwe uitnodigingslink, dan kun je alsnog verder.",
+    "auth.invite_already_logged_in": "Je bent al ingelogd, dus deze uitnodigingslink heb je niet nodig. Wil je iemand anders laten registreren, open de link dan in een privévenster of log eerst uit.",
     "auth.invite_have_account": "Al geregistreerd?",
     "auth.magic_link_login": "Stuur mij een inloglink per e-mail",
     "auth.magic_link_title": "E-mail inloglink",

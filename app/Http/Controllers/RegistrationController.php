@@ -6,13 +6,18 @@ use App\Http\Requests\RegisterMemberRequest;
 use App\Models\Invitation;
 use App\Models\Member;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class RegistrationController extends Controller
 {
-    public function show(string $token): View|Response
+    public function show(string $token, Request $request): View|Response|RedirectResponse
     {
+        if ($request->user() !== null) {
+            return redirect()->route('home')->with('success', __('auth.invite_already_logged_in'));
+        }
+
         $invitation = $this->findInvitation($token);
 
         if (! $invitation->isValid()) {
