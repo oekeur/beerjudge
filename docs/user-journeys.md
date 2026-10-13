@@ -194,7 +194,8 @@ Pre-launch run on main (`2f3483e`) before the first club evening. `scripts/journ
 
 - Closing a competition while a judge has an unsent sheet: the POST gets 422 and the sheet shows "Retry" forever; reloading the judging page answers 403. Reopen judging recovers it (the queued sheet keeps its uuid). Browser probe. Related to TASK-84.
 - Entry form: typing a style without tapping a suggestion submits an empty `style_id` and shows "The style id field is required."; the typed text is gone. Browser probe.
-- A member waiting for approval is told "Your account is not active.", in English (registration stores locale `en`, TASK-87).
+- A member waiting for approval is told "Your account is not active.", in English (registration stores locale `en`, TASK-87). Filed as TASK-109.
+- Language gaps for a Dutch member, found by rendering every member page in nl and en and diffing the text: the home page (TASK-107), the results, score sheet and judge report pages (TASK-108) and the registration notice (TASK-109) are hardcoded English; every new member is stored as `en` (TASK-87). Oscar, 2026-10-13: "our group is mostly English, so it's fine for now". Login, magic link, password reset, profile, the entry form and the judging screen are fully translated.
 - Not probed, read from code: a CSRF token made stale by logging out in another tab makes saves retry on 419 until a reload.
 
 **Checked and fine**: a session wiped mid-judging (remember-me logs the judge back in and the next save answers 200), password login for 10 members on one IP, two tabs of one judge (Web Locks), out-of-range scores (buttons only), the ABV decimal comma on a phone keyboard.
