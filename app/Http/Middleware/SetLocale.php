@@ -33,7 +33,11 @@ class SetLocale
         return $next($request);
     }
 
-    private static function defaultLocale(): string
+    /**
+     * Also read by mail sent from guest routes, where config('app.locale') already holds
+     * the guest's Accept-Language match.
+     */
+    public static function defaultLocale(): string
     {
         return self::$defaultLocale ??= Config::string('app.locale');
     }

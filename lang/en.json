@@ -42,6 +42,9 @@
     "member.activated_subject": "Your account is approved",
     "member.activated_intro": "An admin has approved your account. You can now log in.",
     "member.activated_action": "Log in",
+    "member.pending_mail_subject": "New member awaiting approval",
+    "member.pending_mail_intro": ":name (:email) registered through an invitation and is waiting for approval.",
+    "member.pending_mail_action": "Review pending members",
 
     "style.section.identity": "Identity",
     "style.section.vital_statistics": "Vital Statistics",
