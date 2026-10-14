@@ -4,7 +4,7 @@ title: One of two judges added after closing got no judge report button
 status: To Do
 assignee: []
 created_date: '2026-10-14 08:25'
-updated_date: '2026-10-14 09:04'
+updated_date: '2026-10-14 10:30'
 labels:
   - results
 dependencies: []
@@ -41,3 +41,9 @@ Separate UX gap: a judge without a sheet link on the home page has no direct pat
 
 2026-10-14: parked by Oscar ("it isn't too big of a deal"). Open facts: Oscar says the member without the button was member 23, who does have a competition_judge row now; he confirmed both added judges showed in the list after saving. Member 25 scored but has no row, and it is unknown whether they were one of the two added. Unasked: whether member 23 looked before being added, or only opened their own sheet. The UX gap (no direct path to the judge report) stands regardless.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Archived 2026-10-14 by Oscar's call: parked as not a big deal. The cause of the missing judge report button was not confirmed (see notes). The judge-list gate and stale-save fixes in TASK-112 and TASK-113 cover the likely causes.
+<!-- SECTION:FINAL_SUMMARY:END -->
