@@ -1,9 +1,10 @@
 ---
 id: TASK-85
 title: Rate-limit the password reset email request
-status: Backlog
+status: Planned
 assignee: []
 created_date: '2026-10-09 13:16'
+updated_date: '2026-10-14 14:32'
 labels:
   - security-hardening
   - auth
@@ -12,7 +13,7 @@ documentation:
   - docs/user-journeys.md
 priority: medium
 type: bug
-ordinal: 82000
+ordinal: 111000
 ---
 
 ## Description
@@ -26,3 +27,10 @@ POST /password/reset (send reset link) has no throttle, so anyone can trigger un
 - [ ] #1 POST /password/reset uses a named limiter keyed by its name plus IP (and email), covered by a test like RateLimitingTest
 - [ ] #2 The response stays identical whether or not the address exists
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Full plan: planning/2026-10-14-throttle-password-reset-request.md
+Phase 1: password-reset-request named limiter (3 per 5 min per email+IP, 45 per IP) on POST /password/reset, tests in RateLimitingTest proving 429 and identical responses for member and unknown address, docs update [AC 1,2]
+<!-- SECTION:PLAN:END -->
