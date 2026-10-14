@@ -4,10 +4,11 @@ title: Lock the entries repeater once judging starts
 status: Planned
 assignee: []
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 14:35'
+updated_date: '2026-10-14 14:57'
 labels:
   - v1
-dependencies: []
+dependencies:
+  - TASK-107
 documentation:
   - docs/user-journeys.md
 priority: medium

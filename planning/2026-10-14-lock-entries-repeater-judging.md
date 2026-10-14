@@ -42,4 +42,7 @@ Tasks:
 
 ## Open decisions
 
+**Decided by Oscar, 2026-10-14:** keep the full lock (field edits included) from Judging on.
+
+
 - [x] Lock field edits as well as add/remove/reorder (planner's call, 2026-10-14): AC 1 says "read-only repeater or equivalent", and a style or member change after judging starts would alter what judges already scored. Oscar can overrule; the cost is that a mistyped entry cannot be fixed from the admin once judging starts.

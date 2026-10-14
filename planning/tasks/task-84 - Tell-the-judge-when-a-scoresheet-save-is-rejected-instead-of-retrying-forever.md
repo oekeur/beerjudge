@@ -4,10 +4,11 @@ title: Tell the judge when a scoresheet save is rejected instead of retrying for
 status: Planned
 assignee: []
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 14:33'
+updated_date: '2026-10-14 14:57'
 labels:
   - pwa
-dependencies: []
+dependencies:
+  - TASK-107
 documentation:
   - docs/user-journeys.md
 priority: medium

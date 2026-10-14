@@ -48,6 +48,9 @@ Unknowns:
 
 ## Open decisions
 
+**Decided by Oscar, 2026-10-14:** raw exports and mapping CSVs stay out of git under the gitignored backfill/data/.
+
+
 - [ ] Raw Google Forms `.xlsx` exports, extracted JSON (judges' free-text notes) and the names/beers mapping CSVs (first names, production member IDs). Recommended: keep out of git, under gitignored `backfill/data/`; the plan does this by default (the old branch keeps them as well). Alternative: commit them (repo is private). Oscar's call.
 - [ ] Oscar completes (and corrects the 2015-era codes 7C, 8C, 27A to 2021 codes or `custom:`) `backfill/data/names_to_map.csv` and `beers_to_map.csv` (member IDs from production) before the production run; that run is a separate task.
 - [ ] Drop `stash@{0}` and delete `feat/backfill-historical-competitions` once the PR is merged and the data is confirmed copied (offered, not done).

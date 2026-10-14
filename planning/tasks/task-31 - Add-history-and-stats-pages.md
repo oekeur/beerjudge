@@ -4,10 +4,11 @@ title: Add history and stats pages
 status: Planned
 assignee: []
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-14 14:34'
+updated_date: '2026-10-14 14:57'
 labels:
   - history-stats
-dependencies: []
+dependencies:
+  - TASK-107
 documentation:
   - planning/roadmap.md
   - planning/requirements/homebrew-competition-enhancements-prd.md

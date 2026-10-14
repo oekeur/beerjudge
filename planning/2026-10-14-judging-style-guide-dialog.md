@@ -44,4 +44,7 @@ Unknowns:
 
 ## Open decisions
 
+**Decided by Oscar, 2026-10-14:** both bottom sheets (section guidelines and style info) are in scope.
+
+
 - [ ] Both sheets or only the section guideline sheet (planned: both, see Scope decision). Low impact.
