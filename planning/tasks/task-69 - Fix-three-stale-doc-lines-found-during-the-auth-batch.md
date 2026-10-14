@@ -1,15 +1,16 @@
 ---
 id: TASK-69
 title: Fix three stale doc lines found during the auth batch
-status: Backlog
+status: Planned
 assignee: []
 created_date: '2026-10-07 21:40'
+updated_date: '2026-10-14 14:31'
 labels:
   - docs
 dependencies: []
 priority: low
 type: docs
-ordinal: 69000
+ordinal: 108000
 ---
 
 ## Description
@@ -20,5 +21,15 @@ docs/admin/filament-overview-explanation.md:64 says the Authenticate middleware 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The three lines match the code
+- [ ] #1 The three named lines, and the other doc lines repeating the same claims (env-reference, docker-howto, active-member-middleware-reference), match the code; the rg check in the plan prints nothing
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Full plan: planning/2026-10-14-fix-stale-doc-lines.md (Phase 1: Correct the stale lines)
+Goal: make the three stale doc lines and their same-claim copies match the code.
+Phase 1 - Correct the stale lines: Authenticate/canAccessPanel/RequireActiveMember wording, drop batch-print, rewrite SESSION_SAME_SITE paragraph with no claim about strict, fix env-reference, docker-howto, active-member-middleware-reference; docs/private edit is local only; commit straight to main [AC 1]
+[RISK] none. Non-blocking unknown: whether strict now works is untested; edits avoid claiming either way.
+Open (non-blocking): none
+<!-- SECTION:PLAN:END -->
