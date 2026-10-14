@@ -28,7 +28,7 @@ test('judges added and removed on the edit page persist without pressing Save', 
     const editUrl = `/admin/competitions/${openCompetitionId}/edit`
     await page.goto(editUrl)
     await page.getByRole('tab', { name: 'Dashboard' }).click()
-    await page.getByRole('button', { name: 'Select an option' }).click()
+    await page.getByRole('combobox', { name: 'Judges' }).click()
     await page.getByRole('option', { name: 'Browser Brewer' }).click()
     await expect(removeBrewer).toBeVisible()
     // The change is saved by the live update request; wait for it to settle before reloading.
