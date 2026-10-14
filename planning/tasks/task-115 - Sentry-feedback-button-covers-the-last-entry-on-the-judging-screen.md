@@ -1,10 +1,11 @@
 ---
 id: TASK-115
 title: Sentry feedback button covers the last entry on the judging screen
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-14 08:25'
-updated_date: '2026-10-14 09:37'
+updated_date: '2026-10-14 11:29'
 labels:
   - sentry
 dependencies:
