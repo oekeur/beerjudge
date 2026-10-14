@@ -114,7 +114,7 @@
 
     {{-- Entry list --}}
     @if($isJudge)
-    <main x-show="ready && !inactive" class="max-w-lg mx-auto px-4 py-4 space-y-3">
+    <main x-show="ready && !inactive" class="max-w-lg mx-auto px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] space-y-3">
 
         <div class="flex items-center justify-between">
             <span class="text-xs text-gray-400">{{ __('judging.sort_label') }}</span>
