@@ -17,7 +17,7 @@ Decisions taken (Oscar, 2026-10-08): env var + config, not a members column; tha
 Base branch: start from `main` after `improve/journey-walkthrough-fixes` has landed. That branch edits `lang/en.json`, `lang/nl.json` and `tests/Feature/InvitationTest.php`, which this task also edits.
 
 Tasks:
-- [ ] Add `'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL')` to `config/app.php` (blank string treated as unset) and document it in `.env.example` and `.env.docker.example`. Add a queued (`ShouldQueue`) mail notification, sent on demand (`Notification::route('mail', ...)`) from `RegistrationController::store` after the member is created. A failed dispatch is passed to `report()` and does not fail the registration. Mail text in EN and NL in `lang/*.json`. Locale: the locale of the member whose email equals the notification address if one exists, else the configured default captured by `SetLocale` (make its `defaultLocale()` reachable). Do not use `config('app.locale')` at send time: on guest routes `SetLocale` has already overwritten it with the registrant's Accept-Language. The link targets the Members index with `filters[pending_approval][isActive]=true` (Filament v4 binds table filters as `#[Url(as: 'filters')]`, see `vendor/filament/filament/src/Resources/Pages/ListRecords.php`). Update `planning/specs/authentication.md` (Invitation-based registration) and `planning/specs/members.md`. Done when these feature tests pass:
+- [x] Add `'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL')` to `config/app.php` (blank string treated as unset) and document it in `.env.example` and `.env.docker.example`. Add a queued (`ShouldQueue`) mail notification, sent on demand (`Notification::route('mail', ...)`) from `RegistrationController::store` after the member is created. A failed dispatch is passed to `report()` and does not fail the registration. Mail text in EN and NL in `lang/*.json`. Locale: the locale of the member whose email equals the notification address if one exists, else the configured default captured by `SetLocale` (make its `defaultLocale()` reachable). Do not use `config('app.locale')` at send time: on guest routes `SetLocale` has already overwritten it with the registrant's Accept-Language. The link targets the Members index with `filters[pending_approval][isActive]=true` (Filament v4 binds table filters as `#[Url(as: 'filters')]`, see `vendor/filament/filament/src/Resources/Pages/ListRecords.php`). Update `planning/specs/authentication.md` (Invitation-based registration) and `planning/specs/members.md`. Done when these feature tests pass:
   (a) key set: `Notification::assertSentOnDemand` to that address; the rendered mail contains the new member's name and email and a URL containing `filters[pending_approval][isActive]=true` (URL-decoded);
   (b) a Livewire test loads `ListMembers` with that query string and asserts the inactive member is listed and an active member is not;
   (c) key unset and key `""`: nothing sent, member still created inactive;
@@ -38,7 +38,7 @@ Unknowns:
 **Outcome:** prod runs Phase 1's code with `ADMIN_NOTIFICATION_EMAIL=o.e.keur@gmail.com`, and a real registration has produced a delivered email.
 
 Tasks:
-- [ ] Oscar: before building, check what else on `main` ships with this deploy (`git log` since the last deployed image; the entrypoint runs `migrate --force`). Build and push per `README.md` Deploy. Add `ADMIN_NOTIFICATION_EMAIL=o.e.keur@gmail.com` to the server's `.env.production`. Run `docker compose -f docker-compose.yaml -f docker-compose.prod.yaml pull app && docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d --force-recreate app`. Register once through a fresh single-use invite with a throwaway address. Done when: `php artisan config:show app.admin_notification_email` in the app container prints the address, the pending-approval mail arrives at o.e.keur@gmail.com, and the throwaway member is deleted with `php artisan member:delete <email>` (interactive: it prompts for the email, a choice and a confirmation, so run it with a TTY exec). [AC 7]
+- [x] Oscar: before building, check what else on `main` ships with this deploy (`git log` since the last deployed image; the entrypoint runs `migrate --force`). Build and push per `README.md` Deploy. Add `ADMIN_NOTIFICATION_EMAIL=o.e.keur@gmail.com` to the server's `.env.production`. Run `docker compose -f docker-compose.yaml -f docker-compose.prod.yaml pull app && docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d --force-recreate app`. Register once through a fresh single-use invite with a throwaway address. Done when: `php artisan config:show app.admin_notification_email` in the app container prints the address, the pending-approval mail arrives at o.e.keur@gmail.com, and the throwaway member is deleted with `php artisan member:delete <email>` (interactive: it prompts for the email, a choice and a confirmation, so run it with a TTY exec). [AC 7]
   Context:
 
 Unknowns:
@@ -63,7 +63,7 @@ Runbook. Compose prefix `dc` = `docker compose -f docker-compose.yaml -f docker-
 4. Re-run step 2's member query: it returns only active demo members, if any.
 
 Tasks:
-- [ ] Oscar runs the runbook on prod. Done when step 4 returns no row with `is_active = false` and the step-1 dump file is non-empty. [AC 8]
+- [x] Oscar runs the runbook on prod. Done when step 4 returns no row with `is_active = false` and the step-1 dump file is non-empty. [AC 8]
   Context:
 
 Unknowns:
@@ -75,4 +75,4 @@ Unknowns:
 
 ## Open decisions
 
-- [ ] What to do with any ACTIVE demo members the listing shows (deactivate, delete or keep). DemoSeeder creates member1 and member2 as active admins with password `password`.
+- [x] What to do with any ACTIVE demo members the listing shows (deactivate, delete or keep). DemoSeeder creates member1 and member2 as active admins with password `password`. Decided 2026-10-09: members 2-8 deleted, member1 kept.
