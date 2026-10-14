@@ -4,6 +4,7 @@ title: Saving the competition edit page overwrites the judge list with stale sta
 status: To Do
 assignee: []
 created_date: '2026-10-14 08:25'
+updated_date: '2026-10-14 08:40'
 labels:
   - judging-progress
 dependencies: []
@@ -30,3 +31,9 @@ Recommended fix: stop syncing the full list on form save. Apply each change as i
 - [ ] #2 Removing a judge from the edit page is not undone by a save from a second, older copy of the page
 - [ ] #3 Adding and removing judges from the edit page still works and is covered by Livewire feature tests, including the stale-page case
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-14: Oscar had the edit page open on one device and one tab only that evening, so the two-copies explanation for the judge removal that took several tries is ruled out. That removal stays unexplained. The stale-save bug itself is confirmed and matters more once TASK-112 makes self-registration the only way to become a judge: any admin save from a page opened before a judge registered drops that judge.
+<!-- SECTION:NOTES:END -->

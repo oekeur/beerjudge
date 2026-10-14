@@ -4,6 +4,7 @@ title: One of two judges added after closing got no judge report button
 status: To Do
 assignee: []
 created_date: '2026-10-14 08:25'
+updated_date: '2026-10-14 08:40'
 labels:
   - results
 dependencies: []
@@ -30,3 +31,9 @@ Separate UX gap: a judge without a sheet link on the home page has no direct pat
 - [ ] #2 Every member in competition_judge for a closed competition sees the judge report button on the results index
 - [ ] #3 A judge can reach their judge report from the home page or the results email without going through the member sheet
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-14: Oscar used one device and one tab, so a save from a second, older copy of the edit page (TASK-113) did not drop the second judge. An add that was never saved is now the leading candidate; the production probe still decides.
+<!-- SECTION:NOTES:END -->
