@@ -1,11 +1,11 @@
 ---
 id: TASK-113
 title: Saving the competition edit page overwrites the judge list with stale state
-status: In Progress
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-10-14 08:25'
-updated_date: '2026-10-14 10:30'
+updated_date: '2026-10-14 10:56'
 labels:
   - judging-progress
 dependencies: []
@@ -28,11 +28,11 @@ Recommended fix: stop syncing the full list on form save. Apply each change as i
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A judge who registers while an admin has the edit page open is still a judge after the admin saves
-- [ ] #2 Removing a judge on one copy of the edit page is not undone by a save from a second copy loaded earlier
-- [ ] #3 Saving the edit page with no change to the judges field leaves competition_judge unchanged
-- [ ] #4 The judges field is not shown on the Create page
-- [ ] #5 In a browser, adding or removing a judge and then reloading without pressing Save shows the change persisted (Playwright, or handed to Oscar with the exact steps)
+- [x] #1 A judge who registers while an admin has the edit page open is still a judge after the admin saves
+- [x] #2 Removing a judge on one copy of the edit page is not undone by a save from a second copy loaded earlier
+- [x] #3 Saving the edit page with no change to the judges field leaves competition_judge unchanged
+- [x] #4 The judges field is not shown on the Create page
+- [x] #5 In a browser, adding or removing a judge and then reloading without pressing Save shows the change persisted (Playwright, or handed to Oscar with the exact steps)
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -50,3 +50,17 @@ Open (non-blocking): none
 <!-- SECTION:NOTES:BEGIN -->
 2026-10-14: Oscar had the edit page open on one device and one tab only that evening, so the two-copies explanation for the judge removal that took several tries is ruled out. That removal stays unexplained. The stale-save bug itself is confirmed and matters more once TASK-112 makes self-registration the only way to become a judge: any admin save from a page opened before a judge registered drops that judge.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Landed in 411e340 (PR #70).
+AC1: judges Select no longer saves via relationship (saveRelationshipsUsing(null) after relationship()); test_judge_registered_while_page_is_open_survives_save.
+AC2: live select attaches/detaches only the diff against $old; test_removal_on_one_page_is_not_undone_by_save_from_stale_page (two page instances).
+AC3: test_save_without_judge_change_leaves_judges_unchanged.
+AC4: field visible only when the record exists; test_judges_field_is_hidden_on_create_and_shown_on_edit.
+AC5: Playwright spec admin-competition-judges.spec.ts adds and removes a judge and reloads without Save; passed locally and in CI browser-tests.
+Gates: Probe 2 4/5 new tests fail at base; Pass A CLEAN; Pass B CLEAN (7 extra probes: stale page, validation error, lifecycle action, inactive judge, nested-key client updates, create page). CI 4/4 green.
+Notes: a judge added by the admin at the same millisecond as a self-registration could 500 on the composite key (pre-existing race). A live judge edit may trigger Filament's unsaved-changes warning (unverified).
+As planned.
+<!-- SECTION:FINAL_SUMMARY:END -->

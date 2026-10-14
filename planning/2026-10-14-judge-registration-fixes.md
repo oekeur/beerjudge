@@ -14,7 +14,7 @@ Runs first: once Phase 2 makes registration the only way to score, a stale save 
 **Outcome:** Adding or removing a judge on the competition edit page writes that one change on the change itself; Save never touches `competition_judge`.
 
 Tasks:
-- [ ] TASK-113: replace sync-on-save with per-change attach/detach on a live select. Done when: [AC 1-5] pass; Livewire feature tests cover the stale-page cases; the full PHPUnit suite, PHPStan and `npx playwright test` pass.
+- [x] TASK-113: replace sync-on-save with per-change attach/detach on a live select. Done when: [AC 1-5] pass; Livewire feature tests cover the stale-page cases; the full PHPUnit suite, PHPStan and `npx playwright test` pass.
   Context (verified 2026-10-14): `CompetitionForm.php` Dashboard tab, `Select::make('judges')->multiple()->relationship('judges','name')`. Filament injects `$old` into `afterStateUpdated` (`vendor/filament/schemas/src/Components/Concerns/HasState.php:225`). `Select::relationship()` installs its own `saveRelationshipsUsing` (`vendor/filament/forms/src/Components/Select.php:955`), so `->saveRelationshipsUsing(null)` must come after `->relationship()`; hydration comes from `loadStateFromRelationshipsUsing` (Select.php:798) and is unaffected. Without `->live()` the state is deferred and the change only reaches the server on the next request; a Livewire `->set()` test cannot tell the difference, hence AC 5's browser check. TASK-111 (plan `2026-10-13-fix-edit-competition-n1.md`) also edits `CompetitionForm.php` and pins EditCompetition save query counts; whichever lands second rebases and re-runs those tests.
 
 Unknowns:
