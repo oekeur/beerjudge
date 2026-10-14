@@ -1,12 +1,14 @@
 ---
 id: TASK-115
 title: Sentry feedback button covers the last entry on the judging screen
-status: To Do
+status: Planned
 assignee: []
 created_date: '2026-10-14 08:25'
+updated_date: '2026-10-14 09:37'
 labels:
   - sentry
-dependencies: []
+dependencies:
+  - TASK-112
 priority: medium
 type: bug
 ordinal: 112000
@@ -22,6 +24,16 @@ Fix: add bottom padding to the entry list so the last entry scrolls clear of the
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 With the list scrolled to the end, the last entry header is fully tappable and not covered by the feedback button on a phone-width viewport
-- [ ] #2 Verified in a browser at phone width (Playwright or manual), not only by reading the markup
+- [ ] #1 With a fake Sentry DSN at a 390x844 viewport, the feedback button is present and, scrolled to the end, the last entry header bounding box does not intersect it
+- [ ] #2 Checked in a browser (the Playwright check of AC 1 counts), not only by reading the markup
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Full plan: planning/2026-10-14-judge-registration-fixes.md (Phase 3: bottom clearance for the Sentry button)
+Goal: The last entry on the judging screen scrolls clear of the floating feedback button.
+Phase 3 - bottom padding plus safe-area inset on <main> in judging/show.blade.php; Playwright check with a fake DSN (recipe in admin-sentry.spec.ts) [AC 1,2]
+Runs after TASK-112 (same Blade file).
+Open (non-blocking): none
+<!-- SECTION:PLAN:END -->

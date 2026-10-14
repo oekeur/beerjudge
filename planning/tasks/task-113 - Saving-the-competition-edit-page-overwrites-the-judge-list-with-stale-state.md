@@ -1,10 +1,10 @@
 ---
 id: TASK-113
 title: Saving the competition edit page overwrites the judge list with stale state
-status: To Do
+status: Planned
 assignee: []
 created_date: '2026-10-14 08:25'
-updated_date: '2026-10-14 08:40'
+updated_date: '2026-10-14 09:37'
 labels:
   - judging-progress
 dependencies: []
@@ -28,9 +28,21 @@ Recommended fix: stop syncing the full list on form save. Apply each change as i
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
 - [ ] #1 A judge who registers while an admin has the edit page open is still a judge after the admin saves
-- [ ] #2 Removing a judge from the edit page is not undone by a save from a second, older copy of the page
-- [ ] #3 Adding and removing judges from the edit page still works and is covered by Livewire feature tests, including the stale-page case
+- [ ] #2 Removing a judge on one copy of the edit page is not undone by a save from a second copy loaded earlier
+- [ ] #3 Saving the edit page with no change to the judges field leaves competition_judge unchanged
+- [ ] #4 The judges field is not shown on the Create page
+- [ ] #5 In a browser, adding or removing a judge and then reloading without pressing Save shows the change persisted (Playwright, or handed to Oscar with the exact steps)
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Full plan: planning/2026-10-14-judge-registration-fixes.md (Phase 1: judge-list edits apply one change at a time)
+Goal: Adding or removing a judge on the edit page writes that one change immediately; Save never touches competition_judge.
+Phase 1 - live select with per-change attach/detach from $old vs new, saveRelationshipsUsing(null) after relationship(), hidden on Create; Livewire stale-page tests plus a browser reload check [AC 1,2,3,4,5]
+Runs before TASK-112. Shares CompetitionForm.php with TASK-111; the second to land rebases and re-runs its query-count tests.
+Open (non-blocking): none
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
