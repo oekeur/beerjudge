@@ -3,10 +3,10 @@ id: TASK-79
 title: >-
   Email the admin notification address about pending members; remove inactive
   demo members from prod
-status: In Progress
+status: Review
 assignee: []
 created_date: '2026-10-08 22:05'
-updated_date: '2026-10-14 09:22'
+updated_date: '2026-10-14 09:25'
 labels:
   - auth
   - launch-ops
@@ -56,4 +56,6 @@ Open (non-blocking): what to do with ACTIVE demo members (member1/member2 are se
 2026-10-09 Oscar: 'Delete members 2-8 for me'. Backup VPS ~/backup-2026-10-09-2047-pre-delete-members-2-8.sql (15 tables). One transaction, guarded to abort on references outside 'TEST - %' competitions (none): deleted 14 scoresheets judged by them, 17 entries (with 21 scoresheets on them), 7 members. Remaining demo account: member1 (admin). Active admins: Member 1, Erwin. Members total 12.
 
 2026-10-14 Phase 1 merged as PR #69 (ba17c13). AC 1-6: config key with blank treated as unset; on-demand queued PendingMemberNotification from RegistrationController::store; owner-locale else SetLocale::defaultLocale(); report-and-continue; specs updated; 12 tests in tests/Feature/PendingMemberNotificationTest.php. Departure from plan: the link carries filters[pending_approval][isActive]=1 (http_build_query turns true into 1); the Livewire test proves Filament applies it. Strings live in lang/*.json under member.pending_mail_*. AC 7 (prod deploy and throwaway registration) still open.
+
+2026-10-14 AC 7 run: image ba17c13 (digest sha256:54e67205...) pushed and deployed; ships #68 and #69 only, no migrations. Backups on VPS: ~/backup-2026-10-14-1124-pre-task-79.sql and .env.production.bak-2026-10-14-1124. Added ADMIN_NOTIFICATION_EMAIL=o.e.keur@gmail.com; config:show prints it. Throwaway registration task79-throwaway@example.com through a fresh single-use invite: 302 to /login, member created inactive, worker log shows PendingMemberNotification DONE over smtp, 0 failed jobs. Throwaway member and its invitation deleted. Waiting on Oscar: confirm the mail arrived at o.e.keur@gmail.com.
 <!-- SECTION:NOTES:END -->
