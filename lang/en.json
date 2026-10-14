@@ -118,9 +118,9 @@
     "auth.change_password_submit": "Update password",
     "auth.change_password_success": "Your password has been updated.",
 
-    "judging.not_registered": "You are not registered as a judge for this competition.",
-    "judging.register_as_judge": "Register as judge",
-    "judging.leave_as_judge": "Leave as judge",
+    "judging.not_registered": "You are not participating in this competition. Participate to score entries.",
+    "judging.participate": "Participate",
+    "judging.stop_participating": "Stop participating",
     "judging.logout": "Log out",
     "judging.progress": "Progress",
     "judging.no_entries": "No entries to judge. Either all entries are yours, or none have been registered.",

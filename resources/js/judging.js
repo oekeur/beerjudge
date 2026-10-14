@@ -91,6 +91,7 @@ function emptySheet(entryId) {
 window.judgingApp = function (serverData, labels = { sections: {}, guide: {}, styleInfo: '' }) {
     return {
         entries: serverData.entries,
+        progressEntries: serverData.progressEntries ?? [],
         ownEntries: serverData.ownEntries ?? [],
         bands: serverData.bands,
         sheets: {},

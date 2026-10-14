@@ -19,6 +19,11 @@ class ScoresheetController extends Controller
         $entry = Entry::with('competition')->findOrFail($entryId);
 
         abort_unless($entry->competition?->isJudging() === true, 422, 'Competition is not in judging phase.');
+        abort_unless(
+            $entry->competition->judges()->where('member_id', $judge->id)->exists(),
+            403,
+            'Join the competition before scoring.'
+        );
         abort_if($entry->member_id === $judge->id, 422, 'You cannot score your own entry.');
         abort_if(
             Scoresheet::where('client_uuid', $data['client_uuid'])->where('judge_id', '!=', $judge->id)->exists(),

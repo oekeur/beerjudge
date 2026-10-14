@@ -5,14 +5,14 @@ Score your assigned beer entries and submit your scoresheets before the competit
 ## Prerequisites
 
 - An active member account
-- An active member account (register as a judge in step 1 if an admin has not added you)
+- An active member account (participate in step 1 if an admin has not added you)
 - The competition must be in `judging` status
 
 ## Steps
 
-### 1. Register as a judge
+### 1. Participate
 
-Either an admin adds you as a judge, or you open the judging screen once judging starts and click **Register as judge**. **Leave as judge** on the same screen removes you.
+Only members on the competition's judge list can score. Either an admin adds you as a judge, or you open the judging screen once judging starts and click **Participate**; until then the screen shows the Participate prompt instead of the entries. **Stop participating** on the same screen removes you, while the competition is open or judging and also after you have submitted. Sheets you already submitted stay stored and keep counting in the ranking, but you no longer get a judge report.
 
 ### 2. Open the judging screen
 
@@ -58,7 +58,7 @@ A submitted scoresheet is locked in the UI. To change a score after submitting, 
 
 ### 5. Track progress (admin only)
 
-If you are an admin, a collapsible panel at the top of the screen shows how many judges have submitted for each entry (`submitted / eligible`, where eligible judges exclude the entry's brewer). This refreshes every 30 seconds.
+If you are an admin, a collapsible panel at the top of the screen shows how many judges have submitted for each entry (`submitted / eligible`, where eligible judges are the current judges plus anyone who already submitted on that entry, minus the entry's brewer). This refreshes every 30 seconds.
 
 ### 6. Work offline
 

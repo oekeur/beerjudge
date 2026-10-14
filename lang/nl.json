@@ -118,9 +118,9 @@
     "auth.change_password_submit": "Wachtwoord bijwerken",
     "auth.change_password_success": "Je wachtwoord is bijgewerkt.",
 
-    "judging.not_registered": "Je bent niet geregistreerd als jurylid voor deze competitie.",
-    "judging.register_as_judge": "Registreer als jurylid",
-    "judging.leave_as_judge": "Afmelden als jurylid",
+    "judging.not_registered": "Je doet niet mee aan deze competitie. Doe mee om inzendingen te beoordelen.",
+    "judging.participate": "Deelnemen",
+    "judging.stop_participating": "Stoppen met deelnemen",
     "judging.logout": "Uitloggen",
     "judging.progress": "Voortgang",
     "judging.no_entries": "Geen inzendingen te keuren. Alle inzendingen zijn van jou, of er zijn geen inzendingen geregistreerd.",

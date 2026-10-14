@@ -2,7 +2,7 @@
 
 ## Routes
 
-Defined in `routes/web.php`. All three results-area routes (`results.index`, `results.show`, `judge-report.show`) require `auth` and `active-member` middleware. `GET /competitions/{competition}/judge-report/{judge}` returns 404 if `{judge}` is not registered for the competition; admins can view it at any status, other members only their own report once the competition is closed.
+Defined in `routes/web.php`. All three results-area routes (`results.index`, `results.show`, `judge-report.show`) require `auth` and `active-member` middleware. `GET /competitions/{competition}/judge-report/{judge}` returns 404 if `{judge}` is not on the competition's judge list (a judge who stopped participating has no report, though their submitted sheets still count in the standings); admins can view it at any status, other members only their own report once the competition is closed.
 
 ### Results index
 

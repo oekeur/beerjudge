@@ -73,7 +73,7 @@
             </button>
             <div x-show="progressOpen" x-transition class="px-4 pb-3 flex justify-center">
                 <div class="inline-flex flex-col gap-0.5">
-                    <template x-for="entry in entries" :key="entry.id">
+                    <template x-for="entry in progressEntries" :key="entry.id">
                         <div class="flex items-center gap-2">
                             <span class="text-xs text-amber-400 tabular-nums w-6 text-right shrink-0" x-text="'#' + entry.tasting_number"></span>
                             <span class="text-xs text-amber-100 shrink-0" x-text="entry.brewer_name"></span>
@@ -87,12 +87,12 @@
 
     {{-- Judge registration banner --}}
     @if(! $isJudge)
-        <div class="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-800/50 px-4 py-3 flex items-center justify-between gap-4">
+        <div data-testid="participate-prompt" class="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-800/50 px-4 py-3 flex items-center justify-between gap-4">
             <p class="text-sm text-amber-800 dark:text-amber-300">{{ __('judging.not_registered') }}</p>
             <form method="POST" action="{{ route('competitions.judges.store', $competition) }}">
                 @csrf
                 <button type="submit" class="text-sm font-medium text-amber-700 dark:text-amber-400 underline whitespace-nowrap">
-                    {{ __('judging.register_as_judge') }}
+                    {{ __('judging.participate') }}
                 </button>
             </form>
         </div>
@@ -101,7 +101,7 @@
             <form method="POST" action="{{ route('competitions.judges.destroy', $competition) }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="text-xs text-gray-400 dark:text-gray-500 underline">{{ __('judging.leave_as_judge') }}</button>
+                <button type="submit" class="text-xs text-gray-400 dark:text-gray-500 underline">{{ __('judging.stop_participating') }}</button>
             </form>
         </div>
     @endif
@@ -113,6 +113,7 @@
     </div>
 
     {{-- Entry list --}}
+    @if($isJudge)
     <main x-show="ready && !inactive" class="max-w-lg mx-auto px-4 py-4 space-y-3">
 
         <div class="flex items-center justify-between">
@@ -438,6 +439,7 @@
             </div>
         </template>
     </main>
+    @endif
 
     {{-- Style guide bottom sheet --}}
     <div x-show="styleGuide.open" class="fixed inset-0 z-50 flex items-end" @keydown.escape.window="closeGuide()" style="display: none;">

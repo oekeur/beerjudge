@@ -18,6 +18,7 @@ class JudgingScreenLocaleTest extends TestCase
         $competition = Competition::forceCreate(['name' => 'Test Cup', 'year' => 2025, 'status' => 'judging']);
         $style = Style::create(['code' => '1A', 'category_name' => 'Standard American', 'name' => 'Light Lager']);
         $competition->styles()->attach($style->id);
+        $competition->judges()->attach($judge->id);
         $brewer = Member::factory()->create(['email' => 'brewer@test.com']);
         Entry::create(['competition_id' => $competition->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
 

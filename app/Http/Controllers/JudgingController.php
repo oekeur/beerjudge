@@ -8,6 +8,7 @@ use App\Models\Scoresheet;
 use App\Models\Style;
 use App\Services\CompetitionRankingService;
 use App\Services\DescriptorService;
+use App\Services\JudgingProgressService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,6 +21,12 @@ class JudgingController extends Controller
 
         $judge = $this->member($request);
 
+        if ($request->boolean('register')) {
+            $competition->judges()->syncWithoutDetaching([$judge->id]);
+        }
+
+        $isJudge = $competition->judges()->where('member_id', $judge->id)->exists();
+
         // Number the whole tasting order before removing the judge's own entries, so every
         // judge sees the same number for the same beer. Own entries stay visible as locked rows.
         $tastingOrder = $competition->entries()
@@ -30,8 +37,10 @@ class JudgingController extends Controller
             ->values();
         $tastingNumbers = $tastingOrder->mapWithKeys(fn ($e, $i) => [$e->id => $i + 1]);
         $isOwn = fn (Entry $e): bool => $e->member_id === $judge->id;
-        $ownEntries = $tastingOrder->filter($isOwn)->values();
-        $entries = $tastingOrder->reject($isOwn)->values();
+
+        // Only registered judges get the scoring data; everyone else sees the participate prompt.
+        $ownEntries = $tastingOrder->filter(fn (Entry $e): bool => $isJudge && $isOwn($e))->values();
+        $entries = $tastingOrder->filter(fn (Entry $e): bool => $isJudge && ! $isOwn($e))->values();
 
         $existingSheets = Scoresheet::where('judge_id', $judge->id)
             ->whereIn('entry_id', $entries->pluck('id'))
@@ -42,6 +51,13 @@ class JudgingController extends Controller
             'competitionId' => $competition->id,
             'isAdmin' => $judge->is_admin,
             'progressUrl' => route('judging.progress', $competition),
+            'progressEntries' => $judge->is_admin
+                ? $tastingOrder->map(fn ($e) => [
+                    'id' => $e->id,
+                    'tasting_number' => $tastingNumbers[$e->id],
+                    'brewer_name' => $e->member?->name,
+                ])->values()
+                : [],
             'entries' => $entries->map(fn ($e) => [
                 'id' => $e->id,
                 'tasting_number' => $tastingNumbers[$e->id],
@@ -81,12 +97,7 @@ class JudgingController extends Controller
             'existingSheets' => $existingSheets->map(fn (Scoresheet $s) => $s->toJudgingPayload())->values(),
         ];
 
-        if ($request->boolean('register')) {
-            $competition->judges()->syncWithoutDetaching([$judge->id]);
-        }
-
         $descriptors = DescriptorService::descriptors();
-        $isJudge = $competition->judges()->where('member_id', $judge->id)->exists();
 
         return view('judging.show', [
             'competition' => $competition,
@@ -97,30 +108,16 @@ class JudgingController extends Controller
         ]);
     }
 
-    public function progress(Competition $competition, Request $request): JsonResponse
+    public function progress(Competition $competition, Request $request, JudgingProgressService $progressService): JsonResponse
     {
         abort_unless($competition->isJudging(), 403);
 
         $member = $this->member($request);
         abort_unless($member->is_admin, 403);
 
-        $judgeIds = $competition->judges()->pluck('member_id');
-        $entries = $competition->entries()->orderBy('sort_order')->orderBy('id')->get(['id', 'member_id']);
-
-        $submittedCounts = Scoresheet::whereIn('entry_id', $entries->pluck('id'))
-            ->where('status', 'submitted')
-            ->selectRaw('entry_id, count(*) as cnt')
-            ->groupBy('entry_id')
-            ->pluck('cnt', 'entry_id');
-
-        $progress = [];
-        foreach ($entries as $entry) {
-            $submitted = $submittedCounts[$entry->id] ?? 0;
-            $progress[$entry->id] = [
-                'submitted' => is_numeric($submitted) ? (int) $submitted : 0,
-                'total' => $judgeIds->reject(fn ($id) => $id === $entry->member_id)->count(),
-            ];
-        }
+        $progress = collect($progressService->forCompetition($competition))
+            ->map(fn (array $row) => ['submitted' => $row['submitted'], 'total' => $row['eligible']])
+            ->all();
 
         return response()->json($progress);
     }

@@ -28,6 +28,7 @@ class ScoresheetValidationTest extends TestCase
         $this->comp->styles()->attach($style->id);
         $brewer = Member::factory()->create(['email' => 'brewer@v.com']);
         $this->judge = Member::factory()->create(['email' => 'judge@v.com']);
+        $this->comp->judges()->attach($this->judge->id);
         $this->entry = Entry::create([
             'competition_id' => $this->comp->id,
             'member_id' => $brewer->id,

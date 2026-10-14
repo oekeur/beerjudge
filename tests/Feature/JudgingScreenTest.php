@@ -20,6 +20,7 @@ class JudgingScreenTest extends TestCase
         $comp->styles()->attach($style->id);
         $brewer = Member::factory()->create(['name' => 'Brewer', 'email' => 'brewer@test.com']);
         $judge = Member::factory()->create(['name' => 'Judge', 'email' => 'judge@test.com']);
+        $comp->judges()->attach($judge->id);
         $entry = Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
         $ownEntry = Entry::create(['competition_id' => $comp->id, 'member_id' => $judge->id, 'style_id' => $style->id, 'bottle_number' => 2]);
 
@@ -50,6 +51,7 @@ class JudgingScreenTest extends TestCase
         $comp->styles()->attach($style->id);
         $brewers = Member::factory()->count(3)->create();
         $outsider = Member::factory()->create();
+        $comp->judges()->attach([$outsider->id, $brewers[1]->id]);
         $entries = $brewers->values()->map(fn (Member $m, int $i) => Entry::create([
             'competition_id' => $comp->id, 'member_id' => $m->id, 'style_id' => $style->id, 'bottle_number' => $i + 1, 'sort_order' => $i + 1,
         ]));

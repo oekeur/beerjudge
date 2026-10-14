@@ -44,7 +44,7 @@ await journey('M4-judge', async actor => {
   await m7.step('join as judge via ?register=1 link', async () => {
     await m7.page.goto(`/judging/${competitionId}?register=1`)
     await m7.page.waitForLoadState('networkidle')
-    await expect(m7.page.getByRole('button', { name: 'Leave as judge' })).toBeVisible()
+    await expect(m7.page.getByRole('button', { name: 'Stop participating' })).toBeVisible()
   })
   await m7.step('own entry hidden from the list', async () => {
     await openScreen(m7.page)
@@ -123,19 +123,25 @@ await journey('M4-judge', async actor => {
     const n = sheets('member3'); if (n !== '2') throw new Error('submitted ' + n)
   })
 
-  // member4: Dutch, registers via the banner then leaves again
+  // member4: Dutch, not a judge: sees the participate prompt, participates, then stops again
   const m4 = await actor('member4-nl', { locale: 'nl-NL' })
   await login(m4.page, 'member4@beerjudge.local')
-  await m4.step('register via banner', async () => {
-    await openScreen(m4.page)
-    await m4.page.getByRole('button', { name: 'Registreer als jurylid' }).click()
+  await m4.step('participate prompt replaces the entry list', async () => {
+    await m4.page.goto(`/judging/${competitionId}`)
     await m4.page.waitForLoadState('networkidle')
-    await expect(m4.page.getByRole('button', { name: 'Afmelden als jurylid' })).toBeVisible()
+    await expect(m4.page.getByTestId('participate-prompt')).toBeVisible()
+    await expect(m4.page.getByTestId('entry-expand-button')).toHaveCount(0)
   })
-  await m4.step('leave as judge', async () => {
-    await m4.page.getByRole('button', { name: 'Afmelden als jurylid' }).click()
+  await m4.step('participate via the banner', async () => {
+    await m4.page.getByRole('button', { name: 'Deelnemen', exact: true }).click()
     await m4.page.waitForLoadState('networkidle')
-    await expect(m4.page.getByRole('button', { name: 'Registreer als jurylid' })).toBeVisible()
+    await m4.page.waitForSelector('[data-testid="entry-expand-button"]', { state: 'visible' })
+    await expect(m4.page.getByRole('button', { name: 'Stoppen met deelnemen' })).toBeVisible()
+  })
+  await m4.step('stop participating', async () => {
+    await m4.page.getByRole('button', { name: 'Stoppen met deelnemen' }).click()
+    await m4.page.waitForLoadState('networkidle')
+    await expect(m4.page.getByRole('button', { name: 'Deelnemen', exact: true })).toBeVisible()
   })
   await m4.step('results not yet visible to members', async () => {
     const r = await m4.page.goto(`/competitions/${competitionId}/results`)

@@ -2,7 +2,7 @@
 
 The judging screen is the primary interface for judges during a competition. It renders all eligible entries as scoresheets, auto-saves input to IndexedDB on every keystroke, and syncs to the server in the background. Judges can work through the screen with or without a network connection; pending sheets retry automatically when connectivity returns.
 
-Any active member can open the screen while the competition is in Judging. Members not yet registered see a banner with a **Register as judge** button. Judges never see their own entries.
+Any active member can open the screen while the competition is in Judging. Only members on the competition's judge list can score. Members who are not yet participating see a prompt with a **Participate** button instead of the entry list; the server also answers `POST /scoresheets` with HTTP 403 for them. **Stop participating** is allowed while the competition is open or judging, also after submitting: submitted sheets stay stored and count in the ranking, but a judge who left gets no judge report. Judges never see their own entries.
 
 ## Routes
 
@@ -137,7 +137,7 @@ Saves of one sheet run one after the other, so a slow draft save cannot reach th
 
 ## Admin progress panel
 
-When an admin views the judging screen, a collapsible panel shows per-entry submission counts (`submitted / eligible judges`, where eligible judges are registered judges other than the entry's brewer). This panel polls `GET /judging/{competition}/progress` every 30 seconds.
+When an admin views the judging screen, a collapsible panel shows per-entry submission counts (`submitted / eligible judges`, where eligible judges are the current judges plus anyone with a submitted sheet on the entry, minus the entry's brewer). This panel polls `GET /judging/{competition}/progress` every 30 seconds.
 
 ## Style guide and style info modals
 

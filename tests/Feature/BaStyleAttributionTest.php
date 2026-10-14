@@ -33,6 +33,7 @@ class BaStyleAttributionTest extends TestCase
         $comp->styles()->attach($style->id);
         $brewer = Member::factory()->create();
         $judge = Member::factory()->create();
+        $comp->judges()->attach($judge->id);
         Entry::create(['competition_id' => $comp->id, 'member_id' => $brewer->id, 'style_id' => $style->id, 'bottle_number' => 1]);
 
         $entries = [];
