@@ -1,11 +1,11 @@
 ---
 id: TASK-112
 title: Only registered judges can score; reword registration to participate
-status: In Progress
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-10-14 08:24'
-updated_date: '2026-10-14 10:57'
+updated_date: '2026-10-14 11:28'
 labels:
   - judging-progress
 dependencies:
@@ -34,15 +34,15 @@ The server enforces the same rule: ScoresheetController rejects a sheet from a m
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A member not in competition_judge gets a judging page whose server data has an empty entries list, without the <main> entry list, and with the participate button
-- [ ] #2 An admin who is not a judge still sees the progress panel listing every entry
-- [ ] #3 POST /scoresheets from a member who is not a judge of the entry competition returns 403 and stores nothing
-- [ ] #4 After choosing participate, the member sees the entry list and can save a sheet
-- [ ] #5 Registration copy says participate (EN) and deelnemen (NL) instead of register as judge, in the banner, the button and the leave link
-- [ ] #6 A judge can stop participating while the competition is open or judging, also after submitting; their submitted sheets stay stored and still count in the ranking; leaving a closed competition is refused
-- [ ] #7 The judging-screen progress panel and ResultsSummaryWidget (table and tiles) follow the plan progress rule; a test with a judge who submitted and then left shows no entry above its eligible count, Progress at most 100%, and the leaver not listed as missing
-- [ ] #8 A migration adds every member with a submitted sheet to that competition judge list; run on data that already complies, it changes nothing
-- [ ] #9 planning/specs/judging.md and competitions.md describe the gate, the leave rule and the pivot as competition_judge, and drop the claim that the screen auto-registers on first load
+- [x] #1 A member not in competition_judge gets a judging page whose server data has an empty entries list, without the <main> entry list, and with the participate button
+- [x] #2 An admin who is not a judge still sees the progress panel listing every entry
+- [x] #3 POST /scoresheets from a member who is not a judge of the entry competition returns 403 and stores nothing
+- [x] #4 After choosing participate, the member sees the entry list and can save a sheet
+- [x] #5 Registration copy says participate (EN) and deelnemen (NL) instead of register as judge, in the banner, the button and the leave link
+- [x] #6 A judge can stop participating while the competition is open or judging, also after submitting; their submitted sheets stay stored and still count in the ranking; leaving a closed competition is refused
+- [x] #7 The judging-screen progress panel and ResultsSummaryWidget (table and tiles) follow the plan progress rule; a test with a judge who submitted and then left shows no entry above its eligible count, Progress at most 100%, and the leaver not listed as missing
+- [x] #8 A migration adds every member with a submitted sheet to that competition judge list; run on data that already complies, it changes nothing
+- [x] #9 planning/specs/judging.md and competitions.md describe the gate, the leave rule and the pivot as competition_judge, and drop the claim that the screen auto-registers on first load
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -57,3 +57,20 @@ Phase 2d - idempotent backfill migration; spec fixes (judging.md, competitions.m
 Includes PHPUnit rework (about ten files) and BrowserTestSeeder plus Playwright spec updates; done when PHPUnit, PHPStan and Playwright pass. Depends on TASK-113 landing first.
 Open (non-blocking): none
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Landed in eb57ecb (PR #71).
+AC1: JudgingController::show sends empty entries/ownEntries to a non-judge, <main> only for judges, participate-prompt testid; JudgeParticipationGateTest parses the data-server JSON.
+AC2: admin-only progressEntries (all entries) drive the progress panel; test_admin_who_is_not_a_judge_still_sees_every_entry_in_the_progress_panel.
+AC3: ScoresheetController 403 for non-judges (after the not-judging 422, so a non-judge posting to a non-judging competition gets 422; nothing stored either way); test_scoresheet_post_from_non_judge_is_forbidden_and_stores_nothing.
+AC4: test_participating_unlocks_the_entry_list_and_saving, Playwright judge-registration.spec.ts.
+AC5: judging.participate / judging.stop_participating (Participate / Deelnemen, Stop participating / Stoppen met deelnemen) in banner, button, leave link; EN and NL tests in CompetitionJudgeAssignmentTest.
+AC6: JudgeRegistrationController::destroy 403 unless open or judging; no sheet check; ranking test keeps the leaver's sheet.
+AC7: JudgingProgressService feeds JudgingController::progress and results-summary (table and tiles, capped at 100%); ResultsSummaryWidgetTest leaver case.
+AC8: migration 2026_10_14_110000_backfill_competition_judge_from_submitted_scoresheets; BackfillCompetitionJudgeMigrationTest (idempotent, drafts ignored); Pass B also ran it on Postgres.
+AC9: specs/judging.md and competitions.md updated; user docs and the M4 journey script follow too.
+Gates: Probe 2 discriminating; Pass A one note (422 before 403, accepted as reasonable); Pass B confirmed the M4 journey script was stale (fixed in one retry, journey m4 passes) and flagged that a leaver loses their judge report (Oscar's decision, unchanged). CI 4/4 green.
+Departures: the admin progress panel now lists the admin's own entries too. Docs and the journey script were added to scope by the gate.
+<!-- SECTION:FINAL_SUMMARY:END -->
