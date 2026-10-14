@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@agent'
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 12:41'
+updated_date: '2026-10-14 13:00'
 labels:
   - v1
 dependencies: []
@@ -30,6 +30,7 @@ The competition edit page's entries Repeater is relationship-bound: on Save, Fil
 - [ ] #4 After a Save, a second Save on the same page without changes deletes nothing and duplicates nothing
 - [ ] #5 A row added on the page, saved, then removed and saved again is deleted
 - [ ] #6 An entry registered while the page is open survives two consecutive Saves from that page and ends up after the page rows in the tasting order (sort_order)
+- [ ] #7 Saving the edit page refuses to remove a style that any entry of the competition still uses (late entries included), with a form error naming the style, and nothing is saved
 <!-- AC:END -->
 
 ## Implementation Plan
