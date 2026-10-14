@@ -24,6 +24,7 @@
     "competition.entry.style": "Stijl",
     "competition.entry.abv": "ABV",
     "competition.entry.brewer_notes": "Notities brouwer",
+    "competition.styles_in_use": "Kan stijlen die nog door inzendingen worden gebruikt niet verwijderen: :styles.",
     "competition.entry_link": "Inzending link",
     "competition.invite_link_label": "Genereer uitnodigingslink",
     "competition.invite_type": "Soort uitnodiging",

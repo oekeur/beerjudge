@@ -4,11 +4,13 @@ namespace App\Filament\Resources\Competitions\Schemas;
 
 use App\Enums\CompetitionStatus;
 use App\Filament\Forms\Components\StyleMultiSelect;
+use App\Filament\Resources\Competitions\Pages\EditCompetition;
 use App\Filament\Resources\Competitions\Widgets\JudgeVarianceWidget;
 use App\Filament\Resources\Competitions\Widgets\ResultsSummaryWidget;
 use App\Models\Competition;
 use App\Models\Member;
 use App\Models\Style;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -24,6 +26,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
 class CompetitionForm
@@ -55,6 +58,27 @@ class CompetitionForm
                             ->schema([
                                 StyleMultiSelect::make('styles')
                                     ->relationship('styles', 'name')
+                                    ->rule(fn (?Competition $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($record): void {
+                                        if (! $record?->exists) {
+                                            return;
+                                        }
+
+                                        $kept = array_map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, is_array($value) ? $value : []);
+                                        $removed = $record->entries()
+                                            ->whereNotIn('style_id', $kept)
+                                            ->distinct()
+                                            ->pluck('style_id');
+
+                                        if ($removed->isEmpty()) {
+                                            return;
+                                        }
+
+                                        $names = Style::whereIn('id', $removed)->orderBy('code')->get()
+                                            ->map(fn (Style $style): string => "{$style->code} {$style->name}")
+                                            ->implode(', ');
+
+                                        $fail(__('competition.styles_in_use', ['styles' => $names]));
+                                    })
                                     ->columnSpanFull(),
                             ]),
 
@@ -128,6 +152,7 @@ class CompetitionForm
                                     ->columns(5)
                                     ->defaultItems(0)
                                     ->orderColumn('sort_order')
+                                    ->saveRelationshipsUsing(fn (Repeater $component) => self::saveEntries($component))
                                     ->columnSpanFull(),
                             ]),
 
@@ -172,6 +197,54 @@ class CompetitionForm
                             ]),
                     ]),
             ]);
+    }
+
+    /**
+     * Wraps Repeater::saveToRelationship so a Save only deletes entries the page loaded and the
+     * admin removed. Entries registered after the page loaded ("late entries") are kept and
+     * moved behind the page's rows in sort_order, in id order. The loaded set lives on
+     * EditCompetition and is refreshed here from the records that survive the save, never from
+     * a fresh query, so rows added on the page count as loaded for the next Save.
+     *
+     * Relies on saveToRelationship mutating the collection from getCachedExistingRecords and
+     * handing that same collection to setRelation; re-check on Filament upgrades.
+     */
+    private static function saveEntries(Repeater $component): void
+    {
+        $livewire = $component->getLivewire();
+
+        if (! $livewire instanceof EditCompetition) {
+            $component->saveToRelationship();
+
+            return;
+        }
+
+        $existing = $component->getCachedExistingRecords();
+        $late = $existing
+            ->reject(fn (Model $record): bool => in_array(self::recordId($record), $livewire->loadedEntryIds, true))
+            ->sortBy(fn (Model $record): mixed => $record->getKey());
+
+        foreach ($late->keys() as $key) {
+            $existing->forget($key);
+        }
+
+        $component->saveToRelationship();
+
+        $next = $existing->count();
+
+        foreach ($late as $key => $record) {
+            $record->forceFill(['sort_order' => ++$next])->saveQuietly();
+            $existing->put($key, $record);
+        }
+
+        $livewire->loadedEntryIds = $existing->map(fn (Model $record): int => self::recordId($record))->values()->all();
+    }
+
+    private static function recordId(Model $record): int
+    {
+        $key = $record->getKey();
+
+        return is_numeric($key) ? (int) $key : 0;
     }
 
     private static function copyableLinkHtml(string $url): string

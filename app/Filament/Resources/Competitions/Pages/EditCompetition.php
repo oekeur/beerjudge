@@ -21,6 +21,24 @@ class EditCompetition extends EditRecord
     protected static string $resource = CompetitionResource::class;
 
     /**
+     * Ids of the entries this page loaded or has saved. Save deletes only these when a row is
+     * missing from the form, so entries registered while the page was open survive.
+     *
+     * @var array<int, int>
+     */
+    public array $loadedEntryIds = [];
+
+    protected function afterFill(): void
+    {
+        $entries = $this->data['entries'] ?? [];
+
+        $this->loadedEntryIds = collect(is_array($entries) ? array_keys($entries) : [])
+            ->map(fn (int|string $key): int => (int) str_replace('record-', '', (string) $key))
+            ->values()
+            ->all();
+    }
+
+    /**
      * Runs a status change, then rebuilds the header actions in place so the page offers the next
      * status's buttons. Unsaved form edits are left alone; only the status field is refreshed.
      * Actions already in the Livewire action cache stay there (the running action still needs to
