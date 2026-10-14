@@ -30,7 +30,7 @@ Admins generate invitation links in Filament. Two types:
 - `time_bound` — valid until `expires_at`, can be used more than once (useful for sharing a link at a club meeting).
 
 `GET /join/{token}` — validates via `Invitation::isValid()` (not expired, not used on single_use), renders the registration form (name, email, password + confirmation).
-`POST /join/{token}` — re-validates the token, creates the member, starts a session. Single-use invitations are marked `used_at` on success.
+`POST /join/{token}` — re-validates the token, creates the member (inactive) and redirects to `/login` with a pending-approval message; no session is started. Single-use invitations are marked `used_at` on success.
 
 An invitation that fails validation on either verb renders `auth.invite-invalid` with status 410 instead of the stock error page. `HasTokenExpiry::invalidReason()` splits the two cases so the screen can say which one applies: an expired time-bound link shows its expiry date, a claimed single-use link says it was a one-time link. Both point the visitor at a club admin for a fresh link and link through to `/login` for people who already registered. Unknown tokens still 404 (`firstOrFail`).
 
