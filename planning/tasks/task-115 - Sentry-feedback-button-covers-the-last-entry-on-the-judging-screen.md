@@ -1,11 +1,11 @@
 ---
 id: TASK-115
 title: Sentry feedback button covers the last entry on the judging screen
-status: In Progress
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-10-14 08:25'
-updated_date: '2026-10-14 11:29'
+updated_date: '2026-10-14 11:58'
 labels:
   - sentry
 dependencies:
@@ -25,8 +25,8 @@ Fix: add bottom padding to the entry list so the last entry scrolls clear of the
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 With a fake Sentry DSN at a 390x844 viewport, the feedback button is present and, scrolled to the end, the last entry header bounding box does not intersect it
-- [ ] #2 Checked in a browser (the Playwright check of AC 1 counts), not only by reading the markup
+- [x] #1 With a fake Sentry DSN at a 390x844 viewport, the feedback button is present and, scrolled to the end, the last entry header bounding box does not intersect it
+- [x] #2 Checked in a browser (the Playwright check of AC 1 counts), not only by reading the markup
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -38,3 +38,14 @@ Phase 3 - bottom padding plus safe-area inset on <main> in judging/show.blade.ph
 Runs after TASK-112 (same Blade file).
 Open (non-blocking): none
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Landed in 59e96a6 (PR #72).
+AC1: <main> padding pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))]; Playwright judging-bottom-clearance.spec.ts asserts #sentry-feedback present, expands an entry, scrolls to the end and checks no overlap at 390x844; skips without a DSN (CI).
+AC2: run in Chromium with a fake DSN: fails on the old padding (entry y=757 h=70 vs button y=778, orchestrator re-ran at the merge base), passes with the fix.
+Gates: Probe 2 by the orchestrator (Playwright at base); claim check done inline on the one-hunk diff instead of a Pass A dispatch; Pass B CLEAN, including the expanded last entry (Submit 61px above the button, elementFromPoint hits Submit). CI 4/4 green.
+Note: viewport meta has no viewport-fit=cover, so the safe-area term is 0 today.
+As planned.
+<!-- SECTION:FINAL_SUMMARY:END -->

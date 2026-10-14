@@ -44,7 +44,7 @@ Unknowns:
 **Outcome:** The last entry on the judging screen scrolls clear of the floating feedback button.
 
 Tasks:
-- [ ] TASK-115: bottom padding on the entry list including the safe-area inset. Done when: [AC 1-2] pass.
+- [x] TASK-115: bottom padding on the entry list including the safe-area inset. Done when: [AC 1-2] pass.
   Context (verified 2026-10-14): `resources/views/judging/show.blade.php:116` `<main ... py-4>`; the style sheet at line 516 uses `pb-24` for the same button. Playwright reads `.env.browser-test`, which deliberately has no Sentry DSN, so the button is not injected by default; `tests/Browser/admin-sentry.spec.ts` shows how to run with a fake DSN. Same file as Phase 2, so it runs after Phase 2 lands.
 
 Unknowns:
