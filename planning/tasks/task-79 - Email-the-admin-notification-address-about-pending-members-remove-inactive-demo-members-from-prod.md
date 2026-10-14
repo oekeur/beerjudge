@@ -3,10 +3,10 @@ id: TASK-79
 title: >-
   Email the admin notification address about pending members; remove inactive
   demo members from prod
-status: Review
+status: Done
 assignee: []
 created_date: '2026-10-08 22:05'
-updated_date: '2026-10-14 09:25'
+updated_date: '2026-10-14 09:36'
 labels:
   - auth
   - launch-ops
@@ -32,7 +32,7 @@ Record an admin notification address (ADMIN_NOTIFICATION_EMAIL, Oscar's address)
 - [x] #4 The mail uses the locale of the member whose email equals the notification address, else SetLocale's captured default, never the registrant's Accept-Language
 - [x] #5 A failed notification dispatch is reported and registration still redirects to login with the success flash
 - [x] #6 planning/specs/authentication.md and planning/specs/members.md describe the notification
-- [ ] #7 Prod: deployed with ADMIN_NOTIFICATION_EMAIL set; a throwaway registration delivered the mail and the throwaway member was deleted
+- [x] #7 Prod: deployed with ADMIN_NOTIFICATION_EMAIL set; a throwaway registration delivered the mail and the throwaway member was deleted
 - [x] #8 Prod: after a pg_dump backup, demo members member2..member8@beerjudge.local are deleted together with their scoresheets and entries in the TEST competitions; member1 stays (Oscar, 2026-10-09)
 <!-- AC:END -->
 
@@ -59,3 +59,13 @@ Open (non-blocking): what to do with ACTIVE demo members (member1/member2 are se
 
 2026-10-14 AC 7 run: image ba17c13 (digest sha256:54e67205...) pushed and deployed; ships #68 and #69 only, no migrations. Backups on VPS: ~/backup-2026-10-14-1124-pre-task-79.sql and .env.production.bak-2026-10-14-1124. Added ADMIN_NOTIFICATION_EMAIL=o.e.keur@gmail.com; config:show prints it. Throwaway registration task79-throwaway@example.com through a fresh single-use invite: 302 to /login, member created inactive, worker log shows PendingMemberNotification DONE over smtp, 0 failed jobs. Throwaway member and its invitation deleted. Waiting on Oscar: confirm the mail arrived at o.e.keur@gmail.com.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Admin notification mail for pending invite registrations, plus prod demo-member cleanup.
+AC 1-6: PR #69 (ba17c13). ADMIN_NOTIFICATION_EMAIL config key (blank = unset); queued on-demand PendingMemberNotification from RegistrationController::store; locale of the owning member, else SetLocale::defaultLocale(); failed dispatch reported, registration still succeeds; specs updated; 12 tests. Departure from plan: the link carries filters[pending_approval][isActive]=1, not =true (http_build_query); a Livewire test proves Filament applies it.
+AC 7: image ba17c13 deployed 2026-10-14 with the key set; a throwaway registration produced a mail Oscar confirmed arrived; throwaway member and invite deleted.
+AC 8: 2026-10-09, members 2-8 deleted after backup (revised from 'inactive members' per Oscar).
+Commits: c85a6da, 69442c0, aa12979, a88f160, 6bb5ee7 (docs), ba17c13 (code).
+<!-- SECTION:FINAL_SUMMARY:END -->
