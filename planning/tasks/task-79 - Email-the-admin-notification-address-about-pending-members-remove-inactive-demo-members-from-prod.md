@@ -3,10 +3,10 @@ id: TASK-79
 title: >-
   Email the admin notification address about pending members; remove inactive
   demo members from prod
-status: Planned
+status: In Progress
 assignee: []
 created_date: '2026-10-08 22:05'
-updated_date: '2026-10-09 18:48'
+updated_date: '2026-10-14 09:09'
 labels:
   - auth
   - launch-ops
