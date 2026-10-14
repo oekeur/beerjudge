@@ -1,10 +1,11 @@
 ---
 id: TASK-113
 title: Saving the competition edit page overwrites the judge list with stale state
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-14 08:25'
-updated_date: '2026-10-14 09:37'
+updated_date: '2026-10-14 10:30'
 labels:
   - judging-progress
 dependencies: []
