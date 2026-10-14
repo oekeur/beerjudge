@@ -1,10 +1,10 @@
 ---
 id: TASK-103
 title: Update dependencies to clear the composer audit advisories before going public
-status: Review
+status: Done
 assignee: []
 created_date: '2026-10-12 18:36'
-updated_date: '2026-10-13 12:00'
+updated_date: '2026-10-14 13:46'
 labels:
   - public-launch
   - security-hardening
@@ -47,3 +47,14 @@ Review: PR #55, CI green (all 5 jobs). Oscar checks the judging screen and Filam
 
 2026-10-13: user-journey walkthrough (scripts/journeys/run-all.sh) on the update: 100 of 100 steps after updating the scripts for Filament 4.15's alertdialog/combobox roles (first run 38 failures, all selector or cascade). Logged in docs/user-journeys.md.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Landed as 0857386 (squash of PR #55), rebased onto b67b8f2.
+AC 1: composer update limited to the 8 flagged packages (Filament 4.11.7 -> 4.15.1, Livewire 3.8.1 -> 3.8.10, Laravel 13.15 -> 13.35, commonmark, guzzle, psr7, tiptap-php, flysystem). composer audit after rebase: no advisories.
+AC 2: npm audit fix cleared 11 of 14; the 3 left (esbuild/vite via vitepress 1.6.4, 1 high) are docs dev-server only and not shipped, see notes.
+AC 3: after rebase, phpstan 0 errors, PHPUnit 379/379, Playwright 48 passed/2 skipped locally; CI green on static-analysis, tests, tests-postgres, browser-tests and image. The rebase pulled in the judges spec from PR #70, which still used the pre-4.15 'Select an option' button; fixed to the combobox role (5cf27e9) before merge.
+AC 4: journey walkthrough on the update, 100 of 100 steps (docs/user-journeys.md, 2026-10-13); journey scripts updated for Filament 4.15 alertdialog/combobox roles.
+Departure from plan: the extra browser-spec fix after rebase; otherwise as planned.
+<!-- SECTION:FINAL_SUMMARY:END -->
