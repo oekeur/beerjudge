@@ -47,7 +47,7 @@ Skip the worktree when:
 3. Copy vendor with hard links: `cp -rl vendor ../beerjudge-<branch-slug>/vendor && composer -d ../beerjudge-<branch-slug> dump-autoload --quiet` — **do not use a symlink**. PHP resolves symlinks when computing `__FILE__`, so a symlinked vendor always points `$baseDir` at the main repo's `app/` directory; any new class added in the worktree is invisible to the autoloader. Hard links (`cp -rl`) are instant and share disk blocks; `dump-autoload` rebuilds the classmap against the worktree's own `app/`.
 4. Do all work there.
 
-**Session end (worktree or branch):**
+**Session end (worktree or branch; docs-only changes skip this, see Git):**
 1. Commit all changes on the feature branch.
 2. Push the branch and open a PR with `gh pr create`, writing a meaningful title and body following the commit convention (`[type](scope): description`) — title reflects the overall change, body covers what changed and why.
 3. Squash-merge the PR: `gh pr merge --squash --auto`
@@ -85,6 +85,7 @@ A custom Filament theme is configured at `resources/css/filament/admin/theme.css
 ## Git
 
 - Never commit directly to `main`. Always work on a named branch (`feat/*`, `fix/*`, `improve/*`, etc.).
+- Exception: a docs-only change (only files under `planning/`, `docs/` or `wiki/`, or `*.md` files) is committed straight to `main` and pushed, with no branch and no PR. CI skips these paths (`paths-ignore` in `ci.yml`), so a PR would only add overhead. A change that touches any other file goes through a branch and PR as usual.
 - Commit automatically, but group related changes into one commit rather than one per micro-task. A commit should represent a coherent unit of work.
 - Use the format: `[type](scope): description` (e.g. `feat(judging): add offline sync retry`)
 - Stage only files relevant to the task; do not use `git add -A` blindly.
