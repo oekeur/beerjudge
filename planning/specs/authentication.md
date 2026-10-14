@@ -36,6 +36,8 @@ An invitation that fails validation on either verb renders `auth.invite-invalid`
 
 Registration produces a regular member account with `is_active = false`; the member cannot log in until an admin approves it in Filament (Approve on a row, Approve selected in bulk, or the Active toggle on the edit form). When `is_active` changes from false to true by any path, `Member::booted()` sends `MemberActivatedNotification` in the member's locale with a link to `/login`. Deactivating, or creating a member who is already active, sends nothing.
 
+When `config('app.admin_notification_email')` (`ADMIN_NOTIFICATION_EMAIL`) is set, `POST /join/{token}` also queues `PendingMemberNotification` as an on-demand mail to that one address. It names the new member and their email and links to the Filament Members list with the Pending approval filter on (`filters[pending_approval][isActive]=1`). The mail uses the locale of the member whose email matches the address, else the configured `APP_LOCALE` (`SetLocale::defaultLocale()`), never the registrant's `Accept-Language`. Unset or blank sends nothing. Only invite registration sends it: a member created inactive in Filament or with `member:create` does not. A failed dispatch is passed to `report()` and the registration still redirects to `/login` with the success flash.
+
 ## Sessions
 
 Session-based auth throughout — the session cookie covers both the Filament admin panel and all member-facing routes. No separate API tokens. Sessions last approximately one week before re-authentication is required.

@@ -42,6 +42,9 @@
     "member.activated_subject": "Je account is goedgekeurd",
     "member.activated_intro": "Een beheerder heeft je account goedgekeurd. Je kunt nu inloggen.",
     "member.activated_action": "Inloggen",
+    "member.pending_mail_subject": "Nieuw lid wacht op goedkeuring",
+    "member.pending_mail_intro": ":name (:email) heeft zich via een uitnodiging aangemeld en wacht op goedkeuring.",
+    "member.pending_mail_action": "Bekijk wachtende leden",
 
     "style.section.identity": "Identiteit",
     "style.section.vital_statistics": "Vitale Statistieken",

@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\SetLocale;
 use App\Http\Requests\RegisterMemberRequest;
 use App\Models\Invitation;
 use App\Models\Member;
+use App\Notifications\PendingMemberNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
+use Throwable;
 
 class RegistrationController extends Controller
 {
@@ -35,7 +39,7 @@ class RegistrationController extends Controller
             return $this->invalidInvitation($invitation);
         }
 
-        Member::create([
+        $member = Member::create([
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
             'password' => $request->validated('password'),
@@ -47,7 +51,32 @@ class RegistrationController extends Controller
             $invitation->markUsed();
         }
 
+        $this->notifyAdminOfPendingMember($member);
+
         return redirect()->route('login')->with('success', __('auth.register_success'));
+    }
+
+    /**
+     * Mails the admin notification address, in the locale of the member who owns it, else
+     * the configured default; never the registrant's browser language. A failed dispatch
+     * is reported and does not fail the registration, which has already been saved.
+     */
+    private function notifyAdminOfPendingMember(Member $member): void
+    {
+        $address = config('app.admin_notification_email');
+
+        if (! is_string($address) || trim($address) === '') {
+            return;
+        }
+
+        try {
+            $owner = Member::where('email', Member::normalizeEmail($address))->first();
+
+            Notification::route('mail', $address)
+                ->notify((new PendingMemberNotification($member))->locale($owner?->locale ?: SetLocale::defaultLocale()));
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     private function findInvitation(string $token): Invitation

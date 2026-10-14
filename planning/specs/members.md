@@ -38,6 +38,7 @@ The MemberResource in Filament supports:
 - Edit member (same fields; password change optional on edit)
 - List members (searchable, sortable; inactive member count shown as a badge)
 - Approve pending members, one at a time or in bulk; each approved member is emailed (see `authentication.md`, Invitation-based registration)
+- Hear about pending members: each invite registration emails the admin notification address (`ADMIN_NOTIFICATION_EMAIL`, one address, not every admin) with a link to the Members list filtered on Pending approval (see `authentication.md`, Invitation-based registration)
 
 Members cannot self-edit their profile; all changes go through Filament.
 

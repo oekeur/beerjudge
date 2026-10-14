@@ -91,6 +91,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin Notification Address
+    |--------------------------------------------------------------------------
+    |
+    | Receives an email for every invite registration that awaits approval.
+    | Unset or blank sends nothing.
+    |
+    */
+
+    'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL') ?: null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |
