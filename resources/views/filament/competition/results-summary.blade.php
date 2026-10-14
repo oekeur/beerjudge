@@ -13,9 +13,10 @@
     $allJudges   = $competition?->judges ?? collect();
     $judgeCount  = $allJudges->count();
     $entryCount  = $entries->count();
-    $sheetCount  = $entries->sum(fn ($e) => $e->scoresheets->count());
-    $maxSheets   = $judgeCount * $entryCount;
-    $completePct = $maxSheets > 0 ? (int) round($sheetCount / $maxSheets * 100) : 0;
+    $progressByEntry = $competition ? app(\App\Services\JudgingProgressService::class)->forCompetition($competition) : [];
+    $sheetCount  = collect($progressByEntry)->sum('submitted');
+    $maxSheets   = collect($progressByEntry)->sum('eligible');
+    $completePct = $maxSheets > 0 ? min(100, (int) round($sheetCount / $maxSheets * 100)) : 0;
 
 @endphp
 
@@ -75,11 +76,10 @@
                 <tbody class="divide-y divide-gray-100 dark:divide-white/5">
                     @foreach($entries as $entry)
                         @php
-                            $eligible      = $allJudges->where('id', '!=', $entry->member_id);
-                            $submittedIds  = $entry->scoresheets->pluck('judge_id');
-                            $missingJudges = $eligible->whereNotIn('id', $submittedIds);
-                            $submitted     = $submittedIds->count();
-                            $eligibleCount = $eligible->count();
+                            $entryProgress = $progressByEntry[$entry->id];
+                            $missingJudges = $allJudges->whereIn('id', $entryProgress['missing']);
+                            $submitted     = $entryProgress['submitted'];
+                            $eligibleCount = $entryProgress['eligible'];
                         @endphp
                         <tr class="bg-white dark:bg-gray-900">
                             <td class="px-4 py-2 text-gray-500 dark:text-gray-400">{{ $entry->bottle_number ?? '—' }}</td>

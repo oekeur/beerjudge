@@ -34,6 +34,14 @@ class ScoresheetUpsertTest extends TestCase
         return Member::factory()->create($attrs);
     }
 
+    private function makeJudge(Competition $comp, array $attrs = []): Member
+    {
+        $judge = $this->makeMember($attrs);
+        $comp->judges()->attach($judge->id);
+
+        return $judge;
+    }
+
     private function makeEntry(Competition $comp, Member $brewer, Style $style): Entry
     {
         $comp->styles()->syncWithoutDetaching([$style->id]);
@@ -64,7 +72,7 @@ class ScoresheetUpsertTest extends TestCase
         $comp = $this->makeJudgingCompetition();
         $style = $this->makeStyle();
         $brewer = $this->makeMember(['email' => 'brewer@test.com']);
-        $judge = $this->makeMember(['email' => 'judge@test.com']);
+        $judge = $this->makeJudge($comp, ['email' => 'judge@test.com']);
         $entry = $this->makeEntry($comp, $brewer, $style);
         $uuid = fake()->uuid();
 
@@ -80,7 +88,7 @@ class ScoresheetUpsertTest extends TestCase
         $comp = $this->makeJudgingCompetition();
         $style = $this->makeStyle();
         $brewer = $this->makeMember(['email' => 'brewer2@test.com']);
-        $judge = $this->makeMember(['email' => 'judge2@test.com']);
+        $judge = $this->makeJudge($comp, ['email' => 'judge2@test.com']);
         $entry = $this->makeEntry($comp, $brewer, $style);
         $uuid = fake()->uuid();
 
@@ -96,7 +104,7 @@ class ScoresheetUpsertTest extends TestCase
         $comp = $this->makeJudgingCompetition();
         $style = $this->makeStyle();
         $brewer = $this->makeMember();
-        $judge = $this->makeMember();
+        $judge = $this->makeJudge($comp);
         $entry = $this->makeEntry($comp, $brewer, $style);
         $uuid = fake()->uuid();
 
@@ -114,7 +122,7 @@ class ScoresheetUpsertTest extends TestCase
         $comp = $this->makeJudgingCompetition();
         $style = $this->makeStyle();
         $brewer = $this->makeMember();
-        $judge = $this->makeMember();
+        $judge = $this->makeJudge($comp);
         $entry = $this->makeEntry($comp, $brewer, $style);
 
         $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, fake()->uuid(), ['descriptors' => ['acetaldehyde']]))->assertOk();
@@ -128,7 +136,7 @@ class ScoresheetUpsertTest extends TestCase
     {
         $comp = $this->makeJudgingCompetition();
         $style = $this->makeStyle();
-        $member = $this->makeMember(['email' => 'self@test.com']);
+        $member = $this->makeJudge($comp, ['email' => 'self@test.com']);
         $entry = $this->makeEntry($comp, $member, $style);
 
         $response = $this->actingAs($member)->postJson('/scoresheets', $this->payload($entry->id, fake()->uuid()));
@@ -141,7 +149,7 @@ class ScoresheetUpsertTest extends TestCase
         $comp = Competition::forceCreate(['name' => 'Draft Cup', 'year' => 2025, 'status' => 'draft']);
         $style = $this->makeStyle();
         $brewer = $this->makeMember(['email' => 'b3@test.com']);
-        $judge = $this->makeMember(['email' => 'j3@test.com']);
+        $judge = $this->makeJudge($comp, ['email' => 'j3@test.com']);
         $entry = $this->makeEntry($comp, $brewer, $style);
 
         $response = $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, fake()->uuid()));
@@ -154,7 +162,7 @@ class ScoresheetUpsertTest extends TestCase
         $comp = $this->makeJudgingCompetition();
         $style = $this->makeStyle();
         $brewer = $this->makeMember(['email' => 'b4@test.com']);
-        $judge = $this->makeMember(['email' => 'j4@test.com']);
+        $judge = $this->makeJudge($comp, ['email' => 'j4@test.com']);
         $entry = $this->makeEntry($comp, $brewer, $style);
 
         $response = $this->actingAs($judge)->postJson('/scoresheets', $this->payload($entry->id, fake()->uuid(), ['aroma' => 13]));
@@ -167,7 +175,7 @@ class ScoresheetUpsertTest extends TestCase
         $comp = $this->makeJudgingCompetition();
         $style = $this->makeStyle();
         $brewer = $this->makeMember(['email' => 'b5@test.com']);
-        $judge = $this->makeMember(['email' => 'j5@test.com']);
+        $judge = $this->makeJudge($comp, ['email' => 'j5@test.com']);
         $entry = $this->makeEntry($comp, $brewer, $style);
         $uuid = fake()->uuid();
 
@@ -191,8 +199,8 @@ class ScoresheetUpsertTest extends TestCase
         $comp = $this->makeJudgingCompetition();
         $style = $this->makeStyle();
         $brewer = $this->makeMember(['email' => 'brewer_x@test.com']);
-        $judgeA = $this->makeMember(['email' => 'judge_a@test.com']);
-        $judgeB = $this->makeMember(['email' => 'judge_b@test.com']);
+        $judgeA = $this->makeJudge($comp, ['email' => 'judge_a@test.com']);
+        $judgeB = $this->makeJudge($comp, ['email' => 'judge_b@test.com']);
         $entryA = $this->makeEntry($comp, $brewer, $style);
         $entryB = $this->makeEntry($comp, $judgeA, $style); // brewed by judgeA so judgeB can judge it
 

@@ -29,6 +29,7 @@ class ScoresheetRevisionTest extends TestCase
         $competition->styles()->attach($style->id);
         $brewer = Member::factory()->create();
         $this->judge = Member::factory()->create();
+        $competition->judges()->attach($this->judge->id);
         $this->entry = Entry::create(['competition_id' => $competition->id, 'member_id' => $brewer->id, 'style_id' => $style->id]);
         $this->uuid = fake()->uuid();
     }

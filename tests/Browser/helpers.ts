@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const JUDGE_EMAIL = 'judge@browser-test.local'
+export const NEWCOMER_EMAIL = 'newcomer@browser-test.local'
 export const BREWER_EMAIL = 'brewer@browser-test.local'
 export const PASSWORD = 'password'
 

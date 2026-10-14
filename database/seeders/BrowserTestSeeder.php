@@ -17,6 +17,7 @@ class BrowserTestSeeder extends Seeder
         // Clear any existing test data to ensure isolation between test runs
         DB::table('scoresheets')->delete();
         DB::table('entries')->delete();
+        DB::table('competition_judge')->delete();
         DB::table('competition_style')->delete();
         DB::table('competitions')->delete();
         DB::table('styles')->delete();
@@ -86,6 +87,15 @@ class BrowserTestSeeder extends Seeder
             'is_active' => true,
         ]);
 
+        // Starts outside the judge list so judge-registration.spec.ts can exercise the participate prompt.
+        Member::create([
+            'name' => 'Browser Newcomer',
+            'email' => 'newcomer@browser-test.local',
+            'password' => Hash::make('password'),
+            'is_admin' => false,
+            'is_active' => true,
+        ]);
+
         $brewer = Member::create([
             'name' => 'Browser Brewer',
             'email' => 'brewer@browser-test.local',
@@ -102,6 +112,8 @@ class BrowserTestSeeder extends Seeder
             'status' => 'judging',
         ]);
         $judgingComp->styles()->attach([$style->id, $maxOnlyStyle->id, $minOnlyStyle->id, $edgeEqualStyle->id, $baStyle->id]);
+        // Only registered judges can score; the judging specs log in as this member.
+        $judgingComp->judges()->attach($judge->id);
 
         Entry::create([
             'competition_id' => $judgingComp->id,

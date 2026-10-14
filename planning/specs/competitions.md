@@ -17,7 +17,7 @@ A competition is the container for one judging event. It holds a set of accepted
 
 **Pivots:**
 - `competition_style` — which BJCP styles the competition accepts (many-to-many with `styles`)
-- `competition_member` — which members are registered as judges (many-to-many with `members`)
+- `competition_judge` — which members participate as judges (many-to-many with `members`)
 
 ## Lifecycle
 

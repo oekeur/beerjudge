@@ -60,14 +60,18 @@ Judging is an open pool — no pre-assignment of judges to entries. Any register
 
 ## Judge self-registration
 
-Members opt in to judging a competition explicitly.
+Members opt in to a competition explicitly, labelled "Participate" (Dutch: "Deelnemen"). Only registered judges can score.
 
-`POST /competitions/{competition}/judges` — registers the current member as a judge (adds to the `competition_member` pivot).
-`DELETE /competitions/{competition}/judges` — deregisters.
+`POST /competitions/{competition}/judges` — registers the current member (adds a row to the `competition_judge` pivot). Allowed while the competition is open or judging. `GET /judging/{competition}?register=1` does the same on load.
+`DELETE /competitions/{competition}/judges` — stops participating. Allowed while the competition is open or judging, also after submitting; refused once it is closed.
 
-The judging screen also auto-registers a member as a judge the first time they load it for a competition.
+**The gate.** The judging screen only receives entries for members in `competition_judge`. Anyone else sees the participate prompt instead of the entry list (admins who are not judges still get the progress panel). `POST /scoresheets` answers 403 for a member who is not a judge of the entry's competition, so a stale page or a queued offline save cannot bypass it. The screen does not register members automatically.
 
-The admin can also share a **judge participation link** (generated in the Filament Competition > Judging tab) to invite members to register as judges.
+**Leaving.** A judge who leaves keeps their submitted sheets: they stay stored and count in the ranking. They get no judge report, which still requires a `competition_judge` row.
+
+**Progress.** For each entry, eligible judges = current judges plus members with a submitted sheet on that entry, minus the brewer. Submitted = submitted sheets on the entry. Missing = current judges (minus the brewer) without a submitted sheet. The admin summary totals are the sum of submitted over the sum of eligible, capped at 100%.
+
+The admin can also share a **judge participation link** (generated in the Filament Competition > Judging tab) to invite members to participate.
 
 ## Offline-first sync
 

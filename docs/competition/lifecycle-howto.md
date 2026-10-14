@@ -60,7 +60,7 @@ The system:
 1. Open the competition edit page.
 2. Add judges in the Judges field on the **Dashboard** tab, or copy the link next to that field and send it to judges (it works once the competition is in Judging).
 
-A member can also click **Register as judge** on the judging screen (`POST /competitions/{competition}/judges`, allowed while open or judging); **Leave as judge** removes them. A judge cannot score their own entries; the judging screen enforces this by excluding those entries from their list.
+Only members on the judge list can score. A member can also click **Participate** on the judging screen (`POST /competitions/{competition}/judges`, allowed while open or judging); **Stop participating** removes them while the competition is open or judging, also after submitting. Their submitted sheets keep counting in the ranking, but they get no judge report. A judge cannot score their own entries; the judging screen enforces this by excluding those entries from their list.
 
 ## Step 7: Judge the competition
 

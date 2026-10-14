@@ -23,6 +23,11 @@ class JudgeRegistrationController extends Controller
 
     public function destroy(Competition $competition, Request $request): RedirectResponse
     {
+        abort_if(
+            ! in_array($competition->status, [CompetitionStatus::Open, CompetitionStatus::Judging]),
+            403,
+        );
+
         $competition->judges()->detach($this->member($request)->id);
 
         return back();
