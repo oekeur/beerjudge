@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { journey, login, expect, tinker, STATE } from './lib.mjs'
+import { journey, login, expect, modal, tinker, STATE } from './lib.mjs'
 const { competitionId } = JSON.parse(fs.readFileSync(STATE))
 
 await journey('A4-run-judging', async actor => {
@@ -9,10 +9,10 @@ await journey('A4-run-judging', async actor => {
   await page.waitForLoadState('networkidle')
   await step('move to judging asks for confirmation', async () => {
     await page.getByRole('button', { name: 'Move to Judging' }).click()
-    await expect(page.getByRole('dialog')).toContainText('Lock Registration')
+    await expect(modal(page)).toContainText('Lock Registration')
   })
   await step('confirm assigns bottle numbers', async () => {
-    await page.getByRole('dialog').getByRole('button', { name: /Confirm/ }).click()
+    await modal(page).getByRole('button', { name: /Confirm/ }).click()
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(1000)
     const b = tinker(`echo App\\Models\\Entry::where("competition_id", ${competitionId})->orderBy("bottle_number")->pluck("bottle_number")->implode(",");`)
@@ -32,7 +32,7 @@ await journey('A4-run-judging', async actor => {
     await page.getByRole('tab', { name: 'Dashboard' }).click()
     await page.waitForTimeout(500)
     for (const name of ['Member 2', 'Member 3']) {
-      await page.getByRole('button', { name: /Select an option|Member \d/ }).first().click().catch(() => {})
+      await page.getByRole('combobox').filter({ hasText: /Select an option|Member \d/ }).first().click().catch(() => {})
       await page.keyboard.type(name.split(' ')[1], { delay: 50 })
       await page.getByRole('option', { name }).first().click()
       await page.keyboard.press('Escape')

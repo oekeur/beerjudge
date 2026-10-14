@@ -1,4 +1,4 @@
-import { journey, login, expect, tinker } from './lib.mjs'
+import { journey, login, expect, modal, tinker } from './lib.mjs'
 const id = email => tinker(`echo App\\Models\\Member::where("email","${email}")->value("id");`)
 
 await journey('A8-admin-guards', async actor => {
@@ -29,7 +29,7 @@ await journey('A8-admin-guards', async actor => {
     const del = page.getByRole('button', { name: 'Delete' })
     if (await del.isVisible()) {
       await del.click()
-      const d = page.getByRole('dialog'); if (await d.isVisible()) await d.getByRole('button', { name: /Confirm|Delete/ }).click()
+      const d = modal(page); if (await d.isVisible()) await d.getByRole('button', { name: /Confirm|Delete/ }).click()
       await page.waitForTimeout(1000)
     }
     if (tinker('echo App\\Models\\Member::where("email","member2@beerjudge.local")->count();') !== '1') throw new Error('deleted')
