@@ -137,6 +137,17 @@ class CompetitionForm
                                 Select::make('judges')
                                     ->multiple()
                                     ->relationship('judges', 'name')
+                                    ->saveRelationshipsUsing(null)
+                                    ->visible(fn (?Competition $record): bool => (bool) $record?->exists)
+                                    ->live()
+                                    ->afterStateUpdated(function (?Competition $record, ?array $state, ?array $old): void {
+                                        $toInt = fn (mixed $id): int => is_numeric($id) ? (int) $id : 0;
+                                        $new = collect(array_map($toInt, $state ?? []));
+                                        $previous = collect(array_map($toInt, $old ?? []));
+
+                                        $record?->judges()->syncWithoutDetaching($new->diff($previous)->values()->all());
+                                        $record?->judges()->detach($previous->diff($new)->values()->all());
+                                    })
                                     ->options(fn () => Member::where('is_active', true)->orderBy('name')->pluck('name', 'id'))
                                     ->searchable()
                                     ->preload()
