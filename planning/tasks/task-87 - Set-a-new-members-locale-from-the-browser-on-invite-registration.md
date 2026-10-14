@@ -4,10 +4,11 @@ title: Set a new member's locale from the browser on invite registration
 status: Planned
 assignee: []
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 14:33'
+updated_date: '2026-10-14 14:47'
 labels:
   - i18n
-dependencies: []
+dependencies:
+  - TASK-109
 documentation:
   - docs/user-journeys.md
 priority: low

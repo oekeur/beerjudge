@@ -4,10 +4,12 @@ title: Translate the admin login page and the password-reset email
 status: Planned
 assignee: []
 created_date: '2026-10-07 21:40'
-updated_date: '2026-10-14 14:34'
+updated_date: '2026-10-14 14:47'
 labels:
   - i18n
-dependencies: []
+dependencies:
+  - TASK-85
+  - TASK-109
 priority: low
 type: bug
 ordinal: 107000

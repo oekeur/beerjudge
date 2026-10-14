@@ -4,10 +4,11 @@ title: Expose the judging style guide panel as a dialog to screen readers
 status: Planned
 assignee: []
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 14:36'
+updated_date: '2026-10-14 14:47'
 labels:
   - style-guidelines
-dependencies: []
+dependencies:
+  - TASK-84
 documentation:
   - docs/user-journeys.md
 priority: low
