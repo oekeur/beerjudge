@@ -1,9 +1,10 @@
 ---
 id: TASK-107
 title: Translate the home page
-status: To Do
+status: Planned
 assignee: []
 created_date: '2026-10-13 14:45'
+updated_date: '2026-10-14 14:46'
 labels:
   - i18n
 dependencies: []
@@ -24,4 +25,15 @@ welcome.blade.php hardcodes the 'Competitions' heading, the Judging/Open/Past se
 <!-- AC:BEGIN -->
 - [ ] #1 Every visible string on the home page comes from lang/en.json and lang/nl.json
 - [ ] #2 A test renders the home page for an nl member and finds the Dutch strings
+- [ ] #3 A unit test asserts lang/en.json and lang/nl.json hold identical key sets
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Full plan: planning/2026-10-14-translate-member-pages.md (Phase 1: Home page and key-parity guard)
+Goal: the home page renders entirely from lang files; en/nl key drift fails a test.
+Phase 1 - Home page: move every welcome.blade.php string to home.* keys (single section/badge label kept, so English 'Past' stays), translatedFormat for the judging date, nl feature test with absence checks [AC 1,2]
+Phase 1 - Parity guard: unit test comparing sorted key sets of en.json and nl.json [AC 3]
+Open (non-blocking): none
+<!-- SECTION:PLAN:END -->
