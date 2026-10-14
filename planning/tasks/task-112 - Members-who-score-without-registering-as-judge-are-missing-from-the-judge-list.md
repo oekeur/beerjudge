@@ -1,10 +1,11 @@
 ---
 id: TASK-112
 title: Only registered judges can score; reword registration to participate
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-14 08:24'
-updated_date: '2026-10-14 09:37'
+updated_date: '2026-10-14 10:57'
 labels:
   - judging-progress
 dependencies:
