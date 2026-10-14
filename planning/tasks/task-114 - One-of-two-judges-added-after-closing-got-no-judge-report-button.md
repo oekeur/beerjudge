@@ -4,7 +4,7 @@ title: One of two judges added after closing got no judge report button
 status: To Do
 assignee: []
 created_date: '2026-10-14 08:25'
-updated_date: '2026-10-14 08:40'
+updated_date: '2026-10-14 08:55'
 labels:
   - results
 dependencies: []
@@ -36,4 +36,6 @@ Separate UX gap: a judge without a sheet link on the home page has no direct pat
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-10-14: Oscar used one device and one tab, so a save from a second, older copy of the edit page (TASK-113) did not drop the second judge. An add that was never saved is now the leading candidate; the production probe still decides.
+
+2026-10-14 production probe (competition 4, closed 2026-10-13 19:49): competition_judge has 10 members; 11 members submitted sheets. Member 25 submitted 7 sheets and has no competition_judge row, so the results index hides the judge report button for them. Every other member who scored has a row, and no row exists for a member who did not score. The pivot has no timestamps, so whether member 25 was never added or was added and later removed (for example while removing the absent judge, which took several tries) cannot be read from the data. Immediate workaround: add member 25 as judge of competition 4 in Filament.
 <!-- SECTION:NOTES:END -->
