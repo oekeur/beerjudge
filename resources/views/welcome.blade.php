@@ -7,7 +7,7 @@
     <x-app-nav />
 
     <main class="max-w-3xl mx-auto px-6 py-10">
-        <h1 class="text-2xl font-semibold text-amber-900 dark:text-amber-300 mb-6">Competitions</h1>
+        <h1 class="text-2xl font-semibold text-amber-900 dark:text-amber-300 mb-6">{{ __('home.heading') }}</h1>
 
         @if (session('success'))
             <p class="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg px-3 py-2 text-sm mb-6" data-testid="flash-success">
@@ -17,9 +17,9 @@
 
         @php
             $sections = [
-                'judging' => 'Judging',
-                'open'    => 'Open',
-                'closed'  => 'Past',
+                'judging' => __('home.section.judging'),
+                'open'    => __('home.section.open'),
+                'closed'  => __('home.section.closed'),
             ];
         @endphp
 
@@ -28,7 +28,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-4.5A3.75 3.75 0 0012 10.5a3.75 3.75 0 00-3.75 3.75v4.5m3.75-9V3.75m0 0h3m-3 0h-3" />
                 </svg>
-                <p class="text-sm">No competitions yet.</p>
+                <p class="text-sm">{{ __('home.empty') }}</p>
             </div>
         @else
             @foreach($sections as $status => $label)
@@ -49,7 +49,7 @@
                                             <p class="font-medium text-gray-900 dark:text-white">{{ $competition->name }}</p>
                                             @if($competition->judging_date)
                                                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                                                    {{ \Carbon\Carbon::parse($competition->judging_date)->format('j M Y') }}
+                                                    {{ \Carbon\Carbon::parse($competition->judging_date)->translatedFormat('j M Y') }}
                                                 </p>
                                             @endif
                                         </div>
@@ -67,21 +67,21 @@
                                         <div class="mt-3 pt-3 border-t border-amber-100 dark:border-amber-900">
                                             <a href="{{ route('judging.show', $competition) }}"
                                                class="text-sm text-amber-700 dark:text-amber-400 font-medium hover:underline">
-                                                Judge entries &rarr;
+                                                {{ __('home.link.judge') }} &rarr;
                                             </a>
                                         </div>
                                     @elseif($status === 'open')
                                         <div class="mt-3 pt-3 border-t border-amber-100 dark:border-amber-800/50">
                                             <a href="{{ route('competitions.entries.create', $competition) }}"
                                                class="text-sm text-amber-700 dark:text-amber-400 font-medium hover:underline">
-                                                Register entry &rarr;
+                                                {{ __('home.link.register') }} &rarr;
                                             </a>
                                         </div>
                                     @elseif($competition->isClosed())
                                         <div class="mt-3 pt-3 border-t border-stone-100 dark:border-gray-800">
                                             <a href="{{ route('results.show', [$competition, auth()->user()]) }}"
                                                class="text-sm text-amber-700 dark:text-amber-400 font-medium hover:underline">
-                                                View results &rarr;
+                                                {{ __('home.link.results') }} &rarr;
                                             </a>
                                         </div>
                                     @endif

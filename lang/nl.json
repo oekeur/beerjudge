@@ -228,6 +228,9 @@
     "nav.entries": "Inzendingen",
     "nav.competition_dashboard": "Dashboard",
     "nav.logout": "Uitloggen",
+    "nav.theme.light": "Lichte modus",
+    "nav.theme.system": "Systeemvoorkeur",
+    "nav.theme.dark": "Donkere modus",
 
     "profile.title": "Jouw profiel",
     "profile.account_details": "Accountgegevens",
@@ -279,6 +282,16 @@
     "feedback.errorTimeoutText": "Niet vast te stellen of de melding is verstuurd.",
     "feedback.errorForbiddenText": "De melding kan niet worden verstuurd. Dit domein staat mogelijk niet in de lijst met toegestane domeinen.",
     "feedback.errorGenericText": "De melding kan niet worden verstuurd. Dit kan een netwerkprobleem zijn, of een adblocker blokkeert het.",
+
+    "home.heading": "Competities",
+    "home.empty": "Nog geen competities.",
+    "home.section.judging": "Keuren",
+    "home.section.open": "Open",
+    "home.section.closed": "Afgelopen",
+    "home.link.judge": "Inzendingen keuren",
+    "home.link.register": "Inzending registreren",
+    "home.link.results": "Bekijk resultaten",
+
 
     "errors.403.title": "Geen toegang tot deze pagina",
     "errors.403.body": "Je kunt deze pagina nu niet openen. Was je aan het keuren, dan is het keuren voor deze competitie waarschijnlijk afgesloten.",
