@@ -1,10 +1,11 @@
 ---
 id: TASK-83
 title: Lock the entries repeater once judging starts
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 14:57'
+updated_date: '2026-10-19 14:52'
 labels:
   - v1
 dependencies:
