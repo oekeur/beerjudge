@@ -1,10 +1,11 @@
 ---
 id: TASK-108
 title: 'Translate the results, score sheet and judge report pages'
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-13 14:45'
-updated_date: '2026-10-14 14:46'
+updated_date: '2026-10-19 14:41'
 labels:
   - i18n
 dependencies:

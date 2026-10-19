@@ -1,10 +1,11 @@
 ---
 id: TASK-31
 title: Add history and stats pages
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-14 14:57'
+updated_date: '2026-10-19 14:41'
 labels:
   - history-stats
 dependencies:

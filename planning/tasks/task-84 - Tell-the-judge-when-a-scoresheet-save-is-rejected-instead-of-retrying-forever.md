@@ -1,10 +1,11 @@
 ---
 id: TASK-84
 title: Tell the judge when a scoresheet save is rejected instead of retrying forever
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 14:57'
+updated_date: '2026-10-19 14:41'
 labels:
   - pwa
 dependencies:
