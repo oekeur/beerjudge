@@ -1,10 +1,11 @@
 ---
 id: TASK-38
 title: Land the historical competition backfill importer
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-14 14:34'
+updated_date: '2026-10-19 14:18'
 labels:
   - backfill
 dependencies: []

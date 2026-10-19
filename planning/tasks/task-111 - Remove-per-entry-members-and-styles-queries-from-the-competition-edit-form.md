@@ -1,10 +1,11 @@
 ---
 id: TASK-111
 title: Remove per-entry members and styles queries from the competition edit form
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-14 08:06'
-updated_date: '2026-10-14 08:06'
+updated_date: '2026-10-19 14:18'
 labels:
   - sentry
 dependencies: []

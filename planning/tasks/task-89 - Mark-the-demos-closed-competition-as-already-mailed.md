@@ -1,10 +1,11 @@
 ---
 id: TASK-89
 title: Mark the demo's closed competition as already mailed
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 14:31'
+updated_date: '2026-10-19 14:18'
 labels:
   - email-on-publish
 dependencies: []

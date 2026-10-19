@@ -1,10 +1,11 @@
 ---
 id: TASK-85
 title: Rate-limit the password reset email request
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-14 14:32'
+updated_date: '2026-10-19 14:18'
 labels:
   - security-hardening
   - auth

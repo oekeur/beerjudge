@@ -1,10 +1,11 @@
 ---
 id: TASK-69
 title: Fix three stale doc lines found during the auth batch
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-07 21:40'
-updated_date: '2026-10-14 14:31'
+updated_date: '2026-10-19 14:18'
 labels:
   - docs
 dependencies: []
