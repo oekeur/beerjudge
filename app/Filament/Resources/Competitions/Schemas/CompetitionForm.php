@@ -31,6 +31,38 @@ use Illuminate\Support\HtmlString;
 
 class CompetitionForm
 {
+    /**
+     * All members, inactive included so existing entries still validate. Memoized per request:
+     * the Repeater validates every row on save and would otherwise look the member up per row.
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function memberOptions(): array
+    {
+        return once(fn (): array => Member::orderBy('name')->pluck('name', 'id')->all());
+    }
+
+    /**
+     * Style options for the entry rows, restricted to the competition's styles when any are
+     * selected. Keyed on the style-id array only: capturing an object would defeat the memo.
+     *
+     * @param  array<array-key, mixed>  $styleIds
+     * @return array<array-key, mixed>
+     */
+    private static function styleOptions(array $styleIds): array
+    {
+        return once(function () use ($styleIds): array {
+            $query = Style::orderBy('code');
+            if (! empty($styleIds)) {
+                $query->whereIn('id', $styleIds);
+            }
+
+            return $query->get()
+                ->mapWithKeys(fn (Style $s) => [$s->id => "{$s->code} — {$s->name}"])
+                ->toArray();
+        });
+    }
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -114,7 +146,7 @@ class CompetitionForm
                                     ->schema([
                                         Select::make('member_id')
                                             ->label(__('competition.entry.member'))
-                                            ->relationship('member', 'name')
+                                            ->options(fn (): array => self::memberOptions())
                                             ->searchable()
                                             ->required()
                                             ->columnSpan(2),
@@ -122,17 +154,7 @@ class CompetitionForm
                                             ->label(__('competition.entry.style'))
                                             ->searchable()
                                             ->required()
-                                            ->options(function (Get $get): array {
-                                                $styleIds = $get('../../styles') ?? [];
-                                                $query = Style::orderBy('code');
-                                                if (! empty($styleIds)) {
-                                                    $query->whereIn('id', $styleIds);
-                                                }
-
-                                                return $query->get()
-                                                    ->mapWithKeys(fn (Style $s) => [$s->id => "{$s->code} — {$s->name}"])
-                                                    ->toArray();
-                                            })
+                                            ->options(fn (Get $get): array => self::styleOptions(is_array($styles = $get('../../styles')) ? $styles : []))
                                             ->live()
                                             ->columnSpan(2),
                                         TextInput::make('abv')
