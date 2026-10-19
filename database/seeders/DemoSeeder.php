@@ -40,6 +40,7 @@ class DemoSeeder extends Seeder
             'year' => 2024,
             'judging_date' => '2024-10-19',
             'status' => 'closed',
+            'results_mailed_at' => now(),
         ]);
         $comp1->styles()->attach(Style::where('source', 'bjcp_beer')->pluck('id'));
         $comp1->judges()->attach([$m1->id, $m2->id, $m4->id]);
