@@ -1,11 +1,11 @@
 ---
 id: TASK-69
 title: Fix three stale doc lines found during the auth batch
-status: In Progress
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-10-07 21:40'
-updated_date: '2026-10-19 14:18'
+updated_date: '2026-10-19 14:21'
 labels:
   - docs
 dependencies: []
@@ -22,7 +22,7 @@ docs/admin/filament-overview-explanation.md:64 says the Authenticate middleware 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The three named lines, and the other doc lines repeating the same claims (env-reference, docker-howto, active-member-middleware-reference), match the code; the rg check in the plan prints nothing
+- [x] #1 The three named lines, and the other doc lines repeating the same claims (env-reference, docker-howto, active-member-middleware-reference), match the code; the rg check in the plan prints nothing
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -34,3 +34,9 @@ Phase 1 - Correct the stale lines: Authenticate/canAccessPanel/RequireActiveMemb
 [RISK] none. Non-blocking unknown: whether strict now works is untested; edits avoid claiming either way.
 Open (non-blocking): none
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+AC 1: six lines reworded to match the code (commit 6a9f2bd): filament-overview-explanation and active-member-middleware-reference now say the panel runs RequireActiveMember (AdminPanelProvider.php:58-62) and canAccessPanel returns is_admin (Member.php:79-82); authentication spec, env-reference and docker-howto say lax is the default (config/session.php:202), GET /magic-link renders a confirm page and POST consumes (routes/web.php:41-42), with no claim about strict; ranking-service-explanation drops the batch-print view. Verified by Pass A (each reworded claim read against the cited code) and the done-check rg (exit 1 on the branch, hits on main). Departure: the plan's rg pattern 'still reach' also matched an unrelated sentence in docs/judging/explanation-offline-sync.md:35; narrowed to 'still reach (the panel|.?/admin)' in the plan. Not done: the gitignored docs/private/deploy-notes.md:201 still says strict breaks magic links; it is local-only and outside git.
+<!-- SECTION:FINAL_SUMMARY:END -->
