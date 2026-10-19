@@ -26,7 +26,7 @@ GET  /competitions/{competition}/entries/create  auth, active-member
 POST /competitions/{competition}/entries  auth, active-member
 ```
 
-The Filament admin panel (`/admin`) does **not** use this middleware. Filament calls `Member::canAccessPanel()`, which checks `is_admin` only; an inactive admin can still reach the panel.
+The Filament admin panel (`/admin`) also runs `RequireActiveMember` (in `AdminPanelProvider::authMiddleware`), so an inactive admin is logged out and redirected. `Member::canAccessPanel()` checks `is_admin` only.
 
 ---
 

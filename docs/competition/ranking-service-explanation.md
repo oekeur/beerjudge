@@ -2,7 +2,7 @@
 
 ## The problem this solves
 
-Results need to be computed from multiple judges' scoresheets, merged into a single ranked list, and served on every results page request. The data lives in three tables (`entries`, `scoresheets`, and their related members and styles). Without a dedicated service, this logic would leak into the controller and be duplicated if rankings ever needed to appear in a Filament widget or a batch-print view. It also feeds the per-judge report through `judgeComparison()`.
+Results need to be computed from multiple judges' scoresheets, merged into a single ranked list, and served on every results page request. The data lives in three tables (`entries`, `scoresheets`, and their related members and styles). Without a dedicated service, this logic would leak into the controller and be duplicated if rankings ever needed to appear in a Filament widget. It also feeds the per-judge report through `judgeComparison()`.
 
 `CompetitionRankingService` centralises all ranking logic: score averaging, tiebreak handling, and BJCP band assignment.
 

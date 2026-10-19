@@ -119,7 +119,7 @@ Never change `APP_KEY` once members exist: it signs sessions and invitation link
 1. `APP_URL` matches the address in the browser exactly (scheme, domain, no trailing slash).
 2. Behind an HTTPS proxy, the proxy forwards `X-Forwarded-Proto`; otherwise Laravel builds `http://` URLs and secure cookies are dropped.
 3. Redis is healthy: `docker compose -f docker-compose.selfhost.yaml logs redis`. This stack runs Redis without a password, so leave `REDIS_PASSWORD` as it is in the template.
-4. `SESSION_SAME_SITE` is `lax` (the default). With `strict`, email magic links arrive without the session cookie.
+4. `SESSION_SAME_SITE` is `lax` (the default).
 
 ### App returns 502 right after start
 

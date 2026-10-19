@@ -42,7 +42,7 @@ When `config('app.admin_notification_email')` (`ADMIN_NOTIFICATION_EMAIL`) is se
 
 Session-based auth throughout — the session cookie covers both the Filament admin panel and all member-facing routes. No separate API tokens. Sessions last approximately one week before re-authentication is required.
 
-`SESSION_SAME_SITE` must be `lax`. A magic link is opened from an email client, which makes the click a cross-site navigation. Under `strict` the browser stores the session cookie set by `/magic-link/{token}` but withholds it on the redirect that follows, so the member lands on `/login` with no error and the single-use token is already spent. Pasting the same URL into the address bar is a same-site navigation and logs in fine, so only a click from the email tests this. `lax` still withholds the cookie on cross-site POST, and the CSRF middleware covers the rest.
+`SESSION_SAME_SITE` is `lax` (the config default). A magic link is opened from an email client, which makes the click a cross-site navigation. `GET /magic-link/{token}` only renders a confirm page and does not consume the token; the `POST` consumes it. `lax` withholds the cookie on cross-site POST, and the CSRF middleware covers the rest.
 
 Production ran with `strict` until 2026-10-07: the fix reached a local copy of `.env.production` but not the file on the server. The container reads `.env.production` only when it is created (`env_file` in `docker-compose.prod.yaml`) and caches config on start, so a change there needs `up -d --force-recreate app`, not `restart`.
 

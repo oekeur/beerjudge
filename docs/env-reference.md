@@ -64,7 +64,7 @@ See [README.md](../README.md) for which env file to copy in each setup scenario.
 | `SESSION_ENCRYPT` | bool | `false` | `false` | Encrypt session payload at rest. Not required when the session store is a private Redis instance. |
 | `SESSION_PATH` | string | `/` | `/` | Cookie path scope. |
 | `SESSION_DOMAIN` | string | `null` | `null` | Cookie domain. `null` defaults to the request host. |
-| `SESSION_SAME_SITE` | string | _(unset, config default `lax`)_ | _(unset)_ | Must be `lax`. Magic links open from an email client, which is a cross-site navigation; under `strict` the browser withholds the session cookie on the redirect after `/magic-link/{token}`, so the member lands on `/login` and the single-use link is spent. |
+| `SESSION_SAME_SITE` | string | _(unset, config default `lax`)_ | _(unset)_ | Defaults to `lax`. Magic links open from an email client, which is a cross-site navigation. `GET /magic-link/{token}` only renders a confirm page; the `POST` consumes the token. |
 | `SESSION_SECURE_COOKIE` | bool | _(unset)_ | _(unset)_ | Set to `true` in production so the session cookie is only sent over HTTPS. |
 | `QUEUE_CONNECTION` | string | `database` | `redis` | Queue backend. `database` is fine for low-volume use; `redis` is preferred in production. |
 | `BROADCAST_CONNECTION` | string | `log` | `log` | Broadcast driver. `log` disables real broadcasting; the app does not use websockets. |

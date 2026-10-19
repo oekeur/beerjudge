@@ -61,7 +61,7 @@ Each resource lives in its own subdirectory under `app/Filament/Resources/`. For
 
 ## Authentication
 
-The panel uses the same session cookie as the rest of the app. There is no separate admin login. Members with `is_admin = true` can access `/admin`; the `Authenticate` middleware enforces this. `RequireActiveMember` guards the main app routes only, so the panel does not check `is_active`: an inactive admin can still reach `/admin`.
+The panel uses the same session cookie as the rest of the app. There is no separate admin login. Members with `is_admin = true` can access `/admin`: `Member::canAccessPanel()` returns `is_admin`, and Filament's `Authenticate` middleware calls it and returns 403 otherwise. The panel's `authMiddleware` also includes `RequireActiveMember`, so an inactive admin is logged out and redirected to login.
 
 ---
 
