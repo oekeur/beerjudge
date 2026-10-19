@@ -112,7 +112,7 @@ The deterministic suites (`php artisan test`, `npm run test:browser`) check each
 - **Steps**:
   - **Password**: email and password at `/login`. Members land on `/`, admins on `/admin`.
   - **Magic link**: request a link at `/magic-link`, open it from the email, press the button on the confirm page. Opening the link alone does not log in; a used link shows "expired or already used".
-  - **Password reset**: request a reset email, set a new password, which logs you in.
+  - **Password reset**: request a reset email, set a new password, which logs you in. Requesting the email is limited to 3 per 5 minutes per email and IP, and 45 per 5 minutes per IP; the response is the same for unknown addresses.
   - **Log out** from the nav.
 - **Code**: `AuthController`, `PasswordResetController`.
 - **Docs**: [How to log in](/member/auth-howto), [Magic link reference](/member/magic-link-reference).
@@ -234,9 +234,7 @@ Finding 11 (the style guide panel is not a dialog for screen readers) is still n
 **Found while fixing** (not fixed in this run, not filed as tasks yet)
 
 - Any Save on the competition edit page deletes entries registered after the page was opened: the relationship repeater removes rows missing from its stale form state.
-- `POST /password/reset` (send link) is not throttled.
 - `trustProxies('*')` lets a client that rotates `X-Forwarded-For` escape IP-keyed limits; it depends on the proxy in front.
-- There is no custom 429 page.
 - Invite registration hardcodes the locale `en`.
 - The entries repeater has no status lock during Judging or Closed.
 - A 4xx on a scoresheet save (419 or 422) is retried every 5 seconds forever.

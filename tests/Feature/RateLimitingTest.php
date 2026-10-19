@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\MagicLink;
 use App\Models\Member;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
@@ -184,6 +185,78 @@ class RateLimitingTest extends TestCase
             'password' => 'newpassword123',
             'password_confirmation' => 'newpassword123',
         ])->assertStatus(302);
+    }
+
+    public function test_fourth_password_reset_request_for_one_email_within_five_minutes_is_throttled(): void
+    {
+        Notification::fake();
+        $member = Member::factory()->create(['is_active' => true]);
+
+        for ($i = 0; $i < 3; $i++) {
+            $this->post(route('password.email'), ['email' => $member->email])->assertRedirect();
+        }
+
+        $this->post(route('password.email'), ['email' => strtoupper($member->email)])->assertStatus(429);
+        $this->post(route('password.email'), ['email' => 'someone-else@example.com'])->assertRedirect();
+    }
+
+    public function test_forty_sixth_password_reset_request_from_one_ip_is_throttled_whatever_the_email(): void
+    {
+        Notification::fake();
+
+        for ($i = 0; $i < 45; $i++) {
+            $this->post(route('password.email'), ['email' => "user{$i}@example.com"])->assertRedirect();
+        }
+
+        $this->post(route('password.email'), ['email' => 'user45@example.com'])->assertStatus(429);
+    }
+
+    public function test_password_reset_request_answers_the_same_for_member_and_unknown_address_including_when_throttled(): void
+    {
+        Notification::fake();
+        $member = Member::factory()->create(['is_active' => true]);
+        $unknown = 'nobody@example.com';
+
+        for ($i = 0; $i < 3; $i++) {
+            $memberResponse = $this->post(route('password.email'), ['email' => $member->email]);
+            $memberFlash = session('success');
+            $unknownResponse = $this->post(route('password.email'), ['email' => $unknown]);
+
+            $this->assertSame($memberResponse->getStatusCode(), $unknownResponse->getStatusCode());
+            $this->assertSame($memberResponse->headers->get('Location'), $unknownResponse->headers->get('Location'));
+            $this->assertSame($memberFlash, session('success'));
+            $this->assertSame(__('passwords.sent'), session('success'));
+        }
+
+        $memberThrottled = $this->post(route('password.email'), ['email' => $member->email]);
+        $unknownThrottled = $this->post(route('password.email'), ['email' => $unknown]);
+
+        $memberThrottled->assertStatus(429);
+        $unknownThrottled->assertStatus(429);
+        $this->assertSame($memberThrottled->getContent(), $unknownThrottled->getContent());
+
+        Notification::assertSentToTimes($member, ResetPassword::class, 1);
+        Notification::assertNothingSentTo(Member::factory()->make(['email' => $unknown]));
+    }
+
+    public function test_password_reset_requests_do_not_count_toward_magic_link_request_or_reset_confirm_limits(): void
+    {
+        Notification::fake();
+        $member = Member::factory()->create(['is_active' => true]);
+
+        for ($i = 0; $i < 3; $i++) {
+            $this->post(route('password.email'), ['email' => $member->email]);
+        }
+
+        $this->post('/magic-link', ['email' => $member->email])->assertStatus(302);
+        for ($i = 0; $i < 5; $i++) {
+            $this->post(route('password.update'), [
+                'token' => 'invalid-token',
+                'email' => $member->email,
+                'password' => 'newpassword123',
+                'password_confirmation' => 'newpassword123',
+            ])->assertStatus(302);
+        }
     }
 
     public function test_login_with_array_email_does_not_error(): void
