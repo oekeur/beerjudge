@@ -1,11 +1,11 @@
 ---
 id: TASK-89
 title: Mark the demo's closed competition as already mailed
-status: In Progress
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-10-09 13:16'
-updated_date: '2026-10-19 14:18'
+updated_date: '2026-10-19 14:38'
 labels:
   - email-on-publish
 dependencies: []
@@ -24,7 +24,7 @@ DemoSeeder creates the closed 'Autumn Harvest 2024' competition without results_
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 DemoSeeder sets results_mailed_at on the closed demo competition; reopen and close on a fresh demo database sends no mail (test)
+- [x] #1 DemoSeeder sets results_mailed_at on the closed demo competition; reopen and close on a fresh demo database sends no mail (test)
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -36,3 +36,9 @@ Phase 1 - Seed as mailed: set results_mailed_at on the closed demo competition i
 [RISK] none found
 Open (non-blocking): none
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+AC 1: DemoSeeder seeds the closed demo competition (Autumn Harvest 2024) with results_mailed_at = now(); DemoSeederTest::test_reopening_and_closing_the_closed_demo_competition_sends_no_mail reopens and closes it under Notification::fake() and asserts nothing sent. Fails at the merge base (Probe 2). Pass A and Pass B CLEAN; Pass B confirmed the open and judging demo competitions still seed unmailed and mail once on first close. CI green, merged as eef85e9 (PR #74). As planned. Note: docs/user-journeys.md:243 still lists the old seeder gap inside a dated run log; left as history per the plan's out-of-scope line.
+<!-- SECTION:FINAL_SUMMARY:END -->
