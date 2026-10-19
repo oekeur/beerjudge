@@ -24,6 +24,7 @@
     "competition.entry.style": "Style",
     "competition.entry.abv": "ABV",
     "competition.entry.brewer_notes": "Brewer notes",
+    "competition.entry.locked": "Entries are locked once judging starts: bottle numbers and the tasting order are fixed.",
     "competition.styles_in_use": "Cannot remove styles that entries still use: :styles.",
     "competition.entry_link": "Entry submission link",
     "competition.invite_link_label": "Generate invite link",

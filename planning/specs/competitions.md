@@ -47,7 +47,7 @@ The CompetitionResource has a multi-tab edit interface:
 
 - **Overview** — name, year, judging date, status
 - **Styles** — categorised style selector (custom `StyleMultiSelect` component)
-- **Entries** — repeater for managing entries: member, style, bottle number, brewer notes, sort order (drag-to-reorder)
+- **Entries** — repeater for managing entries: member, style, ABV, brewer notes, sort order (drag-to-reorder, Sort by ABV). Editable in `draft` and `open`; read-only from `judging` on (`judging`, `closed`, reopened `judging`)
 - **Judging** — select judges, display judge participation link, judging progress visualisation
 - **Dashboard** — results summary with entry statistics
 - **Results** — variance table showing judge score spread per entry
