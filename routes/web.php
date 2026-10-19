@@ -43,7 +43,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/join/{token}', [RegistrationController::class, 'store']);
 
     Route::get('/password/reset', [PasswordResetController::class, 'showRequestForm'])->name('password.request');
-    Route::post('/password/reset', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+    Route::post('/password/reset', [PasswordResetController::class, 'sendResetLink'])->name('password.email')->middleware('throttle:password-reset-request');
     Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
     Route::post('/password/reset/confirm', [PasswordResetController::class, 'resetPassword'])->name('password.update')->middleware('throttle:password-reset-confirm');
 });

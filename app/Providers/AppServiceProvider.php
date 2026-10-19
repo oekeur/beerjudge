@@ -47,6 +47,10 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinutes(5, 3)->by('magic-link-request|'.self::emailKey($request).'|'.$request->ip()),
             Limit::perMinutes(5, 45)->by('magic-link-request-ip|'.$request->ip()),
         ]);
+        RateLimiter::for('password-reset-request', fn (Request $request): array => [
+            Limit::perMinutes(5, 3)->by('password-reset-request|'.self::emailKey($request).'|'.$request->ip()),
+            Limit::perMinutes(5, 45)->by('password-reset-request-ip|'.$request->ip()),
+        ]);
         RateLimiter::for('password-reset-confirm', fn (Request $request): array => [
             Limit::perMinute(5)->by('password-reset-confirm|'.self::emailKey($request).'|'.$request->ip()),
             Limit::perMinute(30)->by('password-reset-confirm-ip|'.$request->ip()),
