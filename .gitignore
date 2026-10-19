@@ -41,3 +41,6 @@ Thumbs.db
 
 # Operator-only deployment notes, kept out of the public repository
 /docs/private/
+
+# Raw competition exports and name/beer mappings (personal data)
+/backfill/data/
