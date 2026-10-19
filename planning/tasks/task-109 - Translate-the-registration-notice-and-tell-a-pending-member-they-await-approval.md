@@ -3,10 +3,11 @@ id: TASK-109
 title: >-
   Translate the registration notice and tell a pending member they await
   approval
-status: Planned
-assignee: []
+status: In Progress
+assignee:
+  - '@agent'
 created_date: '2026-10-13 14:45'
-updated_date: '2026-10-14 14:46'
+updated_date: '2026-10-19 15:06'
 labels:
   - i18n
 dependencies:

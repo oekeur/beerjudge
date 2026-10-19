@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@agent'
 created_date: '2026-10-07 14:39'
-updated_date: '2026-10-19 14:41'
+updated_date: '2026-10-19 15:06'
 labels:
   - history-stats
 dependencies:
@@ -47,6 +47,12 @@ Phase 4 - Member history page and spec updates: member picker with entries, tren
 Risks: none open.
 Open (non-blocking): tied first place shown as badge only; assumes lang JSON conflicts with sibling tasks are resolved on rebase; does not depend on the TASK-107 parity test (not found in tests/).
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Phase 1 landed: HistoryStatsService merged as a7cc78d (PR #80); Pass A and Pass B CLEAN after one retry (entrants now counts every ranked entry, matching the results sheet's 'Nth of N'). Phases 2-4 (ClubStats, StyleStats, MemberHistory pages) and the spec updates run next as one branch and one browser review.
+<!-- SECTION:NOTES:END -->
 
 ## Comments
 
