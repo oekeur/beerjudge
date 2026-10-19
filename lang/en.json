@@ -228,6 +228,9 @@
     "nav.entries": "Entries",
     "nav.competition_dashboard": "Dashboard",
     "nav.logout": "Log out",
+    "nav.theme.light": "Light mode",
+    "nav.theme.system": "System preference",
+    "nav.theme.dark": "Dark mode",
 
     "profile.title": "Your profile",
     "profile.account_details": "Account details",
@@ -279,6 +282,16 @@
     "feedback.errorTimeoutText": "Unable to determine whether the feedback was sent.",
     "feedback.errorForbiddenText": "Unable to send feedback. This domain may not be on the list of allowed domains.",
     "feedback.errorGenericText": "Unable to send feedback. This may be a network problem, or an ad-blocker is blocking it.",
+
+    "home.heading": "Competitions",
+    "home.empty": "No competitions yet.",
+    "home.section.judging": "Judging",
+    "home.section.open": "Open",
+    "home.section.closed": "Past",
+    "home.link.judge": "Judge entries",
+    "home.link.register": "Register entry",
+    "home.link.results": "View results",
+
 
     "errors.403.title": "No access to this page",
     "errors.403.body": "You can't open this page right now. If you were judging, judging for this competition has probably been closed.",
