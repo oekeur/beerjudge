@@ -41,7 +41,7 @@ Bottle numbers are assigned by the admin during the transition to `judging` stat
 
 ## Admin management (Filament)
 
-The Entries tab in CompetitionResource displays all entries as a repeater. Admins can edit any field (member, style, bottle number, brewer notes, sort order) and reorder entries via drag-and-drop.
+The Entries tab in CompetitionResource displays all entries as a repeater. In `draft` and `open` status admins can add and remove entries, edit their fields (member, style, ABV, brewer notes) and reorder them via drag-and-drop or Sort by ABV. From `judging` on (`judging`, `closed`, and a reopened `judging`) the repeater is read-only and Sort by ABV is hidden: bottle numbers are assigned and judges score against them. The lock is enforced on the server; a tampered save changes nothing. There is no override for correcting a mistyped entry.
 
 ## View
 

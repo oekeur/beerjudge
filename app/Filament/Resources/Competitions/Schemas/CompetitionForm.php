@@ -127,6 +127,7 @@ class CompetitionForm
                                             Action::make('sortByAbv')
                                                 ->label(__('competition.entry.sort_by_abv'))
                                                 ->color('gray')
+                                                ->visible(fn (?Competition $record): bool => ! $record?->entriesAreLocked())
                                                 ->action(function (Get $get, Set $set): void {
                                                     $state = $get('entries');
                                                     $entries = is_array($state) ? $state : [];
@@ -143,6 +144,8 @@ class CompetitionForm
 
                                 Repeater::make('entries')
                                     ->relationship()
+                                    ->disabled(fn (?Competition $record): bool => (bool) $record?->entriesAreLocked())
+                                    ->helperText(fn (?Competition $record) => $record?->entriesAreLocked() ? __('competition.entry.locked') : null)
                                     ->schema([
                                         Select::make('member_id')
                                             ->label(__('competition.entry.member'))

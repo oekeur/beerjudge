@@ -39,6 +39,19 @@ class EditCompetition extends EditRecord
     }
 
     /**
+     * A locked repeater is never saved, but its rows are still validated. Rows the admin added
+     * or emptied before the competition moved to Judging (in this page or in another tab) would
+     * block every Save with errors they can no longer fix, so the state is reset to the stored
+     * entries first.
+     */
+    protected function beforeValidate(): void
+    {
+        if ($this->record->entriesAreLocked()) {
+            $this->refreshFormData(['entries']);
+        }
+    }
+
+    /**
      * Runs a status change, then rebuilds the header actions in place so the page offers the next
      * status's buttons. Unsaved form edits are left alone; only the status field is refreshed.
      * Actions already in the Livewire action cache stay there (the running action still needs to

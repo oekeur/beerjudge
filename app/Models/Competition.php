@@ -124,6 +124,14 @@ class Competition extends Model
     }
 
     /**
+     * Entries are fixed from Judging on: bottle numbers are assigned and judges score against them.
+     */
+    public function entriesAreLocked(): bool
+    {
+        return $this->isJudging() || $this->isClosed();
+    }
+
+    /**
      * @return BelongsToMany<Style, $this>
      */
     public function styles(): BelongsToMany
