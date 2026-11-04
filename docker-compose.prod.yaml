@@ -1,6 +1,7 @@
 # Production overlay. Use with: docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
 services:
   app:
+    restart: unless-stopped
     env_file: .env.production
     networks:
       - default
