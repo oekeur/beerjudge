@@ -2,6 +2,40 @@
 
 Reconstructed from the git history on 2026-10-07. Each version covers one ISO week of commits; weeks without commits have no version. The date is the last commit of that week. Styling iterations, static-analysis passes, CI and test plumbing, and tracker housekeeping are summarised rather than listed.
 
+## [1.1.0] - 2026-11-25
+
+### Upgrade notes
+- Three new migrations run on start: member emails are lowercased (case-only duplicates are skipped), a `failed_jobs` table is created, and judges who submitted a scoresheet are added to the competition's judge list.
+- New optional `ADMIN_NOTIFICATION_EMAIL`: when set, that address gets an email for every pending invite registration.
+
+### Added
+- `ADMIN_NOTIFICATION_EMAIL` notification for pending invite registrations.
+- `php artisan backfill:import` imports a historical competition from Google Forms judging data extracted by `backfill/extract_responses.py`; `--dry-run` validates without writing.
+- Translated 403 and 429 error pages.
+- Failed queue jobs are recorded, and rejected scoresheet saves are reported to Sentry.
+- `HistoryStatsService`, the data layer for the planned history and stats pages.
+
+### Changed
+- Login throttling no longer lets one shared Wi-Fi IP lock out the whole room.
+- The password-reset email request is rate-limited.
+- The entries repeater on the competition edit page locks once judging starts.
+- The judge list is saved per change instead of synced on Save.
+- `docker-compose.prod.yaml` restarts the app container after a reboot.
+
+### Fixed
+- Every judge sees the same tasting number for a beer; a judge's own entries stay in the list as locked rows.
+- Only judges taking part in a competition can score it.
+- Saving a stale competition edit page no longer drops entries registered after it loaded.
+- Member emails match regardless of capitals at login, password reset and registration.
+- Note length limits, double-tap submit, and opening an invite link while logged in.
+- The home page, results, score sheet and judge report pages are translated; a test guards en/nl key parity.
+- The last entry on the judging screen stays clear of the feedback button.
+- Entry row select options on the competition edit form are memoized (fewer queries).
+- CI runs on pull requests into every branch.
+
+### Security
+- laravel/framework 13.44.1, symfony/yaml 8.1.12 and patched JS dev dependencies (vite, serialize-javascript, fast-uri) for open advisories.
+
 ## [1.0.0] - 2026-10-12
 
 First public release.
