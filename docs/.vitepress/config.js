@@ -1,9 +1,38 @@
 import { defineConfig } from 'vitepress'
 
+const siteUrl = 'https://oekeur.github.io/beerjudge/'
+const siteDescription =
+  'Self-hosted competition management and offline-first BJCP judging for small homebrew clubs. Laravel + Filament, installable PWA, MIT licensed.'
+
 export default defineConfig({
   title: 'BeerJudge',
-  description: 'Competition management for a small homebrew club.',
+  description: siteDescription,
+  lang: 'en',
   base: '/beerjudge/',
+  sitemap: { hostname: siteUrl },
+  head: [
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'BeerJudge' }],
+    ['meta', { property: 'og:image', content: `${siteUrl}og-image.png` }],
+    ['meta', { property: 'og:image:width', content: '1280' }],
+    ['meta', { property: 'og:image:height', content: '640' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:image', content: `${siteUrl}og-image.png` }],
+  ],
+  // Per-page canonical URL, og:title and og:description, built from each page's own title and description.
+  transformPageData(pageData, { siteConfig }) {
+    const path = pageData.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '.html')
+    const title = pageData.frontmatter.title ?? pageData.title
+    const pageTitle = title ? `${title} | ${siteConfig.site.title}` : siteConfig.site.title
+    const description = pageData.frontmatter.description || pageData.description || siteDescription
+    pageData.frontmatter.head ??= []
+    pageData.frontmatter.head.push(
+      ['link', { rel: 'canonical', href: `${siteUrl}${path}` }],
+      ['meta', { property: 'og:url', content: `${siteUrl}${path}` }],
+      ['meta', { property: 'og:title', content: pageTitle }],
+      ['meta', { property: 'og:description', content: description }],
+    )
+  },
   ignoreDeadLinks: [/README/],
   // Operator notes kept outside git (see .gitignore); never part of the site.
   srcExclude: ['private/**'],

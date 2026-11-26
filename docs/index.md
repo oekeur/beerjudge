@@ -1,5 +1,6 @@
 ---
 layout: home
+title: BJCP competitions for small homebrew clubs
 
 hero:
   name: BeerJudge
